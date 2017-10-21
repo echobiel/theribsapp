@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">The Ribs Steakhouse</string>
+    <string name="title_activity_main_home">Home</string>
+    <string name="title_activity_main_pedido">Pedido</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="result_qrcode_text_default">Please focus camera on QR Code</string>
+</resources>
