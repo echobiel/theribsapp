@@ -7,5 +7,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="result_qrcode_text_default">Please focus camera on QR Code</string>
+    <string name="result_qrcode_text_default">Por favor foque a câmera no código QR fornecido</string>
+    <string name="gerar_qrcode_text_default">Gerar QR Code</string>
 </resources>

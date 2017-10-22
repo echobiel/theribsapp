@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="#ff720e"
+            android:background="#11202a"
+            android:id="@+id/btn_pedido_qrcode_gerar"
+            android:text="GERAR QR CODE"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="600px"
+        android:id="@+id/img_qrcode"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Peça ao cliente que escaneie o QR Code"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="bottom">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="#ff720e"
+            android:background="#11202a"
+            android:text="Cliente sem cadastro"
+            android:id="@+id/btn_client_sem_cadastro"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="#ddd"></LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="#ff720e"
+            android:background="#11202a"
+            android:id="@+id/btn_client_com_cadastro"
+            android:text="Cliente com cadastro"/>
+    </LinearLayout>
+
+</LinearLayout>

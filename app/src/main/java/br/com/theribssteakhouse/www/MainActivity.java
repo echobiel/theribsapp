@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity
         FragmentViewPager fragment = new FragmentViewPager();
 
         fragment.addFragment("Home",new FragmentHome());
-        fragment.addFragment("Pesquisa",new FragmentPesquisa());
 
         txn.replace(R.id.container, fragment);
 
@@ -247,6 +246,21 @@ public class MainActivity extends AppCompatActivity
         fragment.addFragment("Home",new FragmentHome());
         fragment.addFragment("Pesquisa",new FragmentPesquisa());
         fragment.setFragmentNumber(1);
+        txn.replace(R.id.container, fragment);
+
+        txn.commit();
+    }
+
+    public void backPagePedidoGarcom(){
+        manage = getSupportFragmentManager();
+        txn = manage.beginTransaction();
+
+        //Cria o fragment
+        FragmentViewPager fragment = new FragmentViewPager();
+
+        fragment.addFragment("Novo Pedido",new FragmentNovoPedido());
+        fragment.addFragment("Pedido Garçom",new FragmentPedidoGarcom());
+
         txn.replace(R.id.container, fragment);
 
         txn.commit();

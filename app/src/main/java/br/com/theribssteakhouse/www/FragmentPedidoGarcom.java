@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class FragmentPedidoGarcom extends Fragment {
 
     ListView list_pedidos;
     PedidoGarcom pedido;
+    Button btn_criar_pedido;
     private final List<PedidoGarcom> pedidoGarcomList = new ArrayList<>();
     final Handler handler = new Handler();
 
@@ -47,8 +49,16 @@ public class FragmentPedidoGarcom extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pedido_garcom, container, false);
 
+        btn_criar_pedido = (Button) view.findViewById(R.id.btn_criar_pedido);
+
         setupListPedidos(view);
 
+        btn_criar_pedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).backPagePedidoGarcom();
+            }
+        });
 
 
         return view;

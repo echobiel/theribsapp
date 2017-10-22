@@ -33,6 +33,7 @@ public class FragmentHome extends Fragment {
     private ImageButton img_btn_pesquisa;
     private MyListView list_menu;
     private TextView txt_desc_sobrenos;
+    private TextView txt_pesquisar;
     private ViewPager slider_home;
     private ScrollView scroll_view;
 
@@ -52,12 +53,20 @@ public class FragmentHome extends Fragment {
         slider_home = (ViewPager) view.findViewById(R.id.sliderHome);
         list_menu = (MyListView) view.findViewById(R.id.list_menu);
         txt_desc_sobrenos = (TextView) view.findViewById(R.id.txt_desc_sobrenos);
+        txt_pesquisar = (TextView) view.findViewById(R.id.txt_pesquisar);
 
         list_menu.setFocusable(false);
 
         img_btn_pesquisa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainActivity)getActivity()).nextPageHome();
+            }
+        });
+
+        txt_pesquisar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 ((MainActivity)getActivity()).nextPageHome();
             }
         });
@@ -137,7 +146,7 @@ public class FragmentHome extends Fragment {
         list_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(((MainActivity)getActivity()),"Test " + i,Toast.LENGTH_SHORT);
+                Toast.makeText(((MainActivity)getActivity()),"Test " + i,Toast.LENGTH_SHORT).show();
             }
         });
     }
