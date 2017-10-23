@@ -9,4 +9,36 @@
     <string name="action_settings">Settings</string>
     <string name="result_qrcode_text_default">Por favor foque a câmera no código QR fornecido</string>
     <string name="gerar_qrcode_text_default">Gerar QR Code</string>
+    <string name="title_activity_cardapio2">Cardapio2Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_cardapio_principais">Principais</string>
+    <string name="title_activity_cardapio_todos">Todos</string>
+    <string name="title_activity_historicos">Históricos</string>
+    <string name="title_activity_perfil_garcom">Meu Perfil</string>
+    <string name="title_activity_fale_conosco">Fale Conosco</string>
+
+    <string-array name="periodos">
+        <item>Almoço</item>
+        <item>Jantar</item>
+    </string-array>
+
+    <string-array name="unidades">
+        <item>São Paulo</item>
+        <item>Campinas</item>
+        <item>Campos do Jordão</item>
+    </string-array>
+
+    <string-array name="tipos_info">
+        <item>Crítica</item>
+        <item>Sugestão</item>
+        <item>Informação</item>
+    </string-array>
+
+    <string-array name="bandeiras_cartao">
+        <item>Visa</item>
+        <item>Mastercard</item>
+        <item>Elo</item>
+    </string-array>
+    <string name="title_activity_nossos_restaurantes">Nossos Restaurantes</string>
+
 </resources>

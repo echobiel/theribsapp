@@ -78,13 +78,19 @@ public class MainActivity extends AppCompatActivity
             int itemId;
 
             if (itemMenu == 0){
-                itemId = R.id.nav_camera;
+                itemId = R.id.nav_home;
             }else if (itemMenu == 1){
-                itemId = R.id.nav_gallery;
+                itemId = R.id.nav_scan_pedido;
             }else if (itemMenu == 2){
-                itemId = R.id.nav_gallery;
+                itemId = R.id.nav_pedido_garcom;
+            }else if (itemMenu == 3){
+                itemId = R.id.nav_perfil_garcom;
+            }else if (itemMenu == 4){
+                itemId = R.id.nav_perfil_cliente;
+            }else if (itemMenu == 5){
+                itemId = R.id.nav_perfil_garcom;
             }else{
-                itemId = R.id.nav_slideshow;
+                itemId = R.id.nav_home;
             }
 
             previouslyFragment(itemId);
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity
     }
     //Muda o fragment de acordo com o item do menu
     public void changeFragment(int id){
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
             //Define o label da activity
             this.setTitle("Home");
             manage = getSupportFragmentManager();
@@ -143,7 +149,7 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, fragment);
 
             txn.commit();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_scan_pedido) {
             //Define o label da activity
             this.setTitle("Scanner");
             listTelas.add(1);
@@ -154,7 +160,7 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, new FragmentPedidoClient());
 
             txn.commit();
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_pedido_garcom) {
             //Define o label da activity
             this.setTitle("Pedidos");
 
@@ -171,10 +177,40 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, fragment);
 
             txn.commit();
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_perfil_garcom) {
+            //Define o label da activity
+            this.setTitle("Perfil");
 
-        } else if (id == R.id.nav_share) {
+            listTelas.add(3);
 
+            manage = getSupportFragmentManager();
+            txn = manage.beginTransaction();
+
+            //Cria o fragment
+            FragmentViewPager fragment = new FragmentViewPager();
+
+            fragment.addFragment("Perfil",new FragmentPerfilGarcom());
+
+            txn.replace(R.id.container, fragment);
+
+            txn.commit();
+        } else if (id == R.id.nav_perfil_cliente) {
+            //Define o label da activity
+            this.setTitle("Perfil");
+
+            listTelas.add(4);
+
+            manage = getSupportFragmentManager();
+            txn = manage.beginTransaction();
+
+            //Cria o fragment
+            FragmentViewPager fragment = new FragmentViewPager();
+
+            fragment.addFragment("Perfil",new FragmentPerfilCliente());
+
+            txn.replace(R.id.container, fragment);
+
+            txn.commit();
         } else if (id == R.id.nav_send) {
 
         }
@@ -184,7 +220,7 @@ public class MainActivity extends AppCompatActivity
     }
     //Muda o fragment de acordo com o item do menu
     public void previouslyFragment(int id){
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
             //Define o label da activity
             this.setTitle("Home");
             manage = getSupportFragmentManager();
@@ -199,7 +235,7 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, fragment);
 
             txn.commit();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_scan_pedido) {
             //Define o label da activity
             this.setTitle("Scanner");
 
@@ -209,7 +245,7 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, new FragmentPedidoClient());
 
             txn.commit();
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_pedido_garcom) {
             //Define o label da activity
             this.setTitle("Pedidos");
 
@@ -224,10 +260,36 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, fragment);
 
             txn.commit();
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_perfil_garcom) {
+            //Define o label da activity
+            this.setTitle("Perfil");
 
-        } else if (id == R.id.nav_share) {
+            manage = getSupportFragmentManager();
+            txn = manage.beginTransaction();
 
+            //Cria o fragment
+            FragmentViewPager fragment = new FragmentViewPager();
+
+            fragment.addFragment("Perfil Garçom",new FragmentPerfilGarcom());
+
+            txn.replace(R.id.container, fragment);
+
+            txn.commit();
+        } else if (id == R.id.nav_perfil_cliente) {
+            //Define o label da activity
+            this.setTitle("Pedidos");
+
+            manage = getSupportFragmentManager();
+            txn = manage.beginTransaction();
+
+            //Cria o fragment
+            FragmentViewPager fragment = new FragmentViewPager();
+
+            fragment.addFragment("Perfil Cliente",new FragmentPerfilCliente());
+
+            txn.replace(R.id.container, fragment);
+
+            txn.commit();
         } else if (id == R.id.nav_send) {
 
         }

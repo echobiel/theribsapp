@@ -4,10 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TheRibsSteakhouse.iml" filepath="$PROJECT_DIR$/TheRibsSteakhouse.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/apptheribssteakhouse.iml" filepath="$PROJECT_DIR$/apptheribssteakhouse.iml" />
       <module fileurl="file://$PROJECT_DIR$/theribs.iml" filepath="$PROJECT_DIR$/theribs.iml" />
       <module fileurl="file://$PROJECT_DIR$/theribs.iml" filepath="$PROJECT_DIR$/theribs.iml" />
       <module fileurl="file://$PROJECT_DIR$/theribs.iml" filepath="$PROJECT_DIR$/theribs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/theribsapp.iml" filepath="$PROJECT_DIR$/theribsapp.iml" />
     </modules>
   </component>
 </project>
