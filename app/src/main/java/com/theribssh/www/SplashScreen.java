@@ -2,6 +2,8 @@ package com.theribssh.www;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +30,8 @@ public class SplashScreen extends Activity{
         text_bem_vindo = (TextView) findViewById(R.id.text_bem_vindo);
         imagem_introducao = (ImageView) findViewById(R.id.imagem_introducao);
         progress_bar_introducao = (ProgressBar) findViewById(R.id.progress_bar_introducao);
+
+        progress_bar_introducao.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
 
         Thread timerThread = createThread();
         timerThread.start();

@@ -121,7 +121,6 @@
     <orderEntry type="library" exported="" name="play-services-wallet-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-tagmanager-api-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-storage-9.8.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-games-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-auth-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-messaging-9.8.0" level="project" />
@@ -169,7 +168,6 @@
     <orderEntry type="library" exported="" name="play-services-basement-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="circleimageview-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-auth-module-9.8.0" level="project" />
-    <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-clearcut-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-9.8.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-9.8.0" level="project" />
