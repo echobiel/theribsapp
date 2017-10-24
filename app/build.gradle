@@ -37,6 +37,7 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     compile 'com.github.pinball83:masked-edittext:1.0.3'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile files('C:/Users/16165846/Documents/theribs/libs/glide-full-4.2.0.jar')
+    //compile 'com.github.bumptech.glide:glide:4.2.0'
     //compile files('C:/Users/echobiel/Documents/projetos/senai/theribsapp/libs/glide-full-4.2.0.jar')
+    compile files('C:/Users/16165846.CFP127ALUNO/Documents/theribsapp/libs/glide-full-4.2.0.jar')
 }

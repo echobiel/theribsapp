@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:text="CRIAR UM NOVO PEDIDO"
             android:textColor="#ff720e"
-            android:background="#11202a"
+            android:background="@color/corAzulMarinho"
             android:id="@+id/btn_criar_pedido"/>
     </LinearLayout>
 

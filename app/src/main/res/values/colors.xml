@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000</color>
+    <color name="colorPrimary">#11202a</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#cccccc</color>
     <color name="corVinho">#800000</color>
     <color name="corPreto">#000000</color>
+    <color name="corAzulMarinho">#11202a</color>
+    <color name="corLaranja">#e25909</color>
 </resources>
