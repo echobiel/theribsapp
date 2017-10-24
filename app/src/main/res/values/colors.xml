@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#000</color>
     <color name="colorPrimaryDark">#000</color>
-    <color name="colorAccent">#ffffff</color>
+    <color name="colorAccent">#cccccc</color>
     <color name="corVinho">#800000</color>
     <color name="corPreto">#000000</color>
 </resources>

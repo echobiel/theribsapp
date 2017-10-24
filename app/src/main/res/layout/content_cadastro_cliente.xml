@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_cadastro_cliente">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:id="@+id/img_user"
+            android:src="@drawable/imgfuncionario"
+            />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_login"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Login"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_nome"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Nome"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_celular"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Celular"
+                android:inputType="number"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_telefone"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Telefone"
+                android:inputType="number"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_email"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_logradouro"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Logradouro"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_endereco"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Endereço"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="20dp"
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edit_text_numero"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Número"
+                    android:inputType="number"
+                    android:textSize="18dp"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edit_text_bairro"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Bairro"
+                    android:textSize="18dp"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="CARTÃO DE CRÉDITO"
+            android:textColor="@color/corVinho"
+            android:textAlignment="center"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            />
+
+        <Spinner
+            android:layout_width="370dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_bandeira_cartao"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp">
+
+        </Spinner>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_nome_cartao"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Nome Registrado"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_numero_cartao"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Número Registrado"
+                android:inputType="number"
+                android:textSize="18dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="20dp"
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edit_text_cvv"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:hint="CVV"
+                    android:inputType="number"
+                    android:textSize="18dp"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edit_text_vencimento_cartao"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Vencimento"
+                    android:inputType="date"
+                    android:textSize="18dp"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</ScrollView>

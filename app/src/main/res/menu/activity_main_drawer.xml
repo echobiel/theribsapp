@@ -18,21 +18,30 @@
             android:id="@+id/nav_perfil_cliente"
             android:title="Perfil Cliente" />
         <item
-            android:id="@+id/nav_manage"
-            android:title="Perfil Garçom" />
+            android:id="@+id/nav_cardapio"
+            android:title="Cardápios" />
+        <item
+            android:id="@+id/nav_fale_conosco"
+            android:title="Fale Conosco" />
+        <item
+            android:id="@+id/nav_historicos"
+            android:title="Históricos" />
+        <item
+            android:id="@+id/nav_nossos_restaurantes"
+            android:title="Nossos Restaurantes" />
     </group>
 
-    <item android:title="Communicate">
+
+    <item android:title="Conta">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_login"
+                android:title="Entrar" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_cadastro_cliente"
+                android:title="Cadastrar" />
         </menu>
     </item>
+
 
 </menu>

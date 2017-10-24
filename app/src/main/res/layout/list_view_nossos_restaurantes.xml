@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#000"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#fff"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="180dp"
+                    android:layout_height="140dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/restaurante"
+                    android:id="@+id/image_view_restaurante"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="São Paulo - SP"
+                    android:textColor="@color/corVinho"
+                    android:textSize="20dp"
+                    android:textAlignment="center"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/text_view_unidade_restaurante"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="Rua José Bonifácio, 1010, Centro"
+                    android:textSize="18dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/corPreto"
+                    android:id="@+id/text_view_endereco_restaurante"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="(11)4521-9654"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="15dp"
+                    android:textSize="18dp"
+                    android:textColor="@color/corPreto"
+                    android:id="@+id/text_view_telefone_restaurante"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:textSize="18dp"
+                    android:textColor="@color/corPreto"
+                    android:paddingBottom="15dp"
+                    android:text="Lorem ipsum dolor sit amet, consectetur"
+                    android:id="@+id/text_view_desc_restaurante"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

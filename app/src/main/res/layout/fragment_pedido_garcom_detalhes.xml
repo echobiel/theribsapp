@@ -127,10 +127,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <br.com.theribssteakhouse.www.MyListView
+                    <com.theribssh.www.MyListView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/list_pedidos_produtos"></br.com.theribssteakhouse.www.MyListView>
+                        android:id="@+id/list_pedidos_produtos"></com.theribssh.www.MyListView>
                 </LinearLayout>
         </ScrollView>
     </LinearLayout>

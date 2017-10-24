@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "br.com.theribssteakhouse.www"
+        applicationId "com.theribssh.www"
         minSdkVersion 20
         targetSdkVersion 25
         versionCode 1
@@ -37,6 +37,6 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     compile 'com.github.pinball83:masked-edittext:1.0.3'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    //compile files('C:/Users/16165846/Documents/theribs/libs/glide-full-4.2.0.jar')
-    compile files('C:/Users/echobiel/Documents/projetos/senai/theribsapp/libs/glide-full-4.2.0.jar')
+    compile files('C:/Users/16165846/Documents/theribs/libs/glide-full-4.2.0.jar')
+    //compile files('C:/Users/echobiel/Documents/projetos/senai/theribsapp/libs/glide-full-4.2.0.jar')
 }

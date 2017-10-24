@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center">
-                    <br.com.theribssteakhouse.www.MyListView
+                    <com.theribssh.www.MyListView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/list_menu"/>
