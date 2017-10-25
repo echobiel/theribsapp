@@ -1,11 +1,14 @@
 package com.theribssh.www;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -58,7 +61,15 @@ public class NossosRestaurantesAdapter extends BaseAdapter {
         telefone_restaurante.setText(nossos_restaurantes.getTelefone_restaurante());
 
         ImageView foto_restaurante = (ImageView)view.findViewById(R.id.image_view_restaurante);
-        foto_restaurante.setImageResource(nossos_restaurantes.getFoto_restaurante());
+
+        //Guardando o nome da imagem
+        String nameImage = nossos_restaurantes.getFoto_restaurante();
+        //Pegando o contexto da imagem
+        Context context = foto_restaurante.getContext();
+        //Pegando id da imagem via nome
+        int id = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
+        //Colocando Imagem de fundo
+        Glide.with(view).load(id).thumbnail(Glide.with(view).load(R.drawable.loading)).into(foto_restaurante);
 
         return view;
     }

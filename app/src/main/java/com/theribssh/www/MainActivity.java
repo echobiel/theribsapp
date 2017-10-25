@@ -1,5 +1,8 @@
 package com.theribssh.www;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -8,13 +11,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,6 +31,8 @@ public class MainActivity extends AppCompatActivity
     FragmentManager manage;
     FragmentTransaction txn;
     NavigationView navigationView;
+    Socket socket;
+    Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +152,10 @@ public class MainActivity extends AppCompatActivity
     }
     //Muda o fragment de acordo com o item do menu
     public void changeFragment(int id){
+        socket = null;
+
+        runnable = null;
+
         if (id == R.id.nav_home) {
             //Define o label da activity
             this.setTitle("Home");
@@ -544,5 +557,48 @@ public class MainActivity extends AppCompatActivity
         txn.replace(R.id.container, fragment);
 
         txn.commit();
+    }
+
+    public Socket conectarSocket()
+    {
+        try {
+            socket = IO.socket("http://10.0.2.2:8888");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return socket;
+    }
+
+    public Runnable getRunnable(final List<NossosRestaurantesListView> list, final NossosRestaurantesListView item){
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                list.add(item);
+
+                enviarNotificacao(item);
+            }
+        };
+
+        return runnable;
+    }
+
+
+    int notification_id = 1;
+
+    public void enviarNotificacao(NossosRestaurantesListView item){
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setSmallIcon(R.drawable.logo_icon)
+                .setContentTitle(item.getNome_restaurante() + "")
+                .setContentText(item.getEndereco_restaurante())
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_MAX);
+
+        NotificationManager nManager = (NotificationManager)
+                (this).getSystemService(Context.NOTIFICATION_SERVICE);
+
+        nManager.notify( notification_id , builder.build() );
+
     }
 }

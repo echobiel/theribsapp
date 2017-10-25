@@ -1,24 +1,35 @@
 package com.theribssh.www;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class FragmentNossosRestaurantes extends Fragment{
 
     ListView list_view_nossos_restaurantes;
     List<NossosRestaurantesListView> lstRestaurantes = new ArrayList<>();
+    NossosRestaurantesAdapter adapter;
+    Activity act;
 
     @Nullable
     @Override
@@ -27,6 +38,8 @@ public class FragmentNossosRestaurantes extends Fragment{
 
         list_view_nossos_restaurantes = (ListView)view.findViewById(R.id.list_view_nossos_restaurantes);
 
+        act = ((MainActivity)getActivity());
+
         configurarListView();
 
         return view;
@@ -34,14 +47,74 @@ public class FragmentNossosRestaurantes extends Fragment{
 
     private void configurarListView() {
 
-        lstRestaurantes = new ArrayList<NossosRestaurantesListView>();
+        lstRestaurantes = new ArrayList<>();
 
-        lstRestaurantes.add(new NossosRestaurantesListView(R.drawable.restaurante, "São Paulo - SP", "Rua José Bonifácio, 1010, Centro","(11)4521-9654", "Lorem ipsum dolor sit amet, consectetur"));
-        lstRestaurantes.add(new NossosRestaurantesListView(R.drawable.restaurante, "São Paulo - SP", "Rua José Bonifácio, 1010, Centro","(11)4521-9654", "Lorem ipsum dolor sit amet, consectetur"));
+        new PegadorTask().execute();
 
-        NossosRestaurantesAdapter adapter = new NossosRestaurantesAdapter(lstRestaurantes, ((MainActivity)getActivity()));
+        Socket socket = ((MainActivity)getActivity()).conectarSocket();
 
-        list_view_nossos_restaurantes.setAdapter(adapter);
+        socket.on("novo_usuario", new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+
+                if (args.length > 0){
+
+                    Log.d("socket", args[0].toString());
+                    String json = args[0].toString();
+
+                    final NossosRestaurantesListView item = new Gson().fromJson(json, NossosRestaurantesListView.class);
+
+                    act.runOnUiThread(((MainActivity)getActivity()).getRunnable(lstRestaurantes, item, adapter));
+
+                }
+            }
+        });
+
+        socket.connect();
+    }
+
+    int notification_id = 1;
+
+    public void enviarNotificacao(NossosRestaurantesListView item){
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(act);
+
+        builder.setSmallIcon(R.drawable.logo_icon)
+                .setContentTitle(item.getNome_restaurante() + "")
+                .setContentText(item.getEndereco_restaurante())
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_MAX);
+
+        NotificationManager nManager = (NotificationManager)
+                (act).getSystemService(Context.NOTIFICATION_SERVICE);
+
+        nManager.notify( notification_id , builder.build() );
+
+    }
+
+    private class PegadorTask extends AsyncTask<Void, Void, Void>
+    {
+        String json;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            String href = "http://10.0.2.2:8888/select";
+            json = HttpConnection.get(href);
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Gson gson = new Gson();
+            lstRestaurantes = gson.fromJson(json, new TypeToken<List<NossosRestaurantesListView>>(){
+            }.getType());
+
+            adapter = new NossosRestaurantesAdapter(lstRestaurantes, act);
+            list_view_nossos_restaurantes.setAdapter(adapter);
+
+        }
     }
 
 }
