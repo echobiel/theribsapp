@@ -2,7 +2,16 @@
 var app = require('express')(),
 	http = require('http').createServer(app),
 	io = require('socket.io').listen(http),
-	lstPedidos = [];
+	lstPedidos = [],
+	mysql = require('mysql'),
+	con = mysql.createConnection({
+	  host: "10.107.144.13",
+	  user: "root",
+	  password: "bcd127",
+	  database: "dbtheribssh"
+	});
+
+con.connect();
 
 app.set('view engine', 'ejs');
 
@@ -14,25 +23,41 @@ app.get('/', function(req, res){
 
 });
 
-app.get('/select', function(req, res){
+app.get('/selectRestaurante', function(req, res){
 
-	//res.sendFile( __dirname + "/index.html");
-	//res.send(lstAgendas);
-	var id = req.query.id;
+	  var command = "select r.id_restaurante, r.nome, r.imagem, r.descricao, concat(coalesce(c.nome, ''), ', ' , "+
+		"coalesce(e.bairro, '') , ', ' , coalesce(e.rua, '') , ', ' , coalesce(e.numero, '') , ' ' , "+
+		"coalesce(e.aptbloco, '')) as 'endereco' from tbl_restaurante as r "+
+		"inner join tbl_endereco as e "+
+		"on r.id_endereco = e.id_endereco "+
+		"inner join tbl_cidade as c "+
+		"on c.id_cidade = e.id_cidade "+
+		"where r.id_restaurante = 2 "+
+		"order by r.id_restaurante asc";
+
+	  con.query(command, function (err, result, fields) {
+	    if (err) throw err;
+	    res.send(result);
+	  });
 
 
+});
 
-	if (id != null || id > lstPedidos.length){
-		res.send(lstPedidos[id]);
-	}else{
-		res.send(lstPedidos);
-	}
+app.get('/selectCardapio', function(req, res){
+
+	  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ',preco) as 'preco_produto' from tbl_produto where statusAprovacao = 1;";
+
+	  con.query(command, function (err, result, fields) {
+	    if (err) throw err;
+	    res.send(result);
+	  });
+
 
 });
 
 app.get('/disconnect', function(req, res){
 
-	res.send(disconnect:1);
+	res.send(disconnect,1);
 
 });
 

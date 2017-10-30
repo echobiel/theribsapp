@@ -569,19 +569,6 @@ public class MainActivity extends AppCompatActivity
         return socket;
     }
 
-    public Runnable getRunnable(final List<NossosRestaurantesListView> list, final NossosRestaurantesListView item){
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                list.add(item);
-
-                enviarNotificacao(item);
-            }
-        };
-
-        return runnable;
-    }
-
 
     int notification_id = 1;
 

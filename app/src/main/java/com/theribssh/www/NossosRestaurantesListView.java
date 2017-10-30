@@ -6,20 +6,19 @@ package com.theribssh.www;
 
 public class NossosRestaurantesListView {
 
-    private String foto_restaurante;
-    private String unidade_restaurante;
+    private String imagem;
+    private String nome;
     private String nome_restaurante;
-    private String endereco_restaurante;
-    private String desc_restaurante;
+    private String endereco;
+    private String descricao;
     private String telefone_restaurante;
 
-    public NossosRestaurantesListView(String foto_restaurante, String unidade_restaurante, String endereco_restaurante, String desc_restaurante, String telefone_restaurante){
-
-        this.foto_restaurante = foto_restaurante;
-        this.unidade_restaurante = unidade_restaurante;
-        this.endereco_restaurante = endereco_restaurante;
-        this.desc_restaurante = desc_restaurante;
-        this.telefone_restaurante = telefone_restaurante;
+    public NossosRestaurantesListView(String imagem, String nome, String endereco, String descricao, String telefone_restaurante){
+        setFoto_restaurante(imagem);
+        setNome_restaurante(nome);
+        setEndereco_restaurante(endereco);
+        setDesc_restaurante(descricao);
+        //setTelefone_restaurante(telefone);
     }
 
     public String getNome_restaurante() {
@@ -31,19 +30,19 @@ public class NossosRestaurantesListView {
     }
 
     public String getFoto_restaurante() {
-        return foto_restaurante;
+        return imagem;
     }
 
-    public void setFoto_restaurante(String foto_restaurante) {
-        this.foto_restaurante = foto_restaurante;
+    public void setFoto_restaurante(String caminho_imagem) {
+        this.imagem = caminho_imagem;
     }
 
     public String getUnidade_restaurante() {
-        return unidade_restaurante;
+        return nome;
     }
 
     public void setUnidade_restaurante(String unidade_restaurante) {
-        this.unidade_restaurante = unidade_restaurante;
+        this.nome = unidade_restaurante;
     }
 
     public String getTelefone_restaurante() {
@@ -55,18 +54,18 @@ public class NossosRestaurantesListView {
     }
 
     public String getEndereco_restaurante() {
-        return endereco_restaurante;
+        return endereco;
     }
 
     public void setEndereco_restaurante(String endereco_restaurante) {
-        this.endereco_restaurante = endereco_restaurante;
+        this.endereco = endereco_restaurante;
     }
 
     public String getDesc_restaurante() {
-        return desc_restaurante;
+        return descricao;
     }
 
     public void setDesc_restaurante(String desc_restaurante) {
-        this.desc_restaurante = desc_restaurante;
+        this.descricao = desc_restaurante;
     }
 }

@@ -1,11 +1,14 @@
 package com.theribssh.www;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -57,7 +60,24 @@ public class CardapioPrincipaisAdapter extends BaseAdapter {
         preco_produto.setText(cardapio_principais.getPreco_produto());
 
         ImageView imagem_produto = (ImageView)view.findViewById(R.id.image_view_produto);
-        imagem_produto.setImageResource(cardapio_principais.getFoto_produto());
+
+        //Guardando o nome da imagem
+        String nameImage = cardapio_principais.getFoto_produto();
+        //Pegando o contexto da imagem
+        Context context = imagem_produto.getContext();
+
+        int idImagem;
+
+        try {
+            //Pegando id da imagem via nome
+            idImagem = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
+            //Colocando Imagem de fundo
+            Glide.with(view).load(idImagem).thumbnail(Glide.with(view).load(R.drawable.loading)).into(imagem_produto);
+
+        }catch (Exception e){
+
+        }
+
 
         return view;
     }

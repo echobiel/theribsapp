@@ -66,10 +66,19 @@ public class NossosRestaurantesAdapter extends BaseAdapter {
         String nameImage = nossos_restaurantes.getFoto_restaurante();
         //Pegando o contexto da imagem
         Context context = foto_restaurante.getContext();
-        //Pegando id da imagem via nome
-        int id = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
-        //Colocando Imagem de fundo
-        Glide.with(view).load(id).thumbnail(Glide.with(view).load(R.drawable.loading)).into(foto_restaurante);
+
+        int idImagem;
+
+        try {
+            //Pegando id da imagem via nome
+            idImagem = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
+            //Colocando Imagem de fundo
+            Glide.with(view).load(idImagem).thumbnail(Glide.with(view).load(R.drawable.loading)).into(foto_restaurante);
+
+        }catch (Exception e){
+
+        }
+
 
         return view;
     }

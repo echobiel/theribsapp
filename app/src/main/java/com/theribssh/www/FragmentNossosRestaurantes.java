@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -29,6 +31,9 @@ public class FragmentNossosRestaurantes extends Fragment{
     ListView list_view_nossos_restaurantes;
     List<NossosRestaurantesListView> lstRestaurantes = new ArrayList<>();
     NossosRestaurantesAdapter adapter;
+    Emitter.Listener emitterListener;
+    FloatingActionButton fab;
+    Socket socket;
     Activity act;
 
     @Nullable
@@ -37,10 +42,18 @@ public class FragmentNossosRestaurantes extends Fragment{
         View view = inflater.inflate(R.layout.activity_nossos_restaurantes, container, false);
 
         list_view_nossos_restaurantes = (ListView)view.findViewById(R.id.list_view_nossos_restaurantes);
+        fab = (FloatingActionButton)view.findViewById(R.id.fab);
 
         act = ((MainActivity)getActivity());
 
         configurarListView();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                configurarListView();
+            }
+        });
 
         return view;
     }
@@ -50,27 +63,6 @@ public class FragmentNossosRestaurantes extends Fragment{
         lstRestaurantes = new ArrayList<>();
 
         new PegadorTask().execute();
-
-        Socket socket = ((MainActivity)getActivity()).conectarSocket();
-
-        socket.on("novo_usuario", new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-
-                if (args.length > 0){
-
-                    Log.d("socket", args[0].toString());
-                    String json = args[0].toString();
-
-                    final NossosRestaurantesListView item = new Gson().fromJson(json, NossosRestaurantesListView.class);
-
-                    act.runOnUiThread(((MainActivity)getActivity()).getRunnable(lstRestaurantes, item, adapter));
-
-                }
-            }
-        });
-
-        socket.connect();
     }
 
     int notification_id = 1;
@@ -97,7 +89,7 @@ public class FragmentNossosRestaurantes extends Fragment{
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            String href = "http://10.0.2.2:8888/select";
+            String href = "http://10.0.2.2:8888/selectRestaurante";
             json = HttpConnection.get(href);
 
 
@@ -112,9 +104,11 @@ public class FragmentNossosRestaurantes extends Fragment{
             }.getType());
 
             adapter = new NossosRestaurantesAdapter(lstRestaurantes, act);
-            list_view_nossos_restaurantes.setAdapter(adapter);
-
+            try {
+                list_view_nossos_restaurantes.setAdapter(adapter);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
-
 }
