@@ -34,10 +34,7 @@ public class FragmentCardapioPrincipais extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        super.onCreate(savedInstanceState);
-
-        View rootView = inflater.inflate(R.layout.cardapio_principais_listview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_cardapios_principais, container, false);
 
         act = ((MainActivity)getActivity());
 

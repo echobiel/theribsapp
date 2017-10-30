@@ -5,9 +5,9 @@ var app = require('express')(),
 	lstPedidos = [],
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
+	  host: "localhost",
 	  user: "root",
-	  password: "bcd127",
+	  password: "",
 	  database: "dbtheribssh"
 	});
 

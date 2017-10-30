@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by 16165824 on 09/10/2017.
  */
@@ -59,7 +61,7 @@ public class CardapioPrincipaisAdapter extends BaseAdapter {
         TextView preco_produto = (TextView)view.findViewById(R.id.text_view_preco_produto);
         preco_produto.setText(cardapio_principais.getPreco_produto());
 
-        ImageView imagem_produto = (ImageView)view.findViewById(R.id.image_view_produto);
+        CircleImageView imagem_produto = (CircleImageView)view.findViewById(R.id.image_view_produto);
 
         //Guardando o nome da imagem
         String nameImage = cardapio_principais.getFoto_produto();

@@ -8,7 +8,13 @@ public class CardapioTodosListView {
 
     private String nome_produto;
     private String categoria_produto;
-    private int foto_produto;
+    private String foto_produto;
+
+    public CardapioTodosListView(String nome_produto, String categoria_produto, String foto_produto){
+        setCategoria_produto(categoria_produto);
+        setFoto_produto(foto_produto);
+        setNome_produto(nome_produto);
+    }
 
     public String getNome_produto() {
         return nome_produto;
@@ -27,11 +33,11 @@ public class CardapioTodosListView {
 
     }
 
-    public int getFoto_produto() {
+    public String getFoto_produto() {
         return foto_produto;
     }
 
-    public void setFoto_produto(int foto_produto) {
+    public void setFoto_produto(String foto_produto) {
         this.foto_produto = foto_produto;
     }
 
