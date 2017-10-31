@@ -66,15 +66,15 @@ public class CardapioPrincipaisAdapter extends BaseAdapter {
         //Guardando o nome da imagem
         String nameImage = cardapio_principais.getFoto_produto();
         //Pegando o contexto da imagem
-        Context context = imagem_produto.getContext();
+        //Context context = imagem_produto.getContext();
 
         int idImagem;
 
         try {
             //Pegando id da imagem via nome
-            idImagem = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
+            //idImagem = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
             //Colocando Imagem de fundo
-            Glide.with(view).load(idImagem).thumbnail(Glide.with(view).load(R.drawable.loading)).into(imagem_produto);
+            Glide.with(view).load("http://10.107.144.13/inf4t/OPROJETOTAAQUI/cms/" + nameImage).thumbnail(Glide.with(view).load(R.drawable.loading)).into(imagem_produto);
 
         }catch (Exception e){
 

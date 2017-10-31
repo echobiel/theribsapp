@@ -8,22 +8,31 @@ import java.util.Date;
 
 public class HistoricoPedidosListView {
 
-    int qtdProdutos;
+    int qtd_produtos;
     String restaurante;
+    String status;
     Date data;
 
     public HistoricoPedidosListView(int qtdProdutos, String restaurante, Date data){
-        setQtdProdutos(qtdProdutos);
+        setQtd_produtos(qtdProdutos);
         setRestaurante(restaurante);
         setData(data);
     }
 
-    public int getQtdProdutos() {
-        return qtdProdutos;
+    public int getQtd_produtos() {
+        return qtd_produtos;
     }
 
-    public void setQtdProdutos(int qtdProdutos) {
-        this.qtdProdutos = qtdProdutos;
+    public void setQtd_produtos(int qtd_produtos) {
+        this.qtd_produtos = qtd_produtos;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getRestaurante() {

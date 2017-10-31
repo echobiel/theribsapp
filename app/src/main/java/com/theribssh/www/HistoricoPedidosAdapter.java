@@ -54,7 +54,7 @@ public class HistoricoPedidosAdapter extends BaseAdapter{
         TextView txt_data = (TextView) view.findViewById(R.id.txt_data);
 
         txt_restaurante.setText(pedido.getRestaurante());
-        txt_qtd_produtos.setText(pedido.getQtdProdutos() + " Produtos");
+        txt_qtd_produtos.setText(pedido.getQtd_produtos() + " Produtos");
         txt_data.setText(pedido.getData() + "");
 
         return view;

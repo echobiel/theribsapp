@@ -5,9 +5,9 @@ var app = require('express')(),
 	lstPedidos = [],
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "localhost",
+	  host: "10.107.144.13",
 	  user: "root",
-	  password: "",
+	  password: "bcd127",
 	  database: "dbtheribssh"
 	});
 
@@ -45,11 +45,41 @@ app.get('/selectRestaurante', function(req, res){
 
 app.get('/selectCardapio', function(req, res){
 
-	  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ',preco) as 'preco_produto' from tbl_produto where statusAprovacao = 1;";
+	  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto where statusAprovacao = 1;";
 
 	  con.query(command, function (err, result, fields) {
 	    if (err) throw err;
 	    res.send(result);
+	  });
+
+
+});
+
+app.get('/selectHistoricoPedidos', function(req, res){
+
+	  var command = "select p.id_pedido as 'idpedido', r.nome as 'restaurante', p.data as 'data' from tbl_pedido as p " +
+                    "inner join tbl_funcionario as f on f.id_funcionario = p.id_funcionario INNER JOIN tbl_restaurante as r on f.id_restaurante = r.id_restaurante";
+
+	  con.query(command, function (err, result, fields) {
+	    if (err) throw err + command;
+        
+        var result2;  
+        
+        for (var i = 0; i < result.length; i++) {
+            
+            var id_pedido = result[i].idpedido;
+            
+            var command2 = "select count(*) from tbl_pedidoproduto where id_pedido = " + id_pedido;
+        
+            con.query(command2, function (err2, result2, fields2) {
+                if (err2) throw err2;
+                
+                result2 = result2 + result2;
+            });	  
+        }  
+        
+        res.send(result + result2);
+         
 	  });
 
 
