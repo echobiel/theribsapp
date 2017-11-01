@@ -21,6 +21,6 @@
         android:textColor="@color/corLaranja"
         android:background="@color/corAzulMarinho"
         android:gravity="center"
-        android:textSize="30dp"/>
+        android:textSize="24dp"/>
 
 </LinearLayout>
