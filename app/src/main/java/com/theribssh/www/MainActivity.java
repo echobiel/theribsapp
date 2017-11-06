@@ -3,6 +3,7 @@ package com.theribssh.www;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     Socket socket;
     Runnable runnable;
+    Intent intent;
+    int permissao, idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +50,23 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        intent = getIntent();
+
+        idUser = intent.getIntExtra("idUser",0);
+        permissao = intent.getIntExtra("permissao",0);
+
+        if (permissao == 0){
+            navigationView.getMenu().findItem(R.id.nav_perfil_cliente).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_perfil_garcom).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_scan_pedido).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
+        }
 
         manage = getSupportFragmentManager();
         txn = manage.beginTransaction();
@@ -121,6 +139,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -253,7 +272,7 @@ public class MainActivity extends AppCompatActivity
             txn.commit();
         } else if (id == R.id.nav_cardapio) {
             //Define o label da activity
-            this.setTitle("Cardápios");
+            this.setTitle("Cardápio");
 
             listTelas.add(6);
 
@@ -430,7 +449,7 @@ public class MainActivity extends AppCompatActivity
             txn.commit();
         } else if (id == R.id.nav_cardapio) {
             //Define o label da activity
-            this.setTitle("Cardápios");
+            this.setTitle("Cardapio");
 
             manage = getSupportFragmentManager();
             txn = manage.beginTransaction();
@@ -438,7 +457,7 @@ public class MainActivity extends AppCompatActivity
             //Cria o fragment
             FragmentViewPager fragment = new FragmentViewPager();
 
-            fragment.addFragment("Cardápios",new FragmentCardapios());
+            fragment.addFragment("Cardápio",new FragmentCardapios());
 
             txn.replace(R.id.container, fragment);
 

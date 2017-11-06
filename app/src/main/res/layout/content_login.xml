@@ -20,7 +20,7 @@
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="260dp"
                 android:layout_height="260dp"
-                android:src="@drawable/imgfuncionario"
+                android:src="@drawable/standarduser"
                 android:layout_gravity="center"
                 />
 
