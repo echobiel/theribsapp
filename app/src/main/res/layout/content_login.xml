@@ -16,7 +16,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="260dp"
                 android:layout_height="260dp"
@@ -40,7 +41,7 @@
                         android:id="@+id/edit_text_login"
                         android:layout_width="300dp"
                         android:layout_height="wrap_content"
-                        android:hint="Login"
+                        android:hint="E-mail ou Login"
                         android:textSize="18dp"/>
 
                 </android.support.design.widget.TextInputLayout>

@@ -14,13 +14,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.bumptech.glide.Glide;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     Runnable runnable;
     Intent intent;
     int permissao, idUser;
+    String foto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
         intent = getIntent();
 
-        idUser = intent.getIntExtra("idUser",0);
+        idUser = intent.getIntExtra("id_usuario",0);
         permissao = intent.getIntExtra("permissao",0);
 
         if (permissao == 0){
@@ -66,6 +71,47 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_scan_pedido).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+        }else if (permissao == 1){
+            navigationView.getMenu().findItem(R.id.nav_perfil_garcom).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_cadastro_cliente).setVisible(false);
+
+            CircleImageView perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+
+            //Guardando o nome da imagem
+            foto = intent.getStringExtra("foto");
+
+            try {
+                //Colocando Imagem de fundo
+                Glide.with(this).load("http://10.107.144.13/inf4t/OPROJETOTAAQUI/cms/" + foto).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
+
+            }catch (Exception e){
+
+            }
+        }else if (permissao == 2){
+            navigationView.getMenu().findItem(R.id.nav_perfil_cliente).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_scan_pedido).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_cadastro_cliente).setVisible(false);
+
+            CircleImageView perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+
+            //Guardando o nome da imagem
+            foto = intent.getStringExtra("foto");
+
+            try {
+                //Formatando o caminho da foto
+                String url = String.format("%s%s",getResources().getString(R.string.url_server),foto);
+                //Colocando Imagem de fundo
+                Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
+
+            }catch (Exception e){
+
+            }
         }
 
         manage = getSupportFragmentManager();
@@ -132,6 +178,7 @@ public class MainActivity extends AppCompatActivity
 
             previouslyFragment(itemId);
         } else{
+            finish();
             super.onBackPressed();
         }
     }
@@ -355,6 +402,11 @@ public class MainActivity extends AppCompatActivity
             txn.replace(R.id.container, fragment);
 
             txn.commit();
+        } else if (id == R.id.nav_logout) {
+            //Refresh
+            Intent intent = new Intent(this, MainActivity.class);
+            finish();
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -576,16 +628,6 @@ public class MainActivity extends AppCompatActivity
         txn.replace(R.id.container, fragment);
 
         txn.commit();
-    }
-
-    public Socket conectarSocket()
-    {
-        try {
-            socket = IO.socket("http://10.0.2.2:8888");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return socket;
     }
 
 

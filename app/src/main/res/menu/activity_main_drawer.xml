@@ -12,12 +12,6 @@
             android:id="@+id/nav_pedido_garcom"
             android:title="Pedido Garçom" />
         <item
-            android:id="@+id/nav_perfil_garcom"
-            android:title="Perfil Garçom" />
-        <item
-            android:id="@+id/nav_perfil_cliente"
-            android:title="Perfil Cliente" />
-        <item
             android:id="@+id/nav_cardapio"
             android:title="Cardápio" />
         <item
@@ -40,6 +34,15 @@
             <item
                 android:id="@+id/nav_cadastro_cliente"
                 android:title="Cadastrar" />
+            <item
+                android:id="@+id/nav_perfil_cliente"
+                android:title="Perfil" />
+            <item
+                android:id="@+id/nav_perfil_garcom"
+                android:title="Perfil" />
+            <item
+                android:id="@+id/nav_logout"
+                android:title="Sair" />
         </menu>
     </item>
 
