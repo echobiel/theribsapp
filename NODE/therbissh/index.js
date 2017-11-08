@@ -6,7 +6,9 @@ var app = require('express')(),
 	mysql = require('mysql'),
 	con = mysql.createConnection({
 	  //host: "10.107.144.13",
-	  host: "10.107.134.26",
+	  host: "localhost",
+	  //host: "10.107.134.26",
+	  //host: "10.107.134.15",
 	  user: "root",
 	  password: "bcd127",
 	  database: "dbtheribssh"
@@ -112,7 +114,8 @@ app.get('/inserir', function(req, res){
 app.get('/autenticarUsuario', function(req, res){
 
 	var _email = req.query.email,
-		_senha = req.query.senha;
+		_senha = req.query.senha,
+        resultadoFinal = {};
     
     var contador = 0;
     var command = "select * from tbl_cliente where email = '" + _email + "' or login='" + _email + "' and senha = '" + _senha + "'";
@@ -120,7 +123,6 @@ app.get('/autenticarUsuario', function(req, res){
     con.query(command, function(err, result, fields) {
         if (err) throw err + command;
         
-        contador = 0;
         // Verificação das linhas no select
         if (contador < result.length) {
 
@@ -129,39 +131,44 @@ app.get('/autenticarUsuario', function(req, res){
             
             var permissao = 1;
             
-            res.send({id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'});
+            resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'};
+            console.log(command);
             
-            contador++;
+            contador = contador + 1;
+            console.log(contador);
             
-        }
-
-    });
-    if (contador == 0){
-        var command = "select * from tbl_funcionario where email = '" + _email + "' or login = '" + _email + "' and senha = '" + _senha + "'";
-        con.query(command, function(err, result, fields) {
-            if (err) throw err + command;
-
-            contador = 0;
-            // Verificação das linhas no select
-            if (contador < result.length) {
-
-                var foto = result[contador].foto;
-                var id = result[contador].id_cliente;
-
-                var permissao = 2;
-
-                res.send({id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'});
-
-                contador++;
-
-            }
-
-        });
-    }
+        }else{
+            var contador2 = 0;
+            var command2 = "select * from tbl_funcionario where email = '" + _email + "' or login = '" + _email + "' and senha = '" + _senha + "'";
         
-    if (contador == 0){
-        res.send({permissao : 0, mensagem : 'Usuário ou senha incorretos. Verifique e tente novamente.'});
-    }
+            con.query(command2, function(err, result, fields) {
+                if (err) throw err + command2;
+
+                // Verificação das linhas no select
+                if (contador2 < result.length) {
+
+                    var foto = result[contador].foto;
+                    var id = result[contador].id_cliente;
+
+                    var permissao = 2;
+
+                    resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'};
+
+                    contador2 = contador2 + 1;
+
+                }else{
+                    resultadoFinal = {permissao : 0, mensagem : 'Usuário ou senha incorretos. Verifique e tente novamente.'};
+                }
+                
+                res.send(resultadoFinal);
+            });
+        }
+        
+        if (contador != 0){
+            res.send(resultadoFinal);
+        }        
+        
+    });
 
 });
 

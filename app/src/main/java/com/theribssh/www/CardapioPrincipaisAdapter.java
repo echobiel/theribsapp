@@ -1,11 +1,9 @@
 package com.theribssh.www;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -77,7 +75,7 @@ public class CardapioPrincipaisAdapter extends BaseAdapter {
             Glide.with(view).load("http://10.107.144.13/inf4t/OPROJETOTAAQUI/cms/" + nameImage).thumbnail(Glide.with(view).load(R.drawable.loading)).into(imagem_produto);
 
         }catch (Exception e){
-
+            e.printStackTrace();
         }
 
 

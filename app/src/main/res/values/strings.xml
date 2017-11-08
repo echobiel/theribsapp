@@ -17,7 +17,8 @@
     <string name="title_activity_perfil_garcom">Meu Perfil</string>
     <string name="title_activity_fale_conosco">Fale Conosco</string>
     <string name="title_cadastre">Crie uma conta ou cadastre-se para mais recursos</string>
-    <string name="url_server">http://10.107.134.26/inf4t/OPROJETOTAAQUI/cms/</string>
+    <string name="url_server">http://10.107.134.15/inf4t/theribssteakhouse/cms/</string>
+    <!--<string name="url_server">http://10.107.134.26/inf4t/OPROJETOTAAQUI/cms/</string>-->
 
     <string-array name="periodos">
         <item>Almoço</item>

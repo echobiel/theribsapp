@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -19,13 +20,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     Runnable runnable;
     Intent intent;
     int permissao, idUser;
+    CircleImageView perfil;
     String foto;
 
     @Override
@@ -72,6 +74,26 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+
+            perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+
+            final int idImagem;
+
+            try {
+                //Pegando id da imagem via nome
+                idImagem = navigationView.getResources().getIdentifier("standarduser", "drawable", getPackageName());
+                //Colocando Imagem de fundo
+                Glide.with(this).load(idImagem).thumbnail(Glide.with(this).load(R.drawable.loading)).into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable drawable, Transition<? super Drawable> transition) {
+                        perfil.setBackgroundResource(idImagem);
+                    }
+                });
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }else if (permissao == 1){
             navigationView.getMenu().findItem(R.id.nav_perfil_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
@@ -85,14 +107,19 @@ public class MainActivity extends AppCompatActivity
             foto = intent.getStringExtra("foto");
 
             try {
-                //Colocando Imagem de fundo
-                Glide.with(this).load("http://10.107.144.13/inf4t/OPROJETOTAAQUI/cms/" + foto).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
+                //Formatando o caminho da foto
+                String url = String.format("%s%s",getResources().getString(R.string.url_server),foto);
+
+                Log.d("test", url);
+                //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
+                Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
 
             }catch (Exception e){
-
+                e.printStackTrace();
             }
         }else if (permissao == 2){
             navigationView.getMenu().findItem(R.id.nav_perfil_cliente).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_fale_conosco).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_scan_pedido).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
@@ -106,11 +133,11 @@ public class MainActivity extends AppCompatActivity
             try {
                 //Formatando o caminho da foto
                 String url = String.format("%s%s",getResources().getString(R.string.url_server),foto);
-                //Colocando Imagem de fundo
+                //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
                 Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
 
             }catch (Exception e){
-
+                e.printStackTrace();
             }
         }
 

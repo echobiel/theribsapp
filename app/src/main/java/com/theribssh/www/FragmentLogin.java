@@ -9,16 +9,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 
 public class FragmentLogin extends Fragment {
 
@@ -76,32 +72,36 @@ public class FragmentLogin extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            Gson gson = new Gson();
-            resultado = gson.fromJson(json, new TypeToken<AutenticarUsuario>(){
-            }.getType());
+            try {
+                Gson gson = new Gson();
+                resultado = gson.fromJson(json, new TypeToken<AutenticarUsuario>() {
+                }.getType());
 
-            if (resultado.getMensagem().equals("Usuário ou senha incorretos. Verifique e tente novamente.")){
-                Snackbar.make(view, resultado.getMensagem(), Snackbar.LENGTH_LONG)
+                if (resultado.getMensagem().equals("Usuário ou senha incorretos. Verifique e tente novamente.")) {
+                    Snackbar.make(view, resultado.getMensagem(), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(view, resultado.getMensagem(), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+
+                    final Intent INTENT = new Intent(((MainActivity) getActivity()), MainActivity.class);
+
+                    INTENT.putExtra("permissao", resultado.getPermissao());
+                    INTENT.putExtra("id_usuario", resultado.getId_cliente());
+                    INTENT.putExtra("foto", resultado.getFoto());
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((MainActivity) getActivity()).finish();
+                            ((MainActivity)getActivity()).startActivity(INTENT);
+                        }
+                    }, 1000);
+                }
+            }catch(Exception e){
+                Snackbar.make(view, "Ocorreu um erro de conexão. Tente novamente mais tarde.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-            }else {
-                Snackbar.make(view, resultado.getMensagem(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                final Intent INTENT = new Intent(((MainActivity) getActivity()), MainActivity.class);
-
-                INTENT.putExtra("permissao", resultado.getPermissao());
-                INTENT.putExtra("id_usuario", resultado.getId_cliente());
-                INTENT.putExtra("foto", resultado.getFoto());
-
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((MainActivity) getActivity()).finish();
-                        startActivity(INTENT);
-                    }
-                }, 1000);
             }
 
         }
