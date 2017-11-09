@@ -2,7 +2,8 @@
 var app = require('express')(),
 	http = require('http').createServer(app),
 	io = require('socket.io').listen(http),
-	lstPedidos = [],
+	lstSalas = [],
+	lstProdutos = [],
 	mysql = require('mysql'),
 	con = mysql.createConnection({
 	  //host: "10.107.144.13",
@@ -128,14 +129,13 @@ app.get('/autenticarUsuario', function(req, res){
 
             var foto = result[contador].foto;
             var id = result[contador].id_cliente;
+            var nome = result[contador].nome;
             
             var permissao = 1;
             
-            resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'};
-            console.log(command);
+            resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, nome : nome, mensagem : 'Login efetuado com sucesso.'};
             
             contador = contador + 1;
-            console.log(contador);
             
         }else{
             var contador2 = 0;
@@ -147,12 +147,13 @@ app.get('/autenticarUsuario', function(req, res){
                 // Verificação das linhas no select
                 if (contador2 < result.length) {
 
-                    var foto = result[contador].foto;
-                    var id = result[contador].id_cliente;
+                    var foto = result[contador2].foto;
+                    var id = result[contador2].id_cliente;
+                    var nome = result[contador2].nome_completo;
 
                     var permissao = 2;
 
-                    resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, mensagem : 'Login efetuado com sucesso.'};
+                    resultadoFinal = {id_cliente : id, permissao : permissao, foto : foto, nome : nome, mensagem : 'Login efetuado com sucesso.'};
 
                     contador2 = contador2 + 1;
 
@@ -172,28 +173,25 @@ app.get('/autenticarUsuario', function(req, res){
 
 });
 
-app.get('/delete', function(req, res){
+app.get('/criacaoSala', function(req, res){
 
-	var _nome = req.query.nome;
-
-	for( i = 0 ; i < lstPedidos.length ; i++){
-
-		if (_nome == lstPedidos[i].nome){
-
-			lstPedidos.splice(i, 1);
-
-		}
-
-	}
-
-	res.send("Deletado com sucesso");
-
+	var _id_sala = lstSalas.length,
+        _id_funcionario = req.query.id_funcionario,
+        s = {id_sala : _id_sala};
+    
+    lstProdutos[][0] = {'0','Maçã','Maçã','Maçã','Maçã','Maçã','Maçã'}
+    
+    lstProdutos[1] = [{},{}]
+    
+    lstPedido[_id_sala] = lstProdutos[]
+    
+    io.sockets.emit("novo_usuario", s);
 });
 
 
 
-http.listen(8888, function(){
+http.listen(8100, function(){
 
-	console.log("Servidor rodando na porta 8888");
+	console.log("Servidor rodando na porta 8100");
 
 });

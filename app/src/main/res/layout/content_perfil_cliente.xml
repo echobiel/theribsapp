@@ -13,13 +13,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
             android:id="@+id/img_user"
-            android:src="@drawable/imgfuncionario"
             />
 
         <LinearLayout

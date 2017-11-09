@@ -18,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -42,7 +44,8 @@ public class MainActivity extends AppCompatActivity
     Intent intent;
     int permissao, idUser;
     CircleImageView perfil;
-    String foto;
+    TextView title_bem_vindo;
+    String foto, nomeUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+
         intent = getIntent();
 
         idUser = intent.getIntExtra("id_usuario",0);
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
 
-            perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+            perfil = (CircleImageView)headerView.findViewById(R.id.img_perfil);
 
             final int idImagem;
 
@@ -95,20 +100,27 @@ public class MainActivity extends AppCompatActivity
             }
 
         }else if (permissao == 1){
+            nomeUser = intent.getStringExtra("nome");
+
             navigationView.getMenu().findItem(R.id.nav_perfil_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_cadastro_cliente).setVisible(false);
 
-            CircleImageView perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+            perfil = (CircleImageView)headerView.findViewById(R.id.img_perfil);
+            title_bem_vindo = (TextView)headerView.findViewById(R.id.title_bem_vindo);
+
+            String titulo = String.format("%s %s",getResources().getString(R.string.title_bem_vindo), nomeUser);
+
+            title_bem_vindo.setText(titulo);
 
             //Guardando o nome da imagem
             foto = intent.getStringExtra("foto");
 
             try {
                 //Formatando o caminho da foto
-                String url = String.format("%s%s",getResources().getString(R.string.url_server),foto);
+                String url = String.format("%s%s",getResources().getString(R.string.url_serverFotoCliente),foto);
 
                 Log.d("test", url);
                 //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
@@ -118,6 +130,8 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }else if (permissao == 2){
+            nomeUser = intent.getStringExtra("nome");
+
             navigationView.getMenu().findItem(R.id.nav_perfil_cliente).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_fale_conosco).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_scan_pedido).setVisible(false);
@@ -125,14 +139,19 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_cadastro_cliente).setVisible(false);
 
-            CircleImageView perfil = (CircleImageView)navigationView.findViewById(R.id.img_perfil);
+            perfil = (CircleImageView)headerView.findViewById(R.id.img_perfil);
+            title_bem_vindo = (TextView)headerView.findViewById(R.id.title_bem_vindo);
+
+            String titulo = String.format("%s %s",getResources().getString(R.string.title_bem_vindo), nomeUser);
+
+            title_bem_vindo.setText(titulo);
 
             //Guardando o nome da imagem
             foto = intent.getStringExtra("foto");
 
             try {
                 //Formatando o caminho da foto
-                String url = String.format("%s%s",getResources().getString(R.string.url_server),foto);
+                String url = String.format("%s%s",getResources().getString(R.string.url_serverFotoFuncionario),foto);
                 //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
                 Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
 

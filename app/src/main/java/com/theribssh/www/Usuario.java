@@ -7,15 +7,17 @@ package com.theribssh.www;
 public class Usuario {
     private int id_cliente;
     private String login;
+    private String nome;
     private String senha;
     private int permissao;
     private String email;
 
-    public void UsuarioLogin (String login, String senha){
+    public String getNome() {
+        return nome;
+    }
 
-        setLogin(login);
-        setSenha(senha);
-
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public int getId_cliente() {

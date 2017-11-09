@@ -9,11 +9,12 @@ public class AutenticarUsuario extends Usuario {
     private String mensagem;
     private String foto;
 
-    public AutenticarUsuario(int id_cliente, int permissao, String foto, String mensagem){
+    public AutenticarUsuario(int id_cliente, String nome, int permissao, String foto, String mensagem){
         setId_cliente(id_cliente);
         setPermissao(permissao);
         setFoto(foto);
         setMensagem(mensagem);
+        setNome(nome);
     }
 
     public String getMensagem() {

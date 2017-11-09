@@ -47,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
                 android:gravity="center"
+                android:id="@+id/title_bem_vindo"
                 android:text="@string/title_cadastre"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 

@@ -9,9 +9,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -62,7 +64,7 @@ public class FragmentLogin extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-             href = String.format("http://10.0.2.2:8888/autenticarUsuario?%s",urlStrings);
+            href = String.format("http://%s/autenticarUsuario?%s",getResources().getString(R.string.ip_node),urlStrings);
             json = HttpConnection.get(href);
 
             return null;
@@ -88,6 +90,7 @@ public class FragmentLogin extends Fragment {
 
                     INTENT.putExtra("permissao", resultado.getPermissao());
                     INTENT.putExtra("id_usuario", resultado.getId_cliente());
+                    INTENT.putExtra("nome", resultado.getNome());
                     INTENT.putExtra("foto", resultado.getFoto());
 
                     Handler handler = new Handler();
@@ -100,8 +103,7 @@ public class FragmentLogin extends Fragment {
                     }, 1000);
                 }
             }catch(Exception e){
-                Snackbar.make(view, "Ocorreu um erro de conexão. Tente novamente mais tarde.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Toast.makeText(((MainActivity)getActivity()),"Ocorreu um erro de conexão. Tente novamente mais tarde.",Toast.LENGTH_LONG).show();
             }
 
         }
