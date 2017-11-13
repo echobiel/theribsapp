@@ -5,7 +5,7 @@ package com.theribssh.www;
  */
 
 public class Usuario {
-    private int id_cliente;
+    private int id_usuario;
     private String login;
     private String nome;
     private String senha;
@@ -20,12 +20,12 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public int getId_cliente() {
-        return id_cliente;
+    public int getId_usuario() {
+        return id_usuario;
     }
 
-    public void setId_cliente(int id_cliente) {
-        this.id_cliente = id_cliente;
+    public void setId_usuario(int id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getLogin() {

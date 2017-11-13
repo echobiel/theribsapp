@@ -1,13 +1,16 @@
 package com.theribssh.www;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -16,11 +19,14 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 
@@ -35,12 +41,21 @@ public class FragmentPedidoClient extends Fragment {
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     String qrcodevalue;
+    String codigo;
+    SalaPedido resultado;
+    View view;
+    int verificadorDialog, id_usuario;
     static final int RequestCameraPermissionID = 1001;
+    Intent intent;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pedido_client, container, false);
+        view = inflater.inflate(R.layout.fragment_pedido_client, container, false);
+
+        intent = ((MainActivity)getActivity()).getIntent();
+
+        id_usuario = intent.getIntExtra("id_usuario",0);
 
         camera_preview = (SurfaceView) view.findViewById(R.id.camera_preview);
         txt_result = (TextView) view.findViewById(R.id.txt_result);
@@ -64,10 +79,10 @@ public class FragmentPedidoClient extends Fragment {
 
                     requestPermissions(new String[]{android.Manifest.permission.CAMERA},
                             RequestCameraPermissionID);
-                    Log.d("START", ActivityCompat.checkSelfPermission(((MainActivity)getActivity()), android.Manifest.permission.CAMERA) + " _/\\_ " + PackageManager.PERMISSION_GRANTED);
+                    Log.d("START", ActivityCompat.checkSelfPermission(((MainActivity) getActivity()), android.Manifest.permission.CAMERA) + " _/\\_ " + PackageManager.PERMISSION_GRANTED);
                     return;
                 }
-                Log.d("START", ActivityCompat.checkSelfPermission(((MainActivity)getActivity()), android.Manifest.permission.CAMERA) + " _/\\_ " + PackageManager.PERMISSION_GRANTED);
+                Log.d("START", ActivityCompat.checkSelfPermission(((MainActivity) getActivity()), android.Manifest.permission.CAMERA) + " _/\\_ " + PackageManager.PERMISSION_GRANTED);
                 try {
                     cameraSource.start(camera_preview.getHolder());
                 } catch (IOException e) {
@@ -94,20 +109,44 @@ public class FragmentPedidoClient extends Fragment {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
+                verificadorDialog = ((MainActivity) getActivity()).getVerificadorDialog();
 
-                if(qrcodes.size() != 0){
-                    if (qrcodevalue != qrcodes.valueAt(0).displayValue){
-                        txt_result.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Create vibrate
-                                Vibrator vibrator = (Vibrator)getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                                vibrator.vibrate(500);
-                                txt_result.setText(qrcodes.valueAt(0).displayValue);
-                            }
-                        });
+                if (verificadorDialog != 1) {
+                    try {
+                        if (ActivityCompat.checkSelfPermission(((MainActivity)getActivity()), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        cameraSource.start(camera_preview.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
+
+                    if (qrcodes.size() != 0) {
+                        if (qrcodevalue != qrcodes.valueAt(0).displayValue) {
+                            txt_result.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Create vibrate
+                                    Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                                    vibrator.vibrate(500);
+
+                                    codigo = qrcodes.valueAt(0).displayValue;
+
+                                    new AutenticacaoSala().execute();
+                                }
+                            });
+                        }
+                    }
+                }else{
+                    cameraSource.stop();
                 }
             }
         });
@@ -115,6 +154,68 @@ public class FragmentPedidoClient extends Fragment {
 
 
         return view;
+    }
+
+    public void openPedido(){
+        ((MainActivity)getActivity()).setVerificadorDialog(1);
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentPedidoCliente dfpc = new DialogFragmentPedidoCliente(4,3);
+        dfpc.show(ft, "dialog");
+    }
+
+    public void closePedido(){
+        ((MainActivity)getActivity()).setVerificadorDialog(0);
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentPedidoCliente dfpc = (DialogFragmentPedidoCliente) ((MainActivity)getActivity())
+                .getSupportFragmentManager().findFragmentByTag("dialog");
+
+        if (dfpc != null){
+            dfpc.dismiss();
+            ft.remove(dfpc);
+        }
+    }
+
+    public class AutenticacaoSala extends AsyncTask<Void, Void, Void>{
+
+        String json;
+        String href;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            href = String.format("http://%s/autenticarSala?qr=%s&id_cliente=%d",getResources().getString(R.string.ip_node),codigo,id_usuario);
+            json = HttpConnection.get(href);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            Toast.makeText(((MainActivity)getActivity()), "", Toast.LENGTH_LONG).show();
+
+            try {
+                Gson gson = new Gson();
+                resultado = gson.fromJson(json, new TypeToken<SalaPedido>() {
+                }.getType());
+
+                if (resultado.getMensagem().equals("Código QR inválido.")) {
+                    txt_result.setText(resultado.getMensagem());
+                } else {
+
+                    int id_sala = resultado.getId_sala();
+
+                    intent.putExtra("id_sala",id_sala);
+
+                    openPedido();
+
+                }
+            }catch(Exception e){
+                Toast.makeText(((MainActivity)getActivity()),"Ocorreu um erro de conexão. Tente novamente mais tarde.",Toast.LENGTH_LONG)
+                        .show();
+
+            }
+        }
     }
 
     @Override

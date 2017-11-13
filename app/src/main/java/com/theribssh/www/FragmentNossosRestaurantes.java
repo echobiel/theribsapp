@@ -1,17 +1,11 @@
 package com.theribssh.www;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,25 +57,6 @@ public class FragmentNossosRestaurantes extends Fragment{
         lstRestaurantes = new ArrayList<>();
 
         new PegadorTask().execute();
-    }
-
-    int notification_id = 1;
-
-    public void enviarNotificacao(NossosRestaurantesListView item){
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(act);
-
-        builder.setSmallIcon(R.drawable.logo_icon)
-                .setContentTitle(item.getNome_restaurante() + "")
-                .setContentText(item.getEndereco_restaurante())
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(Notification.PRIORITY_MAX);
-
-        NotificationManager nManager = (NotificationManager)
-                (act).getSystemService(Context.NOTIFICATION_SERVICE);
-
-        nManager.notify( notification_id , builder.build() );
-
     }
 
     private class PegadorTask extends AsyncTask<Void, Void, Void>

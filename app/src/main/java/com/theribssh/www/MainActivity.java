@@ -42,10 +42,11 @@ public class MainActivity extends AppCompatActivity
     Socket socket;
     Runnable runnable;
     Intent intent;
-    int permissao, idUser;
+    int permissao, idUser, novo_pedido;
     CircleImageView perfil;
     TextView title_bem_vindo;
     String foto, nomeUser;
+    int verificadorDialog = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        NotificationManager nManager = (NotificationManager)
+                (this).getSystemService(Context.NOTIFICATION_SERVICE);
+
+        nManager.cancel(1);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -88,7 +94,7 @@ public class MainActivity extends AppCompatActivity
                 //Pegando id da imagem via nome
                 idImagem = navigationView.getResources().getIdentifier("standarduser", "drawable", getPackageName());
                 //Colocando Imagem de fundo
-                Glide.with(this).load(idImagem).thumbnail(Glide.with(this).load(R.drawable.loading)).into(new SimpleTarget<Drawable>() {
+                Glide.with(this).load(idImagem).thumbnail(Glide.with(this).load(idImagem)).into(new SimpleTarget<Drawable>() {
                     @Override
                     public void onResourceReady(Drawable drawable, Transition<? super Drawable> transition) {
                         perfil.setBackgroundResource(idImagem);
@@ -118,13 +124,17 @@ public class MainActivity extends AppCompatActivity
             //Guardando o nome da imagem
             foto = intent.getStringExtra("foto");
 
+            final int idImagem;
+
             try {
+                //Pegando id da imagem via nome
+                idImagem = navigationView.getResources().getIdentifier("standarduser", "drawable", getPackageName());
                 //Formatando o caminho da foto
                 String url = String.format("%s%s",getResources().getString(R.string.url_serverFotoCliente),foto);
 
                 Log.d("test", url);
                 //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
-                Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
+                Glide.with(this).load(url).thumbnail(Glide.with(this).load(idImagem)).into(perfil);
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -149,11 +159,15 @@ public class MainActivity extends AppCompatActivity
             //Guardando o nome da imagem
             foto = intent.getStringExtra("foto");
 
+            final int idImagem;
+
             try {
+                //Pegando id da imagem via nome
+                idImagem = navigationView.getResources().getIdentifier("standarduser", "drawable", getPackageName());
                 //Formatando o caminho da foto
                 String url = String.format("%s%s",getResources().getString(R.string.url_serverFotoFuncionario),foto);
                 //Colocando Imagem de fundo. Exemplo feito por: Gabriel Augusto
-                Glide.with(this).load(url).thumbnail(Glide.with(this).load(R.drawable.loading)).into(perfil);
+                Glide.with(this).load(url).thumbnail(Glide.with(this).load(idImagem)).into(perfil);
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -173,9 +187,15 @@ public class MainActivity extends AppCompatActivity
 
         listTelas.add(0);
 
-        navigationView.getMenu().getItem(0).setChecked(true);
 
-        //setup the pager
+
+        novo_pedido = intent.getIntExtra("novo_pedido",0);
+
+        if (novo_pedido == 1){
+            navigationView.getMenu().getItem(3).setChecked(true);
+        }else{
+            navigationView.getMenu().getItem(0).setChecked(true);
+        }
     }
 
     @Override
@@ -184,49 +204,61 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (listTelas.size() - 1 > 0){
-            //Armazenando o index o qual será redirecionado
-            int indexNextItem = listTelas.size() - 2;
-            //Armazenando o index o qual será excluido da lista
-            int indexRemoveItem = listTelas.size() - 1;
-            //Armazenando o numero representativo do item menu
-            int itemMenu = listTelas.get(indexNextItem);
-            //Selecionando o item do menu
-            navigationView.setCheckedItem(itemMenu);
-            listTelas.remove(indexRemoveItem);
+            if (verificadorDialog == 1) {
 
-            int itemId;
-
-            if (itemMenu == 0){
-                itemId = R.id.nav_home;
-            }else if (itemMenu == 1){
-                itemId = R.id.nav_scan_pedido;
-            }else if (itemMenu == 2){
-                itemId = R.id.nav_pedido_garcom;
-            }else if (itemMenu == 3){
-                itemId = R.id.nav_perfil_garcom;
-            }else if (itemMenu == 4){
-                itemId = R.id.nav_perfil_cliente;
-            }else if (itemMenu == 5){
-                itemId = R.id.nav_cadastro_cliente;
-            }else if (itemMenu == 6){
-                itemId = R.id.nav_cardapio;
-            }else if (itemMenu == 7) {
-                itemId = R.id.nav_fale_conosco;
-            }else if (itemMenu == 8){
-                itemId = R.id.nav_historicos;
-            }else if (itemMenu == 9){
-                itemId = R.id.nav_login;
-            }else if (itemMenu == 10){
-                itemId = R.id.nav_nossos_restaurantes;
             }else{
-                itemId = R.id.nav_home;
-            }
+                //Armazenando o index o qual será redirecionado
+                int indexNextItem = listTelas.size() - 2;
+                //Armazenando o index o qual será excluido da lista
+                int indexRemoveItem = listTelas.size() - 1;
+                //Armazenando o numero representativo do item menu
+                int itemMenu = listTelas.get(indexNextItem);
+                //Selecionando o item do menu
+                navigationView.setCheckedItem(itemMenu);
+                listTelas.remove(indexRemoveItem);
 
-            previouslyFragment(itemId);
+                int itemId;
+
+                if (itemMenu == 0){
+                    itemId = R.id.nav_home;
+                }else if (itemMenu == 1){
+                    itemId = R.id.nav_scan_pedido;
+                }else if (itemMenu == 2){
+                    itemId = R.id.nav_pedido_garcom;
+                }else if (itemMenu == 3){
+                    itemId = R.id.nav_perfil_garcom;
+                }else if (itemMenu == 4){
+                    itemId = R.id.nav_perfil_cliente;
+                }else if (itemMenu == 5){
+                    itemId = R.id.nav_cadastro_cliente;
+                }else if (itemMenu == 6){
+                    itemId = R.id.nav_cardapio;
+                }else if (itemMenu == 7) {
+                    itemId = R.id.nav_fale_conosco;
+                }else if (itemMenu == 8){
+                    itemId = R.id.nav_historicos;
+                }else if (itemMenu == 9){
+                    itemId = R.id.nav_login;
+                }else if (itemMenu == 10){
+                    itemId = R.id.nav_nossos_restaurantes;
+                }else{
+                    itemId = R.id.nav_home;
+                }
+
+                previouslyFragment(itemId);
+            }
         } else{
             finish();
             super.onBackPressed();
         }
+    }
+
+    public void setVerificadorDialog(int verificadorDialog) {
+        this.verificadorDialog = verificadorDialog;
+    }
+
+    public int getVerificadorDialog(){
+        return this.verificadorDialog;
     }
 
     @Override
@@ -677,22 +709,5 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    int notification_id = 1;
 
-    public void enviarNotificacao(NossosRestaurantesListView item){
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        builder.setSmallIcon(R.drawable.logo_icon)
-                .setContentTitle(item.getNome_restaurante() + "")
-                .setContentText(item.getEndereco_restaurante())
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(Notification.PRIORITY_MAX);
-
-        NotificationManager nManager = (NotificationManager)
-                (this).getSystemService(Context.NOTIFICATION_SERVICE);
-
-        nManager.notify( notification_id , builder.build() );
-
-    }
 }

@@ -43,12 +43,16 @@ public class PedidosGarcomAdapter extends BaseAdapter {
                 .inflate(R.layout.pedido_garcom_list_item, parent, false);
 
         TextView txt_codigo_pedido = (TextView) view.findViewById(R.id.txt_codigo_pedido);
+        TextView txt_codigo_mesa = (TextView) view.findViewById(R.id.txt_codigo_mesa);
+        TextView txt_status = (TextView) view.findViewById(R.id.txt_status);
 
 
         //Resgata o item
         PedidoGarcom pedido = pedidoGarcomList.get(position);
 
-        txt_codigo_pedido.setText(pedido.getCodigoSala());
+        txt_codigo_pedido.setText(pedido.getQr_code());
+        txt_codigo_mesa.setText(pedido.getCodigoMesa());
+        txt_status.setText(pedido.getStatus_nome());
 
         return view;
     }

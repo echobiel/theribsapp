@@ -56,7 +56,7 @@ public class ProdutosGarcomAdapter extends BaseAdapter {
         txt_obs.setText(menu.getObs());
         txt_preco.setText(String.format("R$%.2f",menu.getPreco()));
 
-        Glide.with(view).load("https://www.google.com.br/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwi2uoKi6vrWAhUBlpAKHXMuA6sQjRwIBw&url=https%3A%2F%2Fwww.mcdonalds.com%2Fus%2Fen-us%2Fnew-big-mac.html&psig=AOvVaw2p8TVNcgPF6fKZ9-9cVizY&ust=1508438678569186").thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
+        Glide.with(view).load(menu.getImagem()).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
 
         return view;
     }

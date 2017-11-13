@@ -7,32 +7,42 @@ import java.util.Date;
  */
 
 public class PedidoGarcom {
-    private int idPedido;
-    private String codigoSala;
+    private int id_sala;
+    private String qr_code;
     private String codigoMesa;
+    private String status_nome;
     private Date data;
 
-    public PedidoGarcom(int idPedido, String codigoSala, String codigoMesa, Date data){
-        setIdPedido(idPedido);
-        setCodigoSala(codigoSala);
+    public PedidoGarcom(int id_sala, String qr_code, String codigoMesa, String status_nome,Date data){
+        setId_sala(id_sala);
+        setQr_code(qr_code);
         setCodigoMesa(codigoMesa);
         setData(data);
+        setStatus_nome(status_nome);
     }
 
-    public int getIdPedido() {
-        return idPedido;
+    public String getStatus_nome() {
+        return status_nome;
     }
 
-    public void setIdPedido(int idPedido) {
-        this.idPedido = idPedido;
+    public void setStatus_nome(String status_nome) {
+        this.status_nome = status_nome;
     }
 
-    public String getCodigoSala() {
-        return codigoSala;
+    public int getId_sala() {
+        return id_sala;
     }
 
-    public void setCodigoSala(String codigoSala) {
-        this.codigoSala = codigoSala;
+    public void setId_sala(int id_sala) {
+        this.id_sala = id_sala;
+    }
+
+    public String getQr_code() {
+        return qr_code;
+    }
+
+    public void setQr_code(String qr_code) {
+        this.qr_code = qr_code;
     }
 
     public Date getData() {

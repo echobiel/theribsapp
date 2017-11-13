@@ -89,7 +89,7 @@ public class FragmentLogin extends Fragment {
                     final Intent INTENT = new Intent(((MainActivity) getActivity()), MainActivity.class);
 
                     INTENT.putExtra("permissao", resultado.getPermissao());
-                    INTENT.putExtra("id_usuario", resultado.getId_cliente());
+                    INTENT.putExtra("id_usuario", resultado.getId_usuario());
                     INTENT.putExtra("nome", resultado.getNome());
                     INTENT.putExtra("foto", resultado.getFoto());
 
