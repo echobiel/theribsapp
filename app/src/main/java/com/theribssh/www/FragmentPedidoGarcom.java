@@ -45,35 +45,76 @@ public class FragmentPedidoGarcom extends Fragment {
     Button btn_criar_pedido;
     Activity act;
     private List<PedidoGarcom> pedidoGarcomList = new ArrayList<>();
-    //Socket socket;
+    Socket socket;
     List<PedidoGarcom> resultado;
     int id_usuario;
+    PegadorTask pet;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pedido_garcom, container, false);
+        final View VIEW = inflater.inflate(R.layout.fragment_pedido_garcom, container, false);
 
         act = ((MainActivity)getActivity());
 
-        Intent intent = act.getIntent();
+        if (act != null) {
 
-        id_usuario = intent.getIntExtra("id_usuario",0);
+            Intent intent = act.getIntent();
 
-        btn_criar_pedido = (Button) view.findViewById(R.id.btn_criar_pedido);
+            id_usuario = intent.getIntExtra("id_usuario", 0);
 
-        setupListPedidos(view);
+            btn_criar_pedido = (Button) VIEW.findViewById(R.id.btn_criar_pedido);
 
-        btn_criar_pedido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).backPagePedidoGarcom();
-            }
-        });
+            setupListPedidos(VIEW);
 
+            btn_criar_pedido.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).backPagePedidoGarcom();
+                }
+            });
 
-        return view;
+            socket = conectarSocket();
 
+            socket.on("novo_pedido", new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+
+                    if (args.length > 0) {
+
+                        Log.d("socket", args[0].toString());
+                        String json = args[0].toString();
+
+                        final NossosRestaurantesListView item = new Gson().fromJson(json, NossosRestaurantesListView.class);
+
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (pet != null){
+                                    pet = new PegadorTask();
+                                    pet.execute();
+                                }
+                            }
+                        });
+
+                    }
+                }
+            });
+
+            socket.connect();
+        }
+
+        return VIEW;
+
+    }
+
+    public Socket conectarSocket(){
+        try{
+            socket = IO.socket(String.format("http://%s",getResources().getText(R.string.ip_node)));
+        }catch (URISyntaxException e){
+            e.printStackTrace();
+        }
+        return socket;
     }
 
     private void setupListPedidos(View view) {
@@ -89,7 +130,8 @@ public class FragmentPedidoGarcom extends Fragment {
             }
         });
 
-        new PegadorTask().execute();
+        pet = new PegadorTask();
+        pet.execute();
     }
 
     public class PegadorTask extends AsyncTask<Void, Void, Void>{
@@ -110,23 +152,33 @@ public class FragmentPedidoGarcom extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            try {
-                Gson gson = new Gson();
-                resultado = gson.fromJson(json, new TypeToken<List<PedidoGarcom>>() {
-                }.getType());
+            if(isAdded()){
+                try {
+                    Gson gson = new Gson();
+                    resultado = gson.fromJson(json, new TypeToken<List<PedidoGarcom>>() {
+                    }.getType());
 
-                pedidoGarcomList = resultado;
+                    pedidoGarcomList = resultado;
 
-                PedidosGarcomAdapter adapter = new PedidosGarcomAdapter(((MainActivity)getActivity()), pedidoGarcomList);
+                    PedidosGarcomAdapter adapter = new PedidosGarcomAdapter(((MainActivity)getActivity()), pedidoGarcomList);
 
-                list_pedidos.setAdapter(adapter);
+                    list_pedidos.setAdapter(adapter);
 
-            }catch (Exception e){
-                e.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
-/*
+
+    @Override
+    public void onStop() {
+        pet.cancel(true);
+        pet = null;
+        super.onStop();
+    }
+
+    /*
     int notification_id;
 
     public void enviarNotificacao(NossosRestaurantesListView item){

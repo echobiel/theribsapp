@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity
 
             navigationView.getMenu().findItem(R.id.nav_perfil_garcom).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_pedido_garcom).setVisible(false);
-            navigationView.getMenu().findItem(R.id.nav_historicos).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_cadastro_cliente).setVisible(false);
 

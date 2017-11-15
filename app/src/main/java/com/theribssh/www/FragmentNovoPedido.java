@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -87,16 +88,11 @@ public class FragmentNovoPedido extends Fragment {
 
         socket = conectarSocket();
 
-        socket.on("novo_pedido", new Emitter.Listener() {
+        socket.on("novo_pedido_autenticado", new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
 
                 if (args.length > 0){
-
-                    Log.d("socket", args[0].toString());
-                    String json = args[0].toString();
-
-                    final NossosRestaurantesListView item = new Gson().fromJson(json, NossosRestaurantesListView.class);
 
                     act.runOnUiThread(new Runnable() {
                         @Override
@@ -113,6 +109,26 @@ public class FragmentNovoPedido extends Fragment {
         socket.connect();
 
         return view;
+    }
+
+
+    public void openPedido(){
+        ((MainActivity)getActivity()).setVerificadorDialog(1);
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentPedidoCliente dfpc = new DialogFragmentPedidoCliente(4,3);
+        dfpc.show(ft, "dialog");
+    }
+
+    public void closePedido(){
+        ((MainActivity)getActivity()).setVerificadorDialog(0);
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentPedidoCliente dfpc = (DialogFragmentPedidoCliente) ((MainActivity)getActivity())
+                .getSupportFragmentManager().findFragmentByTag("dialog");
+
+        if (dfpc != null){
+            dfpc.dismiss();
+            ft.remove(dfpc);
+        }
     }
 
     @Override
@@ -156,25 +172,6 @@ public class FragmentNovoPedido extends Fragment {
             }
         });
     }
-/*
-    int notification_id = 1;
-
-    public void enviarNotificacao(NossosRestaurantesListView item){
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(((MainActivity)getActivity()));
-
-        builder.setSmallIcon(R.drawable.logo_icon)
-                .setContentTitle(item.getNome_restaurante() + "")
-                .setContentText(item.getEndereco_restaurante())
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(Notification.PRIORITY_MAX);
-
-        NotificationManager nManager = (NotificationManager)
-                (((MainActivity)getActivity())).getSystemService(Context.NOTIFICATION_SERVICE);
-
-        nManager.notify( notification_id , builder.build() );
-
-    }*/
 
     public class QrCodeGenerator extends AsyncTask<Void, Void, Void> {
 

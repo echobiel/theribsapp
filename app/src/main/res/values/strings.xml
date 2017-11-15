@@ -26,7 +26,7 @@
     <!--<string name="ip_node">10.0.2.2:8100</string>-->
     <!--<string name="ip_node">192.168.0.12:8100</string>-->
     <string name="ip_node">192.168.0.12:8100</string>
-    <string name="title_bem_vindo">Bem-vindo </string>
+    <string name="title_bem_vindo">Bem-vindo(a) </string>
 
     <string-array name="periodos">
         <item>Almoço</item>

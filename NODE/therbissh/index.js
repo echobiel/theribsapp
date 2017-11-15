@@ -226,9 +226,10 @@ app.get('/autenticarSala', function(req, res){
 
 	if (verificador != 1){
 		res.send({ mensagem : "Código QR inválido."});
-	}
+	}else{
 
-	io.sockets.emit("novo_pedido", {funcionario : _id_funcionario, id_sala : _id_sala});
+		io.sockets.emit("novo_pedido_autenticado", {funcionario : _id_funcionario, id_sala : _id_sala});
+	}
 });
 
 app.get('/mesaSala', function(req, res){
@@ -308,6 +309,7 @@ app.get('/criacaoSala', function(req, res){
 
 			//res.send({id_sala : _id_sala, id_funcionario : _id_funcionario, produtos : lstProdutos[_id_sala], tamanho : lstProdutos[_id_sala].length});
 			res.send(lstSalas[_id_sala]);
+			io.sockets.emit("novo_pedido", lstSalas[_id_sala]);
 		}else{
 			res.send({mensagem : "Ocorreu um erro durante a conexão. Tente novamente mais tarde."});
 		}

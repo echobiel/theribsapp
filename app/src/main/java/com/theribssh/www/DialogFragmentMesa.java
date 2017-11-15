@@ -1,33 +1,36 @@
 package com.theribssh.www;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by echobiel on 13/11/2017.
  */
 
 @SuppressLint("ValidFragment")
-public class DialogFragmentPedidoCliente extends DialogFragment {
+public class DialogFragmentMesa extends DialogFragment {
 
     private int numStyle;
     private int numTheme;
     private int layout;
+    private Spinner dialog_mesa;
+    private List<Mesa> mesas = new ArrayList<>();
 
     @SuppressLint("ValidFragment")
-    public DialogFragmentPedidoCliente(int numStyle, int numTheme){
+    public DialogFragmentMesa(int numStyle, int numTheme){
         this.numStyle = numStyle;
         this.numTheme = numTheme;
     }
@@ -64,8 +67,14 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
 
         Log.i("Script", "onCreateView()");
 
-        View view = inflater.inflate(R.layout.dialog_pedido_cliente, container);
+        View view = inflater.inflate(R.layout.dialog_mesa, container);
 
+        dialog_mesa = (Spinner) view.findViewById(R.id.spinner_mesa);
+        //TODO: Adapter do spinner dentro do asynctask
+        /*ArrayAdapter<Mesa> mesaArrayAdapter =
+                new ArrayAdapter<>(((MainActivity)getActivity()), R.layout.support_simple_spinner_dropdown_item, mesas);
+
+        dialog_mesa.setAdapter(mesaArrayAdapter);*/
         return view;
     }
 
