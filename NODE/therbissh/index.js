@@ -7,13 +7,13 @@ var app = require('express')(),
 	lstProdutos = [],
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  //host: "10.107.144.13",
-	  host: "localhost",
+	  host: "10.107.144.13",
+	  //host: "localhost",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
-	  //password: "bcd127",
-	  password: "",
+	  password: "bcd127",
+	  //password: "",
 	  database: "dbtheribssh"
 	});
 
@@ -463,7 +463,7 @@ app.get('/adicionarProduto', function(req, res){
 			id_pedido = req.query.id_pedido;
 
 	var _produtos = lstSalas[id_pedido].produtos;
-
+	_produtos[0]
 	var command = "select nome, preco, descricao, imagem from tbl_produto where id_produto = '" + _id_produto + "'";
 	con.query(command, function(err, result, fields){
 		if (err) throw err + command;
