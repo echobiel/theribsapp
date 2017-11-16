@@ -111,11 +111,15 @@ public class DialogFragmentCardapio extends DialogFragment {
                     id_pedido = ((MainActivity)getActivity()).getId_pedido();
                     qtd = ((MainActivity)getActivity()).getQtd_produto();
 
-                    if (id_pedido != 0 && id_produto != 0 && qtd != 0) {
+                    if (id_pedido >= 0 && id_produto != 0 && qtd != 0) {
                         new AdicionarTask().execute();
+                    }else{
+                        Toast.makeText(act, "Selecione uma quantidade ",Toast.LENGTH_LONG).show();
                     }
+                }else{
+                    Toast.makeText(act, "Selecione um produto", Toast.LENGTH_LONG).show();
                 }
-                closeQuantidade();
+
             }
         });
 
@@ -161,6 +165,15 @@ public class DialogFragmentCardapio extends DialogFragment {
             json = HttpConnection.get(href);
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            Log.d("testid", href);
+
+            dismiss();
         }
     }
 

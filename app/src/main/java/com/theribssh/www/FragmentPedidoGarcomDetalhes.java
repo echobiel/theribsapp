@@ -2,6 +2,7 @@ package com.theribssh.www;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,14 +45,18 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
     TextView text_codigo;
     TextView text_status;
     TextView text_nome_cliente;
+    TextView txt_precoTotal;
     int id_pedido;
+    float total;
     MyListView list_pedidos_produtos;
     List<PedidoGarcomProduto> listPedidosDetalhes = new ArrayList<>();
     SalaPedido resultado;
     Button btn_add_produto;
+    Button btn_finalizar_pedido;
     Socket socket;
     Activity act;
     PegadorTask pet;
+    Intent intent;
 
     @Nullable
     @Override
@@ -59,22 +65,20 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
 
         act = ((MainActivity)getActivity());
 
+        intent = ((MainActivity)getActivity()).getIntent();
+
         list_pedidos_produtos = (MyListView) view.findViewById(R.id.list_pedidos_produtos);
         text_mesa = (TextView) view.findViewById(R.id.text_mesa);
         text_codigo = (TextView) view.findViewById(R.id.text_codigo);
         text_status = (TextView) view.findViewById(R.id.text_status);
         text_nome_cliente = (TextView) view.findViewById(R.id.text_nome_cliente);
+        txt_precoTotal = (TextView) view.findViewById(R.id.txt_precoTotal);
         btn_add_produto = (Button) view.findViewById(R.id.btn_add_produto);
+        btn_finalizar_pedido = (Button) view.findViewById(R.id.btn_finalizar_pedido);
 
-        btn_add_produto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).setId_pedido(id_pedido);
-                openPedido();
-            }
-        });
+        setupBotoes();
 
-        pet = new PegadorTask();
+        pet= new PegadorTask();
         pet.execute();
 
         socket = conectarSocket();
@@ -85,15 +89,27 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
 
                 if (args.length > 0) {
 
-                    act.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (pet != null){
-                                pet = new PegadorTask();
-                                pet.execute();
+                    String json = args[0].toString();
+
+                    Gson gson = new Gson();
+                    VerificacaoId inf = gson.fromJson(json, new TypeToken<VerificacaoId>() {
+                    }.getType());
+
+                    int id_funcionario = inf.getId_funcionario();
+                    int id_usuario = intent.getIntExtra("id_usuario",0);
+
+                    if (id_funcionario == id_usuario) {
+
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (pet != null) {
+                                    pet = new PegadorTask();
+                                    pet.execute();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
 
                 }
             }
@@ -102,6 +118,23 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
         socket.connect();
 
         return view;
+    }
+
+    private void setupBotoes() {
+        btn_finalizar_pedido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPagamento();
+            }
+        });
+
+        btn_add_produto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).setId_pedido(id_pedido);
+                openPedido();
+            }
+        });
     }
 
     public void openPedido(){
@@ -124,6 +157,25 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
         }
     }
 
+
+    public void openPagamento(){
+        closePagamento();
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentMetodoPagamento dfmp = new DialogFragmentMetodoPagamento(1,2,id_pedido);
+        dfmp.show(ft, "dialog");
+    }
+
+    public void closePagamento(){
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentMetodoPagamento dfmp = (DialogFragmentMetodoPagamento) ((MainActivity)getActivity())
+                .getSupportFragmentManager().findFragmentByTag("dialog");
+
+        if (dfmp != null){
+            dfmp.dismiss();
+            ft.remove(dfmp);
+        }
+    }
+
     public Socket conectarSocket(){
         try{
             socket = IO.socket(String.format("http://%s",getResources().getText(R.string.ip_node)));
@@ -137,43 +189,6 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
         this.id_pedido = idPedido;
     }
 
-    public class NovoProdutoTask extends AsyncTask<Void, Void, Void>{
-
-        String href;
-        String json;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/novoProduto?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
-            json = HttpConnection.get(href);
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            try {
-                Gson gson = new Gson();
-                resultado = gson.fromJson(json, new TypeToken<SalaPedido>() {
-                }.getType());
-
-                text_mesa.setText(resultado.getMesa());
-                text_codigo.setText(resultado.getQr_code());
-                text_status.setText(resultado.getStatus_nome());
-                text_nome_cliente.setText(resultado.getNome_cliente());
-
-                List<PedidoGarcomProduto> lpgp = resultado.getProdutos();
-
-                ProdutosGarcomAdapter adapter = new ProdutosGarcomAdapter(((MainActivity) getActivity()), lpgp);
-
-                list_pedidos_produtos.setAdapter(adapter);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
     public class PegadorTask extends AsyncTask<Void, Void, Void>{
 
         String href;
@@ -181,9 +196,12 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/listarDetalhesPedido?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
-            json = HttpConnection.get(href);
-
+            try {
+                href = String.format("http://%s/listarDetalhesPedido?id_sala=%d", getResources().getString(R.string.ip_node), id_pedido);
+                json = HttpConnection.get(href);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -201,6 +219,19 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
                 text_nome_cliente.setText(resultado.getNome_cliente());
 
                 List<PedidoGarcomProduto> lpgp = resultado.getProdutos();
+
+                int contador = 0;
+
+                total = 0;
+
+                while (contador < lpgp.size()){
+
+                    total = total + lpgp.get(contador).getPreco() * lpgp.get(contador).getQtd();
+
+                    contador = contador + 1;
+                }
+
+                txt_precoTotal.setText(String.format("R$ %.2f", total));
 
                 ProdutosGarcomAdapter adapter = new ProdutosGarcomAdapter(((MainActivity) getActivity()), lpgp);
 

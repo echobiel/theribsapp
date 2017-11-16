@@ -50,11 +50,15 @@ public class ProdutosGarcomAdapter extends BaseAdapter {
         TextView txt_nome = (TextView) view.findViewById(R.id.txt_nome);
         TextView txt_preco = (TextView) view.findViewById(R.id.txt_preco);
         TextView txt_obs = (TextView) view.findViewById(R.id.txt_obs);
+        TextView text_nome_status = (TextView) view.findViewById(R.id.text_nome_status);
+        TextView text_qtd = (TextView) view.findViewById(R.id.text_qtd);
         ImageView img_produto = (ImageView) view.findViewById(R.id.img_produto);
 
-        txt_nome.setText(menu.getNome());
-        txt_obs.setText(menu.getObs());
+        txt_nome.setText(String.format("Produto: %s",menu.getNome()));
+        txt_obs.setText(String.format("Obs: %s",menu.getObs()));
         txt_preco.setText(String.format("R$%.2f",menu.getPreco()));
+        text_nome_status.setText(menu.getNome_status());
+        text_qtd.setText(String.format("Qtd. %d",menu.getQtd()));
 
         Glide.with(view).load(menu.getImagem()).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
 

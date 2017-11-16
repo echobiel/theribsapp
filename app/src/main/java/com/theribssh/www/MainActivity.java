@@ -307,6 +307,20 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void pedidoFinalizado(){
+        manage = getSupportFragmentManager();
+        txn = manage.beginTransaction();
+
+        //Cria o fragment
+        FragmentViewPager fragment = new FragmentViewPager();
+
+        fragment.addFragment("Pedido Garçom",new FragmentPedidoGarcom());
+
+        txn.replace(R.id.container, fragment);
+
+        txn.commit();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

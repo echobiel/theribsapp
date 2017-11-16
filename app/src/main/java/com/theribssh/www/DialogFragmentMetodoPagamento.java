@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,24 +28,22 @@ import java.util.List;
  */
 
 @SuppressLint("ValidFragment")
-public class DialogFragmentMesa extends DialogFragment {
+public class DialogFragmentMetodoPagamento extends DialogFragment {
 
     private int numStyle;
     private int numTheme;
     private int id_pedido;
-    private int id_funcionario;
-    private Spinner dialog_mesa;
+    private Spinner spinner_cartao;
     private Button btn_salvar_mesa;
-    private Mesa mesaSelecionada;
-    private Mesa resultado;
-    private List<Mesa> mesas = new ArrayList<>();
+    private TextView text_titulo_pg;
+    private String metodo;
+    private MetodoFisico resultadoF;
 
     @SuppressLint("ValidFragment")
-    public DialogFragmentMesa(int numStyle, int numTheme, int id_pedido, int id_funcionario){
+    public DialogFragmentMetodoPagamento(int numStyle, int numTheme, int id_pedido){
         this.numStyle = numStyle;
         this.numTheme = numTheme;
         this.id_pedido = id_pedido;
-        this.id_funcionario = id_funcionario;
     }
 
     @Override
@@ -69,7 +68,7 @@ public class DialogFragmentMesa extends DialogFragment {
         }
 
         setStyle(style, theme);
-        setCancelable(false);
+        setCancelable(true);
     }
 
     @Nullable
@@ -81,10 +80,14 @@ public class DialogFragmentMesa extends DialogFragment {
 
         View view = inflater.inflate(R.layout.dialog_mesa, container);
 
-        dialog_mesa = (Spinner) view.findViewById(R.id.spinner_mesa);
+        spinner_cartao = (Spinner) view.findViewById(R.id.spinner_mesa);
         btn_salvar_mesa = (Button) view.findViewById(R.id.btn_salvar_mesa);
+        text_titulo_pg = (TextView) view.findViewById(R.id.text_titulo_pg);
 
-        new PegadorTask().execute();
+        text_titulo_pg.setText("Indique a forma de pagamento:");
+
+        ArrayAdapter bandeira = ArrayAdapter.createFromResource(((MainActivity)getActivity()), R.array.metodos_pagamento, R.layout.spinner_padrao);
+        spinner_cartao.setAdapter(bandeira);
 
         setupBotao();
 
@@ -95,24 +98,25 @@ public class DialogFragmentMesa extends DialogFragment {
         btn_salvar_mesa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mesaSelecionada = (Mesa)dialog_mesa.getSelectedItem();
-                new SelecionarMesaTask().execute();
+                metodo = spinner_cartao.getSelectedItem().toString();
+
+                if (metodo.equals("Cartão (Virtual)")){
+
+                }else{
+                    new FinalizarFisicoTask().execute();
+                }
             }
         });
     }
 
-    public class SelecionarMesaTask extends AsyncTask<Void, Void, Void>{
+    public class FinalizarFisicoTask extends AsyncTask<Void,Void,Void>{
 
         String href;
         String json;
 
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/adicionarMesa?id_mesa=%d&nome=%s&id_pedido=%d",
-                    getResources().getString(R.string.ip_node),
-                    mesaSelecionada.getId_mesa(),
-                    mesaSelecionada.getNome(),
-                    id_pedido);
+            href = String.format("http://%s/finalizarPedidoFisico?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
             json = HttpConnection.get(href);
 
             return null;
@@ -124,61 +128,18 @@ public class DialogFragmentMesa extends DialogFragment {
 
             try {
                 Gson gson = new Gson();
-                resultado = gson.fromJson(json, new TypeToken<Mesa>() {
+                resultadoF = gson.fromJson(json, new TypeToken<MetodoFisico>() {
                 }.getType());
 
-                if (resultado.getNome().equals("Ocorreu um erro. Tente novamente mais tarde.")){
-                    Toast.makeText(((MainActivity)getActivity()), resultado.getNome(), Toast.LENGTH_LONG).show();
-                }else{
-                    dismiss();
-                    trocaDeTela();
-                }
+                Toast.makeText(((MainActivity)getActivity()), resultadoF.getMensagem(), Toast.LENGTH_SHORT).show();
 
-            }catch(Exception e){
-                Log.d("Script", "catch onPostExecute");
+                dismiss();
+
+                ((MainActivity)getActivity()).pedidoFinalizado();
+            }catch (Exception e){
                 e.printStackTrace();
             }
         }
-    }
-
-    public class PegadorTask extends AsyncTask<Void, Void, Void>{
-
-        String href;
-        String json;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/mesas?id_funcionario=%d",getResources().getString(R.string.ip_node), id_funcionario);
-            json = HttpConnection.get(href);
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            try {
-                Gson gson = new Gson();
-                mesas = gson.fromJson(json, new TypeToken<List<Mesa>>() {
-                }.getType());
-
-                if (mesas.size() > 0){
-                    ArrayAdapter<Mesa> mesaArrayAdapter =
-                            new ArrayAdapter<>(((MainActivity)getActivity()), R.layout.spinner_padrao, mesas);
-
-                    dialog_mesa.setAdapter(mesaArrayAdapter);
-                }
-
-            }catch(Exception e){
-                Log.d("Script", "catch onPostExecute");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void trocaDeTela(){
-        ((MainActivity)getActivity()).detalhesPedidoGarcom(id_pedido);
     }
 
     @Override

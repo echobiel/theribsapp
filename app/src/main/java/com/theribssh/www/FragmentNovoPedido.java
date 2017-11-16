@@ -55,6 +55,7 @@ public class FragmentNovoPedido extends Fragment {
     View view;
     Activity act;
     Socket socket;
+    Intent intent;
 
     @Nullable
     @Override
@@ -68,13 +69,11 @@ public class FragmentNovoPedido extends Fragment {
         btn_client_sem_cadastro = (Button) view.findViewById(R.id.btn_client_sem_cadastro);
         btn_client_com_cadastro = (Button) view.findViewById(R.id.btn_client_com_cadastro);
 
-        Intent intent = ((MainActivity)getActivity()).getIntent();
+        intent = ((MainActivity)getActivity()).getIntent();
 
         id_funcionario = intent.getIntExtra("id_usuario",0);
 
-        Log.d("TESTID", id_funcionario + "");
-
-        configurandoBotoesFlutuantes();
+        configurandoBotoes();
 
         String text2Qr = "Não foi gerado um código ainda";
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -96,13 +95,22 @@ public class FragmentNovoPedido extends Fragment {
 
                 if (args.length > 0){
 
-                    act.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    String json = args[0].toString();
 
-                            openPedido();
-                        }
-                    });
+                    Gson gson = new Gson();
+                    VerificacaoId inf = gson.fromJson(json, new TypeToken<VerificacaoId>() {
+                    }.getType());
+
+                    if (inf.getId_funcionario() == id_funcionario) {
+
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                openPedido();
+                            }
+                        });
+                    }
 
                 }
             }
@@ -113,21 +121,68 @@ public class FragmentNovoPedido extends Fragment {
         return view;
     }
 
-
     public void openPedido(){
-        closePedido();
+        try {
+            closePedido();
 
-        Log.d("TESTID", id_pedido + " / " + id_funcionario);
-        ((MainActivity)getActivity()).setVerificadorDialog(1);
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentMesa dfm = new DialogFragmentMesa(1, 2, id_pedido, id_funcionario);
-        dfm.show(ft, "dialog");
+            Log.d("TESTID", id_pedido + " / " + id_funcionario);
+            FragmentTransaction ft = ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction();
+            DialogFragmentMesa dfm = new DialogFragmentMesa(1, 2, id_pedido, id_funcionario);
+            dfm.show(ft, "dialog");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void closePedido(){
-        ((MainActivity)getActivity()).setVerificadorDialog(0);
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
         DialogFragmentMesa dfm = (DialogFragmentMesa) ((MainActivity)getActivity())
+                .getSupportFragmentManager().findFragmentByTag("dialog");
+
+        if (dfm != null){
+            dfm.dismiss();
+            ft.remove(dfm);
+        }
+    }
+
+    public void openClientLogin(){
+        try {
+            closeClientLogin();
+
+            FragmentTransaction ft = ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction();
+            DialogFragmentClientLogin dfm = new DialogFragmentClientLogin(1, 3, id_pedido, id_funcionario);
+            dfm.show(ft, "dialog");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void closeClientLogin(){
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentClientLogin dfm = (DialogFragmentClientLogin) ((MainActivity)getActivity())
+                .getSupportFragmentManager().findFragmentByTag("dialog");
+
+        if (dfm != null){
+            dfm.dismiss();
+            ft.remove(dfm);
+        }
+    }
+
+    public void openClientCadastro(){
+        try {
+            closeClientCadastro();
+
+            FragmentTransaction ft = ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction();
+            DialogFragmentClientCadastro dfm = new DialogFragmentClientCadastro(1, 3, id_pedido, id_funcionario);
+            dfm.show(ft, "dialog");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void closeClientCadastro(){
+        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+        DialogFragmentClientCadastro dfm = (DialogFragmentClientCadastro) ((MainActivity)getActivity())
                 .getSupportFragmentManager().findFragmentByTag("dialog");
 
         if (dfm != null){
@@ -153,18 +208,18 @@ public class FragmentNovoPedido extends Fragment {
 
 
 
-    private void configurandoBotoesFlutuantes() {
+    private void configurandoBotoes() {
         btn_client_sem_cadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new QrCodeGeneratorClientSemLogin().execute();
             }
         });
 
         btn_client_com_cadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new QrCodeGeneratorClientComLogin().execute();
             }
         });
 
@@ -205,14 +260,88 @@ public class FragmentNovoPedido extends Fragment {
                     qr_code = resultado.getQr_code();
                     id_pedido = resultado.getId_sala();
 
-                    Log.d("TESTID", id_pedido + "");
-
                     MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
                     BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE, 400, 300);
                     BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                     Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
                     img_qrcode.setImageBitmap(bitmap);
+                }
+            }catch(Exception e){
+                Log.d("Script", "catch onPostExecute");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public class QrCodeGeneratorClientComLogin extends AsyncTask<Void, Void, Void> {
+
+        String json;
+        String href;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            href = String.format("http://%s/criacaoSala?id_funcionario=%d",getResources().getString(R.string.ip_node), id_funcionario);
+            json = HttpConnection.get(href);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            try {
+                Gson gson = new Gson();
+                resultado = gson.fromJson(json, new TypeToken<SalaPedido>() {
+                }.getType());
+
+                if (resultado.getMensagem().equals("Ocorreu um erro durante a conexão. Tente novamente mais tarde.")) {
+                    Snackbar.make(view, resultado.getMensagem() + " | " + href, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    id_pedido = resultado.getId_sala();
+
+                    openClientLogin();
+                }
+            }catch(Exception e){
+                Log.d("Script", "catch onPostExecute");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public class QrCodeGeneratorClientSemLogin extends AsyncTask<Void, Void, Void> {
+
+        String json;
+        String href;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            href = String.format("http://%s/criacaoSala?id_funcionario=%d",getResources().getString(R.string.ip_node), id_funcionario);
+            json = HttpConnection.get(href);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            try {
+                Gson gson = new Gson();
+                resultado = gson.fromJson(json, new TypeToken<SalaPedido>() {
+                }.getType());
+
+                if (resultado.getMensagem().equals("Ocorreu um erro durante a conexão. Tente novamente mais tarde.")) {
+                    Snackbar.make(view, resultado.getMensagem() + " | " + href, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    id_pedido = resultado.getId_sala();
+
+                    openClientCadastro();
                 }
             }catch(Exception e){
                 Log.d("Script", "catch onPostExecute");

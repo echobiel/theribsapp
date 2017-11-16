@@ -51,7 +51,7 @@ app.get('/selectRestaurante', function(req, res){
 
 app.get('/selectCardapio', function(req, res){
 
-  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto where statusAprovacao = 1;";
+  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto where statusAprovacao = 1 order by nome_produto asc;";
 
   con.query(command, function (err, result, fields) {
     if (err) throw err;
@@ -172,6 +172,81 @@ app.get('/autenticarUsuario', function(req, res){
   });
 });
 
+app.get('/autenticarUsuarioSala', function(req, res){
+
+	var _email = req.query.email,
+		_senha = req.query.senha,
+		_id_pedido = req.query.id_pedido,
+    resultadoFinal = {};
+
+  var contador = 0;
+  var command = "select * from tbl_cliente where email = '" + _email + "' or login='" + _email + "' and senha = '" + _senha + "'";
+
+  con.query(command, function(err, result, fields) {
+      if (err) throw err + command;
+
+      // Verificação das linhas no select
+      if (contador < result.length) {
+
+          var id = result[contador].id_cliente;
+          var nome = result[contador].nome;
+
+					lstSalas[_id_pedido].id_cliente = id;
+					lstSalas[_id_pedido].nome_cliente = nome;
+
+          resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
+
+          contador = contador + 1;
+
+      }
+
+      if (contador != 0){
+          res.send(resultadoFinal);
+      }else{
+				res.send({mensagem : "Usuário ou senha incorretos. Verifique e tente novamente."});
+			}
+
+  });
+});
+
+app.get('/autenticarUsuarioSalaCadastro', function(req, res){
+
+	var _email = req.query.email,
+		_nome = req.query.nome,
+		_sobrenome = req.query.sobrenome,
+		_id_pedido = req.query.id_pedido,
+    resultadoFinal = {};
+
+	if (typeof _nome != 'undefined' && typeof _sobrenome != 'undefined' && typeof _email != 'undefined'){
+
+	  var command = "insert into tbl_cliente(email,nome,sobrenome) values('" + _email + "', '" + _nome + "', '" + _sobrenome + "')";
+
+	  con.query(command, function(err, result, fields) {
+      if (err) throw err + command;
+
+			var command2 = "select * from tbl_cliente order by id_cliente desc limit 0,1";
+
+			con.query(command2, function(err2, result2, fields2){
+
+        var id = result2[0].id_cliente;
+        var nome = result2[0].nome;
+
+				console.log(lstSalas[_id_pedido]);
+
+				lstSalas[_id_pedido].id_cliente = id;
+				lstSalas[_id_pedido].nome_cliente = nome;
+
+        resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
+
+				res.send(resultadoFinal);
+
+			});
+	  });
+	}else{
+		res.send({mensagem : "Dados incorretos. Verifique e tente novamente."});
+	}
+});
+
 app.get('/infSala', function(req, res){
 	var _id_sala = req.query.id_sala;
 
@@ -230,8 +305,6 @@ app.get('/autenticarSala', function(req, res){
 
 				lstSalas[contador].nome_cliente = _nome;
 
-				console.log(_id_sala + " / " + _nome);
-
 				res.send({ mensagem : "Autenticado com sucesso.", id_sala : _id_sala });
 			});
 
@@ -246,12 +319,8 @@ app.get('/autenticarSala', function(req, res){
 		res.send({ mensagem : "Código QR inválido."});
 	}else{
 
-		io.sockets.emit("novo_pedido_autenticado", {funcionario : _id_funcionario, id_sala : _id_sala});
+		io.sockets.emit("novo_pedido_autenticado", {id_funcionario : _id_funcionario, id_sala : _id_sala, id_cliente : _id_cliente});
 	}
-});
-
-app.get('/selectProdutos', function(req, res){
-
 });
 
 app.get('/mesaSala', function(req, res){
@@ -281,12 +350,6 @@ app.get('/criacaoSala', function(req, res){
       _qr_code = "",
 			_tamanho = 0;
 
-	if (typeof lstProdutos[_id_sala] == 'undefined'){
-		_tamanho = 0;
-	}else{
-		_tamanho = lstProdutos[_id_sala].length;
-	}
-
 	var command = "select e.uf as 'uf', r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
 									"inner join tbl_restaurante as r "+
 									"on f.id_restaurante = r.id_restaurante "+
@@ -309,12 +372,13 @@ app.get('/criacaoSala', function(req, res){
 			var numero = 0;
 			//Verificador de local para o armazenamento no qrcode
 			while (contador < _id_sala){
-				var qr = lstSalas[contador].qr_code.slice(0,2);
+				if (typeof lstSalas[contador].qr_code != 'undefined'){
+					var qr = lstSalas[contador].qr_code.slice(0,2);
 
-				if (qr == result[0].uf){
-					numero = numero + 1;
+					if (qr == result[0].uf){
+						numero = numero + 1;
+					}
 				}
-
 				contador = contador + 1;
 			};
 			//Formata o número de acordo com um padrão
@@ -325,7 +389,7 @@ app.get('/criacaoSala', function(req, res){
 
 			var _id_restaurante = result[0].id_rest;
 
-			var s = {id_sala : _id_sala, id_restaurante : _id_restaurante, id_cliente : 0, id_mesa : 0, nome_cliente : "", status_nome : "Em espera", id_funcionario : _id_funcionario, mesa : "", tamanho : _tamanho, qr_code : _qr_code, status : 0, mensagem : "Sala criada com sucesso."};
+			var s = {id_sala : _id_sala, id_restaurante : _id_restaurante, id_cliente : 0, id_mesa : 0, produtos : [], nome_cliente : "", status_nome : "Em espera", id_funcionario : _id_funcionario, mesa : "", qr_code : _qr_code, status : 0, mensagem : "Sala criada com sucesso."};
 
 			lstSalas.push(s);
 
@@ -338,6 +402,77 @@ app.get('/criacaoSala', function(req, res){
 
 	});
 
+});
+
+app.get('/finalizarPedidoFisico', function(req, res){
+	var _id_sala = req.query.id_sala;
+	var _id_cliente = lstSalas[_id_sala].id_cliente;
+
+	if (lstSalas[_id_sala].id_cliente == "" || lstSalas[_id_sala].id_mesa == 0){
+		lstSalas[_id_sala] = {};
+		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
+	}else{
+		var d = new Date();
+		var day = d.getDate();
+		var month = d.getMonth() + 1;
+		var year = d.getFullYear();
+		var dataAtual = year + "-" + month + "-" + day;
+
+		var command = "insert into tbl_pedido (id_funcionario, id_cliente, data) "+
+									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + dataAtual + "')";
+
+		con.query(command, function(err){
+			if (err) throw err + command;
+
+		});
+		var id_pedido;
+		var command2 = "select * from tbl_pedido order by id_pedido limit 0,1";
+
+		con.query(command2, function(err2,result2,fields2){
+			if (err2) throw err2 + command2;
+			id_pedido = result2[0].id_pedido;
+
+			var produtos = lstSalas[_id_sala].produtos;
+			var contador = 0;
+
+			while (contador < produtos.lenght){
+
+				var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+				"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
+
+				con.query(command3, function(err3){
+					if (err) throw err + command;
+				});
+
+				contador = contador + 1;
+			}
+
+
+			io.sockets.emit("pedido_finalizado",  _id_cliente);
+			lstSalas[_id_sala] = {};
+
+			res.send({mensagem : "Finalizado com sucesso."});
+		});
+	}
+
+});
+
+app.get('/adicionarProduto', function(req, res){
+	var _id_produto = req.query.id_produto,
+			_qtd = req.query.qtd,
+			id_pedido = req.query.id_pedido;
+
+	var _produtos = lstSalas[id_pedido].produtos;
+
+	var command = "select nome, preco, descricao, imagem from tbl_produto where id_produto = '" + _id_produto + "'";
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		_produtos.push({id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem,status : 0, nome_status : "Em espera"});
+
+		res.send({mensagem : "Sucesso."});
+		io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
+	});
 });
 
 app.get('/adicionarMesa', function(req,res){

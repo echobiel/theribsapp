@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:id="@+id/edit_text_qtd"
+            android:id="@+id/text_qtd"
             android:gravity="center"/>
         <ImageButton
             android:layout_width="50dp"

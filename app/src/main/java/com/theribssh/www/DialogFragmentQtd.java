@@ -38,7 +38,7 @@ public class DialogFragmentQtd extends DialogFragment {
     ImageButton btn_aumentar;
     ImageButton btn_diminuir;
     Button btn_confirmar;
-    TextView edit_text_qtd;
+    TextView text_qtd;
 
     @SuppressLint("ValidFragment")
     public DialogFragmentQtd(int numStyle, int numTheme){
@@ -85,13 +85,15 @@ public class DialogFragmentQtd extends DialogFragment {
         btn_aumentar = (ImageButton) view.findViewById(R.id.btn_aumentar);
         btn_diminuir = (ImageButton) view.findViewById(R.id.btn_diminuir);
         btn_confirmar = (Button) view.findViewById(R.id.btn_confirmar);
-        edit_text_qtd = (TextView) view.findViewById(R.id.edit_text_qtd);
+        text_qtd = (TextView) view.findViewById(R.id.text_qtd);
+
+        text_qtd.setText(qtd + "");
 
         btn_aumentar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 qtd = qtd + 1;
-                edit_text_qtd.setText(qtd + "");
+                text_qtd.setText(qtd + "");
 
             }
         });
@@ -101,7 +103,7 @@ public class DialogFragmentQtd extends DialogFragment {
             public void onClick(View view) {
                 if (qtd - 1 >= 0) {
                     qtd = qtd - 1;
-                    edit_text_qtd.setText(qtd + "");
+                    text_qtd.setText(qtd + "");
                 }
             }
         });
@@ -109,7 +111,7 @@ public class DialogFragmentQtd extends DialogFragment {
         btn_confirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                qtd = Integer.parseInt(edit_text_qtd.getText().toString());
+                qtd = Integer.parseInt(text_qtd.getText().toString());
                 ((MainActivity)getActivity()).setQtd_produto(qtd);
                 dismiss();
             }

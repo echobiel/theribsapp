@@ -46,6 +46,7 @@ public class FragmentPedidoClient extends Fragment {
     View view;
     int verificadorDialog, id_usuario;
     static final int RequestCameraPermissionID = 1001;
+    int id_pedido;
     Intent intent;
 
     @Nullable
@@ -114,13 +115,7 @@ public class FragmentPedidoClient extends Fragment {
                 if (verificadorDialog != 1) {
                     try {
                         if (ActivityCompat.checkSelfPermission(((MainActivity)getActivity()), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
+
                             return;
                         }
                         cameraSource.start(camera_preview.getHolder());
@@ -156,7 +151,7 @@ public class FragmentPedidoClient extends Fragment {
     public void openPedido(){
         ((MainActivity)getActivity()).setVerificadorDialog(1);
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentPedidoCliente dfpc = new DialogFragmentPedidoCliente(4,3);
+        DialogFragmentPedidoCliente dfpc = new DialogFragmentPedidoCliente(4,3, id_pedido);
         dfpc.show(ft, "dialog");
     }
 
@@ -187,6 +182,8 @@ public class FragmentPedidoClient extends Fragment {
                 } else {
 
                     int id_sala = resultado.getId_sala();
+
+                    id_pedido = id_sala;
 
                     intent.putExtra("id_sala",id_sala);
 

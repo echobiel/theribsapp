@@ -6,26 +6,46 @@ package com.theribssh.www;
 
 public class PedidoGarcomProduto {
 
-    private int idProduto;
+    private int id_produto;
+    private int qtd;
     private String imagem;
     private String nome;
+    private String nome_status;
     private String obs;
     private float preco;
 
-    public PedidoGarcomProduto(int idProduto, float preco, String nome, String imagem,String obs) {
-        setIdProduto(idProduto);
+    public PedidoGarcomProduto(int id_produto, int qtd,float preco, String nome_status,String nome, String imagem,String obs) {
+        setId_produto(id_produto);
+        setQtd(qtd);
         setPreco(preco);
         setNome(nome);
         setObs(obs);
         setImagem(imagem);
+        setNome_status(nome_status);
     }
 
-    public int getIdProduto() {
-        return this.idProduto;
+    public String getNome_status() {
+        return nome_status;
     }
 
-    public void setIdProduto(int idProduto) {
-        this.idProduto = idProduto;
+    public void setNome_status(String nome_status) {
+        this.nome_status = nome_status;
+    }
+
+    public int getQtd() {
+        return qtd;
+    }
+
+    public void setQtd(int qtd) {
+        this.qtd = qtd;
+    }
+
+    public int getId_produto() {
+        return id_produto;
+    }
+
+    public void setId_produto(int id_produto) {
+        this.id_produto = id_produto;
     }
 
     public String getImagem() {

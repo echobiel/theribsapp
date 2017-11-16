@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:background="#000"
             android:padding="1dp"
             android:gravity="center">
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="98dp"
+                android:layout_height="98dp"
                 android:background="#fff"
                 android:layout_gravity="center"
                 android:id="@+id/img_produto"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="98dp"
             android:background="#000"
             android:orientation="vertical"
             android:paddingTop="1dp"
@@ -38,17 +39,11 @@
                     android:orientation="horizontal">
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:background="#fff"
                         android:layout_weight="1"
                         android:paddingLeft="8dp"
-                        android:gravity="left">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Produto:"
-                            android:padding="1dp"
-                            android:textColor="#000"/>
+                        android:gravity="left|center">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -63,11 +58,11 @@
                         android:background="#000"></LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:background="#fff"
                         android:layout_weight="0"
                         android:paddingRight="8dp"
-                        android:gravity="right">
+                        android:gravity="right|center">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -83,25 +78,61 @@
                             android:textColor="#10c216"/>
                     </LinearLayout>
                 </LinearLayout>
-                <ScrollView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000"></LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="1dp">
+                    android:orientation="horizontal"
+                    android:background="#fff">
                     <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Em espera. "
+                            android:gravity="center"
+                            android:textColor="@color/corLaranja"
+                            android:padding="5dp"
+                            android:layout_weight="1"
+                            android:id="@+id/text_nome_status"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#000"></LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Qtd. 5 "
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/corLaranja"
+                            android:padding="5dp"
+                            android:id="@+id/text_qtd"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#000"></LinearLayout>
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="#fff">
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="1dp"
+                        android:padding="1dp">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minHeight="60dp"
-                            android:padding="5dp"
+                            android:padding="4dp"
                             android:layout_weight="1"
                             android:id="@+id/txt_obs"
-                            android:text="Com pouco ..."/>
-                    </LinearLayout>
-                </ScrollView>
+                            android:text="Obs:Com pouco ..."/>
+                    </ScrollView>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

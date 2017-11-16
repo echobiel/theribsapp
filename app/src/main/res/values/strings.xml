@@ -50,6 +50,12 @@
         <item>Mastercard</item>
         <item>Elo</item>
     </string-array>
+
+    <string-array name="metodos_pagamento">
+        <item>Cartão (Físico)</item>
+        <item>Cartão (Virtual)</item>
+        <item>Dinheiro (Físico)</item>
+    </string-array>
     <string name="title_activity_nossos_restaurantes">Nossos Restaurantes</string>
 
 </resources>
