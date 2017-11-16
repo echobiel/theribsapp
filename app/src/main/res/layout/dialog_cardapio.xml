@@ -14,17 +14,20 @@
 
         </com.theribssh.www.MyListView>
     </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="bottom">
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/corAzulMarinho"
-            android:textColor="@color/corLaranja"
+            android:background="@color/corMarromClaro"
+            android:textColor="@color/corBranco"
             android:text="SELECIONAR PRODUTO"
             android:id="@+id/btn_selecionar_produto"
             />
     </LinearLayout>
+
 </LinearLayout>

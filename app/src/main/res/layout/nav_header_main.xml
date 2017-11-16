@@ -38,10 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/corAzulMarinho"
+            android:background="@color/corMarromEscuro"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:gravity="center">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

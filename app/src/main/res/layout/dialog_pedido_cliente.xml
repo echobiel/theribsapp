@@ -5,8 +5,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/corAzulMarinho"
-        android:textColor="@color/corLaranja"
+        android:background="@color/corMarromClaro"
+        android:textColor="@color/corBranco"
         android:text="Adicionar produto"
         android:id="@+id/btn_add_produto"/>
     <ScrollView
@@ -21,20 +21,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/corAzulMarinho"
+        android:background="@color/corMarromEscuro"
         android:padding="5dp"
         android:orientation="horizontal">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Charmar garçom"
+            android:text="Chamar garçom"
             android:background="#fff"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="R$ 1 000,00"
+            android:text="R$ 1.000,00"
             android:gravity="right|center"
             android:paddingRight="5dp"
             android:textSize="18dp"

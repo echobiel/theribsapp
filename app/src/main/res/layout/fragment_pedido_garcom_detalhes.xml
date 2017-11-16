@@ -6,42 +6,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="1dp"
             android:background="#000"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="#fff"
                 android:padding="8dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_weight="1"
                     android:gravity="center">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Código:"
+                        android:textColor="@color/corMarromEscuro"
                         android:layout_marginRight="10dp"
                         android:textStyle="bold"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RIBS1020"
                         android:textStyle="bold"
-                        android:textColor="#d47028"
+                        android:textColor="@color/corVinho"
                         android:id="@+id/text_codigo"/>
+
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#000"></LinearLayout>
+                    android:background="#000">
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -49,46 +59,58 @@
                     android:orientation="horizontal"
                     android:layout_weight="1"
                     android:gravity="center">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Mesa:"
+                        android:textColor="@color/corMarromEscuro"
                         android:layout_marginRight="10dp"
                         android:textStyle="bold"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="A1"
+                        android:textColor="@color/corVinho"
                         android:textStyle="bold"
-                        android:textColor="#d47028"
                         android:id="@+id/text_mesa"/>
+
                 </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="1dp"
             android:background="#000"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="#fff"
                 android:padding="8dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_weight="1"
                     android:gravity="center">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Status:"
+                        android:textColor="@color/corMarromEscuro"
                         android:layout_marginRight="10dp"
                         android:textStyle="bold"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -96,11 +118,15 @@
                         android:textStyle="bold"
                         android:textColor="#10c216"
                         android:id="@+id/text_status"/>
+
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#000"></LinearLayout>
+                    android:background="#000">
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,12 +134,15 @@
                     android:orientation="horizontal"
                     android:layout_weight="1"
                     android:gravity="center">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cliente:"
+                        android:textColor="@color/corMarromEscuro"
                         android:layout_marginRight="10dp"
                         android:textStyle="bold"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -121,16 +150,21 @@
                         android:textStyle="bold"
                         android:textColor="#10c216"
                         android:id="@+id/text_nome_cliente"/>
+
                 </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/corAzulMarinho"
+            android:background="@color/corMarromClaro"
             android:layout_gravity="bottom"
             android:padding="5dp"
             android:orientation="horizontal">
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -139,6 +173,7 @@
                 android:text="Finalizar pedido"
                 android:layout_weight="1"
                 android:id="@+id/btn_finalizar_pedido"/>
+
             <TextView
                 android:layout_width="130dp"
                 android:layout_height="match_parent"
@@ -146,29 +181,40 @@
                 android:text="R$ 0,00"
                 android:gravity="center|right"
                 android:id="@+id/txt_precoTotal"/>
+
         </LinearLayout>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <com.theribssh.www.MyListView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/list_pedidos_produtos"></com.theribssh.www.MyListView>
+                        android:id="@+id/list_pedidos_produtos">
+
+                    </com.theribssh.www.MyListView>
+
                 </LinearLayout>
+
         </ScrollView>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/corAzulMarinho"
-            android:textColor="@color/corLaranja"
+            android:background="@color/corMarromClaro"
+            android:textColor="@color/corBranco"
             android:text="ADICIONAR PRODUTO"
             android:id="@+id/btn_add_produto">
 
         </Button>
+
     </LinearLayout>
+
 </LinearLayout>

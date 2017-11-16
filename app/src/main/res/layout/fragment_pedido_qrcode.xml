@@ -10,8 +10,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:textColor="#ff720e"
-            android:background="#11202a"
+            android:textColor="@color/corBranco"
+            android:background="@color/corMarromClaro"
             android:id="@+id/btn_pedido_qrcode_gerar"
             android:text="GERAR QR CODE"/>
     </LinearLayout>
@@ -36,22 +36,25 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="bottom">
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:textColor="#ff720e"
-            android:background="#11202a"
+            android:textColor="@color/corBranco"
+            android:background="@color/corMarromClaro"
             android:text="Cliente sem cadastro"
             android:id="@+id/btn_client_sem_cadastro"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="#ddd"></LinearLayout>
+            android:background="#ddd">
+        </LinearLayout>
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:textColor="#ff720e"
-            android:background="#11202a"
+            android:textColor="@color/corBranco"
+            android:background="@color/corMarromClaro"
             android:id="@+id/btn_client_com_cadastro"
             android:text="Cliente com cadastro"/>
     </LinearLayout>

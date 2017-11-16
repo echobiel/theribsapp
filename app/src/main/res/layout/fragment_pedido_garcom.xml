@@ -6,10 +6,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="50dp">
+
         <com.theribssh.www.MyListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/list_pedidos"></com.theribssh.www.MyListView>
+            android:id="@+id/list_pedidos">
+
+        </com.theribssh.www.MyListView>
     </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="CRIAR UM NOVO PEDIDO"
-            android:textColor="#ff720e"
-            android:background="@color/corAzulMarinho"
+            android:textColor="@color/corBranco"
+            android:background="@color/corMarromClaro"
             android:id="@+id/btn_criar_pedido"/>
     </LinearLayout>
 
