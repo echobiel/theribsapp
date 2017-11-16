@@ -32,7 +32,8 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:hint="Login"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="50"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -47,7 +48,24 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:hint="Nome"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="50"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edit_text_sobrenome"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:hint="Sobrenome"
+                android:textSize="18dp"
+                android:maxLength="50"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -64,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Celular"
                 android:inputType="number"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="15"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -81,7 +100,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Telefone"
                 android:inputType="number"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="14"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +118,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="200"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -114,23 +135,8 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:hint="Logradouro"
-                android:textSize="18dp"/>
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            >
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/edit_text_endereco"
-                android:layout_width="370dp"
-                android:layout_height="wrap_content"
-                android:hint="Endereço"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="200"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -154,6 +160,7 @@
                     android:hint="Número"
                     android:inputType="number"
                     android:textSize="18dp"
+                    android:maxLength="10"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -170,7 +177,8 @@
                     android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:hint="Bairro"
-                    android:textSize="18dp"/>
+                    android:textSize="18dp"
+                    android:maxLength="200"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -208,7 +216,8 @@
                 android:layout_width="370dp"
                 android:layout_height="wrap_content"
                 android:hint="Nome Registrado"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="100"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -225,7 +234,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Número Registrado"
                 android:inputType="number"
-                android:textSize="18dp"/>
+                android:textSize="18dp"
+                android:maxLength="20"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -250,6 +260,7 @@
                     android:hint="CVV"
                     android:inputType="number"
                     android:textSize="18dp"
+                    android:maxLength="5"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -267,7 +278,8 @@
                     android:layout_height="wrap_content"
                     android:hint="Vencimento"
                     android:inputType="date"
-                    android:textSize="18dp"/>
+                    android:textSize="18dp"
+                    android:maxLength="7"/>
 
             </android.support.design.widget.TextInputLayout>
 

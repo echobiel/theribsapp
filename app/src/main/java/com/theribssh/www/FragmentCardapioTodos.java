@@ -23,8 +23,8 @@ import java.util.List;
 public class FragmentCardapioTodos extends Fragment {
 
     private ListView list_view_cardapio_todos;
-    private CardapioTodosAdapter cardapioTodosAdapter;
-    List<CardapioTodosListView> card_todos;
+    private CardapioPrincipaisAdapter cardapioTodosAdapter;
+    List<CardapioPrincipaisListView> card_todos;
     Activity act;
 
     @Override
@@ -66,10 +66,10 @@ public class FragmentCardapioTodos extends Fragment {
             super.onPostExecute(aVoid);
             Gson gson = new Gson();
 
-            card_todos = gson.fromJson(json, new TypeToken<List<CardapioTodosListView>>(){
+            card_todos = gson.fromJson(json, new TypeToken<List<CardapioPrincipaisListView>>(){
             }.getType());
 
-            cardapioTodosAdapter = new CardapioTodosAdapter(card_todos, act);
+            cardapioTodosAdapter = new CardapioPrincipaisAdapter(card_todos, act);
             try {
                 list_view_cardapio_todos.setAdapter(cardapioTodosAdapter);
             }catch (Exception e){

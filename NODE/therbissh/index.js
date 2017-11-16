@@ -1,10 +1,12 @@
 
 var app = require('express')(),
 	http = require('http').createServer(app),
-	io = require('socket.io').listen(http),
+	io = require('socket.io')(http),
 	lstSalas = [],
 	lstPedidos = [],
 	lstProdutos = [],
+	clients = {},
+	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
 	  host: "10.107.144.13",
@@ -26,6 +28,141 @@ app.get('/', function(req, res){
 	//res.sendFile( __dirname + "/index.html");
 	//res.send(lstAgendas);
 	res.render("index", {app_name : lstPedidos});
+
+});
+
+io.on("connection", function (client) {
+	this.client = client;
+    client.on("join", function(name){
+        clients[client.id] = name;
+        client.emit("update", "You have connected to the server.");
+        client.broadcast.emit("update", name + " has joined the server.")
+    });
+
+    client.on("send", function(msg){
+        client.broadcast.emit("chat", clients[client.id], msg);
+    });
+
+    client.on("disconnect", function(){
+        io.emit("update", clients[client.id] + " has left the server.");
+        delete clients[client.id];
+    });
+
+    client.on("selectPedidos", function(idrestaurante){
+
+            var contador = 0;
+            var resultado = "";
+            while(contador < lstSalas.length){
+                var idpedido = lstSalas[contador].id_sala,
+                    /*horarioFeito = lstsalas[contador].horariofeito,*/
+                    mesa = lstSalas[contador].mesa;
+
+                resultado = resultado + "<div class='div_infoReduzidaPed' onclick='abrirInformacoes("+idpedido+")' title='Ver Informações'><div class='linha_esquerda'></div> "+
+                                        "<div class='div_mesaHorario'> " +
+                                        "<div class='mesaHorario'>Mesa "+mesa+"</div> " +
+                                        "<div class='mesaHorario'></div>" +
+                                        "</div>" +
+                                        "<div class='div_btnConcluir' onclick='status(2,"+idpedido+")'><div class='btnConcluir' title='Concluir pedido'><img src='img/pedido_completo.png' alt=''></div></div> " +
+                                        "</div>";
+                contador = contador + 1;
+            }
+
+            client.emit("resultadoPedido", resultado);
+
+    });
+
+    client.on("selectInfoPedido", function(id_pedido){
+
+        var resultado = "";
+
+		if (typeof lstSalas[id_pedido].id_sala != 'undefined'){
+
+            var id_funcionario = lstSalas[id_pedido].id_funcionario;
+            var command = "select nome_completo as 'nomegarcom' from tbl_funcionario where id_funcionario = '" + id_funcionario + "'";
+
+            con.query(command, function(err, result, fields){
+
+				if (err) throw err + command;
+
+				if (result.length > 0){
+	                var nomegarcom = result[0].nomegarcom,
+	                    nomemesa = lstSalas[id_pedido].mesa,
+						produtos = lstSalas[id_pedido].produtos;
+
+					if(produtos.length > 0){
+
+		                resultado = "<div class='tituloInfo'><span class='centralizar_texto'>Nome do Garçom</span></div> " +
+		                                        "<div class='divisoria'> " +
+		                                        "</div><div class='tituloInfoPequeno'><span class='centralizar_texto'>Mesa</span></div> " +
+		                                        "<div class='conteudoInfo'><span class='centralizar_texto'>"+nomegarcom+"</span></div> " +
+		                                        "<div class='divisoriaB'></div> " +
+		                                        "<div class='conteudoInfoPequeno'><span class='centralizar_texto'>"+nomemesa+"</span></div>";
+					}
+				}
+
+				client.emit("resultadoGarcomMesa", resultado);
+
+				var contador = 0,
+					resultado = "",
+					produtos = lstSalas[id_pedido].produtos;
+
+				while(contador < produtos.length){
+					nomeproduto = produtos[contador].nome,
+					idproduto = produtos[contador].id_produto;
+					qntd = produtos[contador].qtd;
+
+				   resultado = resultado +  "<div class='tituloInfo_caixa' onclick='mostrarIngrendientes("+idproduto+")'> " +
+											"<div class='tituloInfoPequenoQntI'><span class='centralizar_texto'>Quantidade</span></div> " +
+											"<div class='divisoria'></div> " +
+											"<div class='tituloInfoQntI'><span class='centralizar_texto'>Nome Produto</span></div> " +
+											"<div class='conteudoInfoPequeno'><span class='centralizar_texto'>"+qntd+"</span></div>" +
+											"<div class='divisoriaB'></div> " +
+											"<div class='conteudoInfo'><span class='centralizar_texto'>"+nomeproduto+"</span></div> " +
+											"</div>" +
+											"<div id='titulo_ingredientes"+idproduto+"' class='tituloIng'><span class='centralizar_texto'>Ingredientes</span></div>" +
+											"<div id='div_ingredientesNomes"+idproduto+"' class='div_ingredientesNomes'></div>";
+
+					contador = contador + 1;
+				}
+				client.emit("resultadoProdutoQntd", resultado);
+
+            });
+		}
+    });
+
+    client.on("selectIngredientesProdutos", function(idproduto){
+        var command = "select ip.quantidade, i.nome as 'nome_ingrediente', ip.detalhe, ti.sigla from tbl_ingredienteproduto as ip " +
+                       "inner join tbl_ingrediente as i on i.id_ingrediente = ip.id_ingrediente " +
+                       "inner join tbl_tipounit as ti on ti.id_tipounit = ip.id_tipounit " +
+                       "where id_produto = "+idproduto;
+
+        con.query(command, function(err, result, fields){
+            var contador = 0;
+                resultado = "";
+            while(contador < result.length){
+                var quantidade = result[contador].quantidade,
+                    nomeingrediente = result[contador].nome_ingrediente,
+                    detalhe = result[contador].detalhe,
+                    sigla = result[contador].sigla;
+
+                resultado = resultado + "<p>"+quantidade+""+sigla+" de "+nomeingrediente+" "+detalhe+"</p>";
+
+                contador = contador + 1;
+            }
+            client.emit("resultadoIngredienteProduto"+idproduto, resultado);
+        });
+    });
+
+    client.on("mudarStatus", function(idstatus, idpedido){
+
+        var command = "select nome from tbl_status where id_status = "+idstatus;
+
+        con.query(command, function(err, result, fields){
+            var nomestatus = result[0].nome;
+            lstSalas[idpedido].status = idstatus;
+            lstSalas[idpedido].status_nome = nomestatus;
+        });
+    });
 
 });
 
@@ -404,6 +541,25 @@ app.get('/criacaoSala', function(req, res){
 
 });
 
+app.get('/selectBancos',function(req,res){
+
+	var command = "select * from tbl_banco"
+		verificador = 0;
+
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		if (result.length > 0){
+			res.send(result);
+		}else{
+			res.send({mensagem : "Ocorreu um erro de conexão. Tente novamente mais tarde."});
+		}
+
+
+	});
+
+});
+
 app.get('/finalizarPedidoFisico', function(req, res){
 	var _id_sala = req.query.id_sala;
 	var _id_cliente = lstSalas[_id_sala].id_cliente;
@@ -412,46 +568,41 @@ app.get('/finalizarPedidoFisico', function(req, res){
 		lstSalas[_id_sala] = {};
 		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
 	}else{
-		var d = new Date();
-		var day = d.getDate();
-		var month = d.getMonth() + 1;
-		var year = d.getFullYear();
-		var dataAtual = year + "-" + month + "-" + day;
 
+		var qtd_produtos = lstSalas[_id_sala].produtos;
 		var command = "insert into tbl_pedido (id_funcionario, id_cliente, data) "+
-									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + dataAtual + "')";
-
+									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', now())";
+		var id_pedido;
 		con.query(command, function(err){
 			if (err) throw err + command;
 
-		});
-		var id_pedido;
-		var command2 = "select * from tbl_pedido order by id_pedido limit 0,1";
+			var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
 
-		con.query(command2, function(err2,result2,fields2){
-			if (err2) throw err2 + command2;
-			id_pedido = result2[0].id_pedido;
+			con.query(command2, function(err2,result2,fields2){
+				if (err2) throw err2 + command2;
+				id_pedido = result2[0].id_pedido;
 
-			var produtos = lstSalas[_id_sala].produtos;
-			var contador = 0;
+				var produtos = lstSalas[_id_sala].produtos;
+				var contador = 0;
 
-			while (contador < produtos.lenght){
+				while (contador < produtos.length){
 
-				var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-				"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
+					var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+					"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
 
-				con.query(command3, function(err3){
-					if (err) throw err + command;
-				});
+					con.query(command3, function(err3){
+						if (err3) throw err3 + command3;
+					});
 
-				contador = contador + 1;
-			}
+					contador = contador + 1;
+				}
 
 
-			io.sockets.emit("pedido_finalizado",  _id_cliente);
-			lstSalas[_id_sala] = {};
+				io.sockets.emit("pedido_finalizado",  _id_cliente);
+				lstSalas[_id_sala] = {};
 
-			res.send({mensagem : "Finalizado com sucesso."});
+				res.send({mensagem : "Finalizado com sucesso."});
+			});
 		});
 	}
 
@@ -471,7 +622,28 @@ app.get('/adicionarProduto', function(req, res){
 		_produtos.push({id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem,status : 0, nome_status : "Em espera"});
 
 		res.send({mensagem : "Sucesso."});
-		io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
+
+		var command2 = "select e.uf as 'uf', r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
+										"inner join tbl_restaurante as r "+
+										"on f.id_restaurante = r.id_restaurante "+
+										"inner join tbl_endereco as en "+
+										"on r.id_endereco = en.id_endereco "+
+										"inner join tbl_cidade as c "+
+										"on c.id_cidade = en.id_cidade "+
+										"inner join tbl_estado as e "+
+										"on e.id_estado = c.id_estado "+
+										"where f.id_funcionario = '" + lstSalas[id_pedido].id_funcionario + "'";
+
+		con.query(command2, function(err2, result2, fields2){
+			if (err2) throw err2 + command2;
+
+
+			io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
+			io.emit("selectPedidos", result2[0].id_rest);
+
+		});
+
+
 	});
 });
 
