@@ -82,11 +82,6 @@ public class FragmentPedidoGarcom extends Fragment {
 
                     if (args.length > 0) {
 
-                        Log.d("socket", args[0].toString());
-                        String json = args[0].toString();
-
-                        final NossosRestaurantesListView item = new Gson().fromJson(json, NossosRestaurantesListView.class);
-
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

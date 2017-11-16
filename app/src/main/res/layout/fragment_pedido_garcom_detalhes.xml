@@ -124,9 +124,33 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/corAzulMarinho"
+            android:layout_gravity="bottom"
+            android:padding="5dp"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:padding="3dp"
+                android:text="Finalizar pedido"
+                android:layout_weight="1"
+                android:id="@+id/btn_finalizar_pedido"/>
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:textColor="@color/corVerde"
+                android:text="R$ 0,00"
+                android:gravity="center|right"
+                android:id="@+id/txt_precoTotal"/>
+        </LinearLayout>
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,5 +161,21 @@
                         android:id="@+id/list_pedidos_produtos"></com.theribssh.www.MyListView>
                 </LinearLayout>
         </ScrollView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:layout_weight="1"
+        android:gravity="bottom">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/corAzulMarinho"
+            android:textColor="@color/corLaranja"
+            android:text="ADICIONAR PRODUTO"
+            android:id="@+id/btn_add_produto">
+
+        </Button>
     </LinearLayout>
 </LinearLayout>

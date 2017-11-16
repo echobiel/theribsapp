@@ -9,14 +9,14 @@ import java.util.Date;
 public class PedidoGarcom {
     private int id_sala;
     private String qr_code;
-    private String codigoMesa;
+    private String mesa;
     private String status_nome;
     private Date data;
 
-    public PedidoGarcom(int id_sala, String qr_code, String codigoMesa, String status_nome,Date data){
+    public PedidoGarcom(int id_sala, String qr_code, String mesa, String status_nome,Date data){
         setId_sala(id_sala);
         setQr_code(qr_code);
-        setCodigoMesa(codigoMesa);
+        setCodigoMesa(mesa);
         setData(data);
         setStatus_nome(status_nome);
     }
@@ -54,10 +54,10 @@ public class PedidoGarcom {
     }
 
     public String getCodigoMesa() {
-        return codigoMesa;
+        return mesa;
     }
 
     public void setCodigoMesa(String codigoMesa) {
-        this.codigoMesa = codigoMesa;
+        this.mesa = codigoMesa;
     }
 }

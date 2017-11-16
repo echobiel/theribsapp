@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <com.theribssh.www.MyListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_produtos"
+            android:descendantFocusability="blocksDescendants">
+
+        </com.theribssh.www.MyListView>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="bottom">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/corAzulMarinho"
+            android:textColor="@color/corLaranja"
+            android:text="SELECIONAR PRODUTO"
+            android:id="@+id/btn_selecionar_produto"
+            />
+    </LinearLayout>
+</LinearLayout>

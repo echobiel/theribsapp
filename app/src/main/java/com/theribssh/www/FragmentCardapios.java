@@ -38,17 +38,6 @@ public class FragmentCardapios extends Fragment {
      */
     private ViewPager mViewPager;
 
-   /* private ArrayList<String> preencherDados() {
-        ArrayList<String> dados = new ArrayList<String>();
-
-        dados.add("cardapio");
-        dados.add("cardapio");
-        dados.add("cardapio");
-        dados.add("cardapio");
-
-        return dados;
-    } */
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

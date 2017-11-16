@@ -134,9 +134,6 @@ public class FragmentPedidoClient extends Fragment {
                             txt_result.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //Create vibrate
-                                    Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                                    vibrator.vibrate(500);
 
                                     codigo = qrcodes.valueAt(0).displayValue;
 
@@ -163,18 +160,6 @@ public class FragmentPedidoClient extends Fragment {
         dfpc.show(ft, "dialog");
     }
 
-    public void closePedido(){
-        ((MainActivity)getActivity()).setVerificadorDialog(0);
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentPedidoCliente dfpc = (DialogFragmentPedidoCliente) ((MainActivity)getActivity())
-                .getSupportFragmentManager().findFragmentByTag("dialog");
-
-        if (dfpc != null){
-            dfpc.dismiss();
-            ft.remove(dfpc);
-        }
-    }
-
     public class AutenticacaoSala extends AsyncTask<Void, Void, Void>{
 
         String json;
@@ -192,8 +177,6 @@ public class FragmentPedidoClient extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            Toast.makeText(((MainActivity)getActivity()), "", Toast.LENGTH_LONG).show();
-
             try {
                 Gson gson = new Gson();
                 resultado = gson.fromJson(json, new TypeToken<SalaPedido>() {
@@ -206,6 +189,8 @@ public class FragmentPedidoClient extends Fragment {
                     int id_sala = resultado.getId_sala();
 
                     intent.putExtra("id_sala",id_sala);
+
+                    cameraSource.stop();
 
                     openPedido();
 

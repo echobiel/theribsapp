@@ -209,7 +209,8 @@ app.get('/autenticarSala', function(req, res){
 	var contador = 0,
 			verificador = 0,
 			_id_funcionario = 0,
-			_id_sala = 0;
+			_id_sala = 0,
+			_nome = "";
 
 	while (contador < lstSalas.length){
 
@@ -218,7 +219,24 @@ app.get('/autenticarSala', function(req, res){
 			_id_funcionario = lstSalas[contador].id_funcionario;
 			_id_sala = lstSalas[contador].id_sala;
 			lstSalas[contador].id_cliente = _id_cliente;
-			res.send({ mensagem : "Autenticado com sucesso.", id_sala : lstSalas[contador].id_sala });
+			lstSalas[contador].nome_cliente = _nome;
+
+			var command = "select nome from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+
+			con.query(command, function(err, result, fields){
+				if (err) throw err + command;
+
+				_nome = result[0].nome;
+
+				lstSalas[contador].nome_cliente = _nome;
+
+				console.log(_id_sala + " / " + _nome);
+
+				res.send({ mensagem : "Autenticado com sucesso.", id_sala : _id_sala });
+			});
+
+			break;
+
 		}
 
 		contador = contador + 1;
@@ -230,6 +248,10 @@ app.get('/autenticarSala', function(req, res){
 
 		io.sockets.emit("novo_pedido_autenticado", {funcionario : _id_funcionario, id_sala : _id_sala});
 	}
+});
+
+app.get('/selectProdutos', function(req, res){
+
 });
 
 app.get('/mesaSala', function(req, res){
@@ -303,13 +325,87 @@ app.get('/criacaoSala', function(req, res){
 
 			var _id_restaurante = result[0].id_rest;
 
-			var s = {id_sala : _id_sala, id_restaurante : _id_restaurante, id_cliente : 0, id_mesa : 0, nome_cliente : "", status_nome : "Em espera", id_funcionario : _id_funcionario, codigo_mesa : "", tamanho : _tamanho, qr_code : _qr_code, status : 0, mensagem : "Sala criada com sucesso."};
+			var s = {id_sala : _id_sala, id_restaurante : _id_restaurante, id_cliente : 0, id_mesa : 0, nome_cliente : "", status_nome : "Em espera", id_funcionario : _id_funcionario, mesa : "", tamanho : _tamanho, qr_code : _qr_code, status : 0, mensagem : "Sala criada com sucesso."};
 
 			lstSalas.push(s);
 
 			//res.send({id_sala : _id_sala, id_funcionario : _id_funcionario, produtos : lstProdutos[_id_sala], tamanho : lstProdutos[_id_sala].length});
 			res.send(lstSalas[_id_sala]);
 			io.sockets.emit("novo_pedido", lstSalas[_id_sala]);
+		}else{
+			res.send({mensagem : "Ocorreu um erro durante a conexão. Tente novamente mais tarde."});
+		}
+
+	});
+
+});
+
+app.get('/adicionarMesa', function(req,res){
+	var _id_mesa = req.query.id_mesa,
+			_nome = req.query.nome,
+			_id_pedido = req.query.id_pedido;
+
+	var contador = 0,
+			verificador = 0;
+
+	while (contador < lstSalas.length){
+
+		if (_id_pedido == lstSalas[contador].id_sala){
+
+				lstSalas[contador].id_mesa = _id_mesa;
+				lstSalas[contador].mesa = _nome;
+
+				verificador = 1;
+
+				res.send({id_mesa : _id_mesa, nome : "Selecionado com sucesso."});
+				io.sockets.emit("novo_pedido", lstSalas[contador]);
+				break;
+		}
+
+		contador = contador + 1;
+	}
+
+	if (verificador == 0){
+		res.send({id_mesa : _id_mesa,nome : "Ocorreu um erro. Tente novamente mais tarde."});
+	}
+});
+
+app.get('/mesas', function(req, res){
+
+	var _id_funcionario = req.query.id_funcionario;
+
+	var command = "select r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
+									"inner join tbl_restaurante as r "+
+									"on f.id_restaurante = r.id_restaurante "+
+									"where f.id_funcionario = '" + _id_funcionario + "'";
+
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		if (result.length > 0){
+
+			var _id_restaurante = result[0].id_rest;
+
+			var command2 = "select m.id_mesa as 'id_mesa', m.nome as 'nome' from tbl_mesa as m "+
+										 "where id_restaurante = '" + _id_restaurante +"'";
+
+			con.query(command2, function(err2, result2, fields2){
+
+				var contador = 0,
+						lstMesas = [];
+
+				while (contador < result2.length){
+
+					var m = {id_mesa : result2[contador].id_mesa, nome : result2[contador].nome};
+
+					lstMesas.push(m);
+
+					contador = contador + 1;
+				}
+
+				res.send(lstMesas);
+
+			});
 		}else{
 			res.send({mensagem : "Ocorreu um erro durante a conexão. Tente novamente mais tarde."});
 		}

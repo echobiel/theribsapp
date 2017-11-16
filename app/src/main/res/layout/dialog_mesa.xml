@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:orientation="vertical" android:layout_width="200dp"
+    android:layout_height="200dp"
+    android:background="#ddd"
+    android:gravity="center">
 
     <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#ddd"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="Indique a mesa"
+            android:background="@color/corAzulMarinho"
+            android:textColor="@color/corLaranja"
+            android:textSize="20dp"
+            android:gravity="center"/>
         <Spinner
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="50dp"
             android:spinnerMode="dialog"
-            android:id="@+id/spinner_mesa">
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"
+            android:id="@+id/spinner_mesa"
+            android:background="#fff"
+            android:gravity="center">
         </Spinner>
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/corAzulMarinho"
+            android:textColor="@color/corLaranja"
+            android:text="Selecionar"
+            android:id="@+id/btn_salvar_mesa"/>
     </LinearLayout>
 
 </LinearLayout>

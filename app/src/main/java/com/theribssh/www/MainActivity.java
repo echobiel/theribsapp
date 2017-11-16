@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity
     TextView title_bem_vindo;
     String foto, nomeUser;
     int verificadorDialog = 0;
+    int id_pedido;
+    int id_produto;
+    int qtd_produto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,55 +200,76 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public int getId_pedido() {
+        return id_pedido;
+    }
+
+    public void setId_pedido(int id_pedido) {
+        this.id_pedido = id_pedido;
+    }
+
+    public int getId_produto() {
+        return id_produto;
+    }
+
+    public void setId_produto(int id_produto) {
+        this.id_produto = id_produto;
+    }
+
+    public int getQtd_produto() {
+        return qtd_produto;
+    }
+
+    public void setQtd_produto(int qtd_produto) {
+        this.qtd_produto = qtd_produto;
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (listTelas.size() - 1 > 0){
-            if (verificadorDialog == 1) {
+            //Armazenando o index o qual será redirecionado
+            int indexNextItem = listTelas.size() - 2;
+            //Armazenando o index o qual será excluido da lista
+            int indexRemoveItem = listTelas.size() - 1;
+            //Armazenando o numero representativo do item menu
+            int itemMenu = listTelas.get(indexNextItem);
+            //Selecionando o item do menu
+            navigationView.setCheckedItem(itemMenu);
+            listTelas.remove(indexRemoveItem);
 
+            int itemId;
+
+            if (itemMenu == 0){
+                itemId = R.id.nav_home;
+            }else if (itemMenu == 1){
+                itemId = R.id.nav_scan_pedido;
+            }else if (itemMenu == 2){
+                itemId = R.id.nav_pedido_garcom;
+            }else if (itemMenu == 3){
+                itemId = R.id.nav_perfil_garcom;
+            }else if (itemMenu == 4){
+                itemId = R.id.nav_perfil_cliente;
+            }else if (itemMenu == 5){
+                itemId = R.id.nav_cadastro_cliente;
+            }else if (itemMenu == 6){
+                itemId = R.id.nav_cardapio;
+            }else if (itemMenu == 7) {
+                itemId = R.id.nav_fale_conosco;
+            }else if (itemMenu == 8){
+                itemId = R.id.nav_historicos;
+            }else if (itemMenu == 9){
+                itemId = R.id.nav_login;
+            }else if (itemMenu == 10){
+                itemId = R.id.nav_nossos_restaurantes;
             }else{
-                //Armazenando o index o qual será redirecionado
-                int indexNextItem = listTelas.size() - 2;
-                //Armazenando o index o qual será excluido da lista
-                int indexRemoveItem = listTelas.size() - 1;
-                //Armazenando o numero representativo do item menu
-                int itemMenu = listTelas.get(indexNextItem);
-                //Selecionando o item do menu
-                navigationView.setCheckedItem(itemMenu);
-                listTelas.remove(indexRemoveItem);
-
-                int itemId;
-
-                if (itemMenu == 0){
-                    itemId = R.id.nav_home;
-                }else if (itemMenu == 1){
-                    itemId = R.id.nav_scan_pedido;
-                }else if (itemMenu == 2){
-                    itemId = R.id.nav_pedido_garcom;
-                }else if (itemMenu == 3){
-                    itemId = R.id.nav_perfil_garcom;
-                }else if (itemMenu == 4){
-                    itemId = R.id.nav_perfil_cliente;
-                }else if (itemMenu == 5){
-                    itemId = R.id.nav_cadastro_cliente;
-                }else if (itemMenu == 6){
-                    itemId = R.id.nav_cardapio;
-                }else if (itemMenu == 7) {
-                    itemId = R.id.nav_fale_conosco;
-                }else if (itemMenu == 8){
-                    itemId = R.id.nav_historicos;
-                }else if (itemMenu == 9){
-                    itemId = R.id.nav_login;
-                }else if (itemMenu == 10){
-                    itemId = R.id.nav_nossos_restaurantes;
-                }else{
-                    itemId = R.id.nav_home;
-                }
-
-                previouslyFragment(itemId);
+                itemId = R.id.nav_home;
             }
+
+            previouslyFragment(itemId);
+
         } else{
             finish();
             super.onBackPressed();

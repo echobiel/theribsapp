@@ -25,9 +25,7 @@ public class FragmentNossosRestaurantes extends Fragment{
     ListView list_view_nossos_restaurantes;
     List<NossosRestaurantesListView> lstRestaurantes = new ArrayList<>();
     NossosRestaurantesAdapter adapter;
-    Emitter.Listener emitterListener;
     FloatingActionButton fab;
-    Socket socket;
     Activity act;
 
     @Nullable
@@ -64,9 +62,8 @@ public class FragmentNossosRestaurantes extends Fragment{
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            String href = "http://10.0.2.2:8888/selectRestaurante";
+            String href = String.format("http://%s/selectRestaurante", getResources().getString(R.string.ip_node));
             json = HttpConnection.get(href);
-
 
             return null;
         }

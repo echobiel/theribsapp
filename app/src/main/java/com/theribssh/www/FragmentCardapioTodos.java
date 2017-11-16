@@ -55,7 +55,7 @@ public class FragmentCardapioTodos extends Fragment {
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            String href = "http://10.0.2.2:8888/selectCardapio";
+            String href = String.format("http://%s/selectCardapio", getResources().getString(R.string.ip_node));
             json = HttpConnection.get(href);
 
             return null;

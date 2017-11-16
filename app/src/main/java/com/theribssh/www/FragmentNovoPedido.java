@@ -72,6 +72,8 @@ public class FragmentNovoPedido extends Fragment {
 
         id_funcionario = intent.getIntExtra("id_usuario",0);
 
+        Log.d("TESTID", id_funcionario + "");
+
         configurandoBotoesFlutuantes();
 
         String text2Qr = "Não foi gerado um código ainda";
@@ -98,7 +100,7 @@ public class FragmentNovoPedido extends Fragment {
                         @Override
                         public void run() {
 
-                            trocaDeTela();
+                            openPedido();
                         }
                     });
 
@@ -113,21 +115,24 @@ public class FragmentNovoPedido extends Fragment {
 
 
     public void openPedido(){
+        closePedido();
+
+        Log.d("TESTID", id_pedido + " / " + id_funcionario);
         ((MainActivity)getActivity()).setVerificadorDialog(1);
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentPedidoCliente dfpc = new DialogFragmentPedidoCliente(4,3);
-        dfpc.show(ft, "dialog");
+        DialogFragmentMesa dfm = new DialogFragmentMesa(1, 2, id_pedido, id_funcionario);
+        dfm.show(ft, "dialog");
     }
 
     public void closePedido(){
         ((MainActivity)getActivity()).setVerificadorDialog(0);
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentPedidoCliente dfpc = (DialogFragmentPedidoCliente) ((MainActivity)getActivity())
+        DialogFragmentMesa dfm = (DialogFragmentMesa) ((MainActivity)getActivity())
                 .getSupportFragmentManager().findFragmentByTag("dialog");
 
-        if (dfpc != null){
-            dfpc.dismiss();
-            ft.remove(dfpc);
+        if (dfm != null){
+            dfm.dismiss();
+            ft.remove(dfm);
         }
     }
 
@@ -146,9 +151,7 @@ public class FragmentNovoPedido extends Fragment {
         return socket;
     }
 
-    public void trocaDeTela(){
-        ((MainActivity)getActivity()).detalhesPedidoGarcom(id_pedido);
-    }
+
 
     private void configurandoBotoesFlutuantes() {
         btn_client_sem_cadastro.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +204,8 @@ public class FragmentNovoPedido extends Fragment {
                 } else {
                     qr_code = resultado.getQr_code();
                     id_pedido = resultado.getId_sala();
+
+                    Log.d("TESTID", id_pedido + "");
 
                     MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 

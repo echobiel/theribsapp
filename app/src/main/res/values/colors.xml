@@ -6,6 +6,8 @@
     <color name="corVinho">#800000</color>
     <color name="corPreto">#000000</color>
     <color name="corAzulMarinho">#11202a</color>
+    <color name="corCinza">#ddd</color>
+    <color name="corBranco">#fff</color>
     <color name="corLaranja">#e25909</color>
     <color name="corVerde">#10c216</color>
 </resources>
