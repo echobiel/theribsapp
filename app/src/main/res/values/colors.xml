@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#11202a</color>
+    <color name="colorPrimary">#200b00</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#2d2d2d</color>
     <color name="corVinho">#800000</color>
@@ -8,6 +8,8 @@
     <color name="corAzulMarinho">#11202a</color>
     <color name="corCinza">#ddd</color>
     <color name="corBranco">#fff</color>
+    <color name="corMarromClaro">#441a1a</color>
+    <color name="corMarromEscuro">#200b00</color>
     <color name="corLaranja">#e25909</color>
     <color name="corVerde">#10c216</color>
 </resources>

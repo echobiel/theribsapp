@@ -9,13 +9,13 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
-	  //host: "localhost",
+	  //host: "10.107.144.13",
+	  host: "localhost",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
-	  password: "bcd127",
-	  //password: "",
+	  //password: "bcd127",
+	  password: "",
 	  database: "dbtheribssh"
 	});
 
