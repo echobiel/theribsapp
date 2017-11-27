@@ -198,6 +198,111 @@ app.get('/selectCardapio', function(req, res){
 
 });
 
+app.get('/selectCliente', function(req, res){
+	var id_cliente = req.query.id_usuario;
+
+	if (typeof id_cliente != 'undefined'){
+
+		var command = "select c.login as 'login', c.senha as 'senha', c.nome as 'nome', c.sobrenome as 'sobrenome', "+
+		"c.celular as 'celular', c.telefone as 'telefone', c.email as 'email', c.foto as 'foto', "+
+		"e.logradouro as 'logradouro', e.bairro as 'bairro', e.rua as 'rua', e.numero as 'numero', "+
+		"cc.numero as 'numerocartao', cc.nome_cartao as 'nomereg', cc.cvv as 'cvv', cc.data as 'vencimento', "+
+		"cc.id_cartaocredito as 'id_cartaocredito', ci.id_cidade as 'id_cidade', es.id_estado as 'id_estado' "+
+		"from tbl_cliente as c "+
+		"inner join tbl_endereco as e "+
+		"on c.id_endereco = e.id_endereco "+
+		"inner join tbl_cidade as ci "+
+		"on ci.id_cidade = e.id_cidade "+
+		"inner join tbl_estado as es "+
+		"on ci.id_estado = es.id_estado "+
+		"left join tbl_cartaocredito as cc "+
+		"on cc.id_cliente = c.id_cliente "+
+		"left join tbl_banco as b "+
+		"on b.id_banco = cc.id_banco "+
+		"where c.id_cliente = '" + id_cliente + "'";
+
+		con.query(command, function(err, result, fields){
+			if (err) throw err + command;
+
+			res.send(result);
+		});
+	}else{
+		res.send({mensagem : "Não logado."});
+	}
+});
+
+app.get('/cadastrarUsuario', function(req, res){
+
+  var login = req.query.login,
+		senha = req.query.senha,
+		nome = req.query.nome,
+		sobrenome = req.query.sobrenome,
+		celular = req.query.celular,
+		telefone = req.query.telefone,
+		email = req.query.email,
+		logradouro = req.query.logradouro,
+		numero = req.query.numero,
+		bairro = req.query.bairro,
+		rua = req.query.rua,
+		nome_cartao = req.query.nome_cartao,
+		cvv = req.query.cvv,
+		vencimento = req.query.vencimento,
+		id_banco = req.query.id_banco,
+		id_cidade = req.query.id_cidade;
+
+  if (login == "" || senha == "" || nome == "" || sobrenome == "" || celular == "" || telefone == "" || email == "" || senha == "" || logradouro == "" || numero == "" || bairro == "" || rua == ""){
+		res.send({mensagem : "Verifique todos os campos com * e preencha-os"});
+  }else{
+		var commandVer = "select * from tbl_cliente where login = '" + login + "'";
+
+		con.query(commandVer, function(errVer, resultVer, fieldsVer){
+			if (errVer) throw errVer + commandVer;
+
+			if (resultVer.length == 0){
+
+				var commandVer2 = "select * from tbl_cliente where email = '" + email + "'";
+
+				con.query(commandVer2, function(errVer2, resultVer2, fieldVer2){
+					if (errVer2) throw errVer2 + commandVer2;
+
+					if (resultVer2.length == 0){
+
+						var command = "insert into tbl_endereco(id_cidade, logradouro, bairro, rua, numero) "+
+						"values('" + id_cidade + "', '" + logradouro + "', '" + bairro + "', '" + rua + "', '" + numero + "')";
+
+						con.query(command, function(err, result, fields){
+							if (err) throw err + command;
+
+							var command2 = "select * from tbl_endereco order by id_endereco desc limit 0,1";
+
+							con.query(command2, function(err2, result2, fields2){
+								if (err2) throw err2 + command2;
+
+								var command3 = "insert into tbl_cliente(id_endereco, login, senha, nome, sobrenome, email, celular, telefone, foto) " +
+								"values('" + result2[0].id_endereco + "', '" + login + "', '" + senha + "', '" + nome + "', '" + sobrenome + "', '" + email + "', '" + celular + "', '" + telefone + "', 'arquivos/foto_usuario/standardUser.png')";
+
+								con.query(command3, function(err3, result3, fields3){
+									if (err3) throw err3 + command3;
+
+									res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se."});
+								});
+							});
+						});
+
+					}else{
+						res.send({mensagem : "E-mail já em uso."});
+					}
+				});
+			}else{
+				res.send({mensagem : "Login já em uso."});
+			}
+		});
+	}
+
+
+
+});
+
 app.get('/selectHistoricoPedidos', function(req, res){
 
   var command = "select p.id_pedido as 'idpedido', r.nome as 'restaurante', p.data as 'data' from tbl_pedido as p " +
@@ -555,6 +660,41 @@ app.get('/selectBancos',function(req,res){
 			res.send({mensagem : "Ocorreu um erro de conexão. Tente novamente mais tarde."});
 		}
 
+
+	});
+
+});
+
+app.get('/selectEstados',function(req,res){
+
+	var command = "select * from tbl_estado";
+
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		if (result.length > 0){
+			res.send(result);
+		}else{
+			res.send({mensagem : "Ocorreu um erro de conexão. Tente novamente mais tarde."});
+		}
+
+
+	});
+
+});
+
+app.get('/selectCidades',function(req,res){
+
+	var command = "select * from tbl_cidade where id_estado = " + req.query.id_estado;
+
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		if (result.length > 0){
+			res.send(result);
+		}else{
+			res.send({mensagem : "Ocorreu um erro de conexão. Tente novamente mais tarde."});
+		}
 
 	});
 

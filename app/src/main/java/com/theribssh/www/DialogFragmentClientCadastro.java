@@ -123,17 +123,6 @@ public class DialogFragmentClientCadastro extends DialogFragment {
         }
     }
 
-    public void closeMesa(){
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentMesa dfm = (DialogFragmentMesa) ((MainActivity)getActivity())
-                .getSupportFragmentManager().findFragmentByTag("dialog");
-
-        if (dfm != null){
-            dfm.dismiss();
-            ft.remove(dfm);
-        }
-    }
-
     private class AutenticadorTask extends AsyncTask <Void, Void, Void>{
 
         String json;

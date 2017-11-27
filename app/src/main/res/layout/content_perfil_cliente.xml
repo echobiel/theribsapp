@@ -19,6 +19,7 @@
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
             android:id="@+id/img_user"
+            android:background="@drawable/standarduser"
             />
 
         <LinearLayout
@@ -174,31 +175,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Endereço: "
-                android:textColor="@color/corVinho"
-                android:layout_gravity="center"
-                android:textSize="18dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rua Maria Siqueira"
-                android:textColor="@color/corPreto"
-                android:layout_gravity="center"
-                android:textSize="18dp"
-                android:id="@+id/text_view_endereco"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="Número: "
                 android:textColor="@color/corVinho"
                 android:layout_gravity="center"
@@ -236,6 +212,31 @@
                 android:layout_gravity="center"
                 android:textSize="18dp"
                 android:id="@+id/text_view_bairro"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rua: "
+                android:textColor="@color/corVinho"
+                android:layout_gravity="center"
+                android:textSize="18dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jardim Silveira"
+                android:textColor="@color/corPreto"
+                android:layout_gravity="center"
+                android:textSize="18dp"
+                android:id="@+id/text_view_rua"/>
 
         </LinearLayout>
 

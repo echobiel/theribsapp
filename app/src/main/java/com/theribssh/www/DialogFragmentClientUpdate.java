@@ -1,13 +1,17 @@
 package com.theribssh.www;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,19 +29,24 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentCadastroCliente extends Fragment {
+/**
+ * Created by echobiel on 13/11/2017.
+ */
 
+@SuppressLint("ValidFragment")
+public class DialogFragmentClientUpdate extends DialogFragment {
+
+    private int numStyle;
+    private int numTheme;
+    Activity act;
     Spinner spinner_bandeira_cartao;
     Spinner spinner_estado;
     Spinner spinner_cidade;
     EditText edit_text_login;
     EditText edit_text_senha;
     EditText edit_text_cfmsenha;
-    EditText edit_text_nome;
-    EditText edit_text_sobrenome;
     EditText edit_text_telefone;
     EditText edit_text_celular;
-    EditText edit_text_email;
     EditText edit_text_logradouro;
     EditText edit_text_numero;
     EditText edit_text_bairro;
@@ -45,8 +54,8 @@ public class FragmentCadastroCliente extends Fragment {
     EditText edit_text_numero_cartao;
     EditText edit_text_cvv;
     EditText edit_text_rua;
+    EditText edit_text_senhaatual;
     EditText edit_text_vencimento_cartao;
-    String urlStrings;
     List<Banco> bancos = new ArrayList<>();
     List<Estado> estados = new ArrayList<>();
     List<Cidade> cidades = new ArrayList<>();
@@ -54,12 +63,62 @@ public class FragmentCadastroCliente extends Fragment {
     TextWatcher cvvMask;
     TextWatcher celularMask;
     TextWatcher telefoneMask;
+    TextWatcher cartaoMask;
     int id_estado;
+    AutenticarUsuario resultado;
+    EditText edit_text_email;
+    EditText edit_text_nome;
+    EditText edit_text_sobrenome;
+    String urlStrings;
+    String email;
+    String nome;
+    String sobrenome;
+    FloatingActionButton fab;
+    List<UsuarioPerfilCliente> user;
+    View view;
+
+    @SuppressLint("ValidFragment")
+    public DialogFragmentClientUpdate(int numStyle, int numTheme, List<UsuarioPerfilCliente> user){
+        this.numStyle = numStyle;
+        this.numTheme = numTheme;
+        this.user = user;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i("Script", "onCreate()");
+
+        int style;
+        int theme;
+
+        switch(numStyle){
+            case 1: style = DialogFragment.STYLE_NO_TITLE; break;
+            case 2: style = DialogFragment.STYLE_NO_INPUT; break;
+            case 3: style = DialogFragment.STYLE_NO_FRAME; break;
+            default: style = DialogFragment.STYLE_NORMAL; break;
+        }
+
+        switch(numTheme){
+            case 1: theme = android.R.style.Theme_Holo_Light; break;
+            case 2: theme = android.R.style.Theme_Holo_Dialog; break;
+            default: theme = android.R.style.Theme_Holo_Light_DarkActionBar; break;
+        }
+
+        setStyle(style, theme);
+        setCancelable(true);
+    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_cadastro_cliente, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        Log.i("Script", "onCreateView()");
+
+        act = ((MainActivity)getActivity());
+
+        view = inflater.inflate(R.layout.activity_update_cliente, container);
 
         spinner_bandeira_cartao = (Spinner)view.findViewById(R.id.spinner_bandeira_cartao);
         spinner_estado = (Spinner)view.findViewById(R.id.spinner_estado);
@@ -68,6 +127,7 @@ public class FragmentCadastroCliente extends Fragment {
         edit_text_nome = (EditText)view.findViewById(R.id.edit_text_nome);
         edit_text_sobrenome = (EditText)view.findViewById(R.id.edit_text_sobrenome);
         edit_text_senha = (EditText)view.findViewById(R.id.edit_text_senha);
+        edit_text_senhaatual = (EditText)view.findViewById(R.id.edit_text_senhaatual);
         edit_text_cfmsenha = (EditText)view.findViewById(R.id.edit_text_cfmsenha);
         edit_text_celular = (EditText)view.findViewById(R.id.edit_text_celular);
         edit_text_telefone = (EditText)view.findViewById(R.id.edit_text_telefone);
@@ -85,11 +145,13 @@ public class FragmentCadastroCliente extends Fragment {
         cvvMask = Mask.insert("####",edit_text_cvv);
         celularMask = Mask.insert("(##)#####-####",edit_text_celular);
         telefoneMask = Mask.insert("(##)####-####",edit_text_telefone);
+        cartaoMask = Mask.insert("################",edit_text_numero_cartao);
 
         edit_text_vencimento_cartao.addTextChangedListener(dtValMask);
         edit_text_cvv.addTextChangedListener(cvvMask);
         edit_text_celular.addTextChangedListener(celularMask);
         edit_text_telefone.addTextChangedListener(telefoneMask);
+        edit_text_numero_cartao.addTextChangedListener(cartaoMask);
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +201,8 @@ public class FragmentCadastroCliente extends Fragment {
         new PegadorBancoTask().execute();
         new PegadorEstadoTask().execute();
 
+        PreencherDados();
+
         spinner_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -154,6 +218,54 @@ public class FragmentCadastroCliente extends Fragment {
         });
 
         return view;
+    }
+
+    private void PreencherDados() {
+        edit_text_bairro.setText(user.get(0).getBairro());
+        edit_text_celular.setText(user.get(0).getCelular());
+        edit_text_cvv.setText(user.get(0).getCvv());
+        edit_text_email.setText(user.get(0).getEmail());
+        edit_text_login.setText(user.get(0).getLogin());
+        edit_text_logradouro.setText(user.get(0).getLogradouro());
+        edit_text_nome.setText(user.get(0).getNome());
+        edit_text_sobrenome.setText(user.get(0).getSobrenome());
+        edit_text_nome_cartao.setText(user.get(0).getNomereg());
+        edit_text_numero.setText(user.get(0).getNumero());
+        edit_text_numero_cartao.setText(user.get(0).getNumerocartao());
+        edit_text_rua.setText(user.get(0).getRua());
+        edit_text_telefone.setText(user.get(0).getTelefone());
+        edit_text_vencimento_cartao.setText(user.get(0).getVencimento());
+    }
+
+    public void setSpinnerItemByIdEstado(Spinner spinner, int _id)
+    {
+        int spinnerCount = spinner.getCount();
+        for (int i = 0; i < spinnerCount; i++)
+        {
+            Estado value = (Estado) spinner.getItemAtPosition(i);
+            int id = value.getId_estado();
+
+            if (id == _id)
+            {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    public void setSpinnerItemByIdCidade(Spinner spinner, int _id)
+    {
+        int spinnerCount = spinner.getCount();
+        for (int i = 0; i < spinnerCount; i++)
+        {
+            Cidade value = (Cidade) spinner.getItemAtPosition(i);
+            long id = value.getId_cidade();
+            if (id == _id)
+            {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     public class InserirTask extends AsyncTask<Void, Void, Void>{
@@ -293,11 +405,38 @@ public class FragmentCadastroCliente extends Fragment {
                     spinner_cidade.setAdapter(mesaArrayAdapter);
                 }
 
+                setSpinnerItemByIdEstado(spinner_estado, user.get(0).getId_estado());
+                setSpinnerItemByIdCidade(spinner_cidade, user.get(0).getId_cidade());
+
             }catch(Exception e){
                 Log.d("Script", "catch onPostExecute");
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Verifique a sua conexão com a internet.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.i("Script", "onActivityCreated()");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.i("Script", "onAttach()");
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        Log.i("Script", "onCancel()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i("Script", "onDestroy()");
     }
 }
