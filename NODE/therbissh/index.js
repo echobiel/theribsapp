@@ -9,13 +9,13 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  //host: "10.107.144.13",
-	  host: "localhost",
+	  host: "10.107.144.13",
+	  //host: "localhost",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
-	  //password: "bcd127",
-	  password: "",
+	  password: "bcd127",
+	  //password: "",
 	  database: "dbtheribssh"
 	});
 
@@ -425,28 +425,23 @@ app.get('/autenticarUsuarioSala', function(req, res){
   var command = "select * from tbl_cliente where email = '" + _email + "' or login='" + _email + "' and senha = '" + _senha + "'";
 
   con.query(command, function(err, result, fields) {
-      if (err) throw err + command;
+	    if (err) throw err + command;
 
-      // Verificação das linhas no select
-      if (contador < result.length) {
+		  // Verificação das linhas no select
+		if (contador < result.length) {
+			var id = result[contador].id_cliente;
+			var nome = result[contador].nome;
+			lstSalas[_id_pedido].id_cliente = id;
+			lstSalas[_id_pedido].nome_cliente = nome;
+			resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
+			contador = contador + 1;
+		 }
 
-          var id = result[contador].id_cliente;
-          var nome = result[contador].nome;
-
-					lstSalas[_id_pedido].id_cliente = id;
-					lstSalas[_id_pedido].nome_cliente = nome;
-
-          resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
-
-          contador = contador + 1;
-
-      }
-
-      if (contador != 0){
-          res.send(resultadoFinal);
-      }else{
-				res.send({mensagem : "Usuário ou senha incorretos. Verifique e tente novamente."});
-			}
+		if (contador != 0){
+			res.send(resultadoFinal);
+		}else{
+			res.send({mensagem : "Usuário ou senha incorretos. Verifique e tente novamente."});
+		}
 
   });
 });
@@ -457,33 +452,33 @@ app.get('/autenticarUsuarioSalaCadastro', function(req, res){
 		_nome = req.query.nome,
 		_sobrenome = req.query.sobrenome,
 		_id_pedido = req.query.id_pedido,
-    resultadoFinal = {};
+		resultadoFinal = {};
 
 	if (typeof _nome != 'undefined' && typeof _sobrenome != 'undefined' && typeof _email != 'undefined'){
 
-	  var command = "insert into tbl_cliente(email,nome,sobrenome) values('" + _email + "', '" + _nome + "', '" + _sobrenome + "')";
+		var command = "insert into tbl_cliente(email,nome,sobrenome) values('" + _email + "', '" + _nome + "', '" + _sobrenome + "')";
 
-	  con.query(command, function(err, result, fields) {
-      if (err) throw err + command;
+		con.query(command, function(err, result, fields) {
+			if (err) throw err + command;
 
 			var command2 = "select * from tbl_cliente order by id_cliente desc limit 0,1";
 
 			con.query(command2, function(err2, result2, fields2){
 
-        var id = result2[0].id_cliente;
-        var nome = result2[0].nome;
+				var id = result2[0].id_cliente;
+				var nome = result2[0].nome;
 
 				console.log(lstSalas[_id_pedido]);
 
 				lstSalas[_id_pedido].id_cliente = id;
 				lstSalas[_id_pedido].nome_cliente = nome;
 
-        resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
+				resultadoFinal = {id_usuario : id, nome : nome, mensagem : 'Login efetuado com sucesso.'};
 
 				res.send(resultadoFinal);
 
 			});
-	  });
+		});
 	}else{
 		res.send({mensagem : "Dados incorretos. Verifique e tente novamente."});
 	}
@@ -710,8 +705,8 @@ app.get('/finalizarPedidoFisico', function(req, res){
 	}else{
 
 		var qtd_produtos = lstSalas[_id_sala].produtos;
-		var command = "insert into tbl_pedido (id_funcionario, id_cliente, data) "+
-									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', now())";
+		var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
+									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
 		var id_pedido;
 		con.query(command, function(err){
 			if (err) throw err + command;
