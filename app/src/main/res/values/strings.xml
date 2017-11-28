@@ -20,9 +20,9 @@
     <!--<string name="url_server">http://10.107.134.15/inf4t/theribssteakhouse/cms/</string>-->
     <!--<string name="url_server">http://10.107.134.26/inf4t/OPROJETOTAAQUI/cms/</string>-->
     <!--<string name="ip_node">www.theribssh.com:8100</string>-->
-    <string name="url_server">http://theribssh.com/inf4t/OPROJETOTAAQUI/cms/</string>
-    <string name="url_serverFotoCliente">http://theribssh.com/inf4t/OPROJETOTAAQUI/</string>
-    <string name="url_serverFotoFuncionario">http://theribssh.com/inf4t/OPROJETOTAAQUI/cms/</string>
+    <string name="url_server">http://theribssh.com/cms/</string>
+    <string name="url_serverFotoCliente">http://theribssh.com/</string>
+    <string name="url_serverFotoFuncionario">http://theribssh.com/cms/</string>
     <!--<string name="ip_node">10.0.2.2:8100</string>-->
     <!--<string name="ip_node">192.168.0.12:8100</string>-->
     <!--<string name="ip_node">10.107.144.9:8100</string>-->
