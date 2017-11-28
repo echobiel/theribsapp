@@ -9,13 +9,16 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
+	  //host: "10.107.144.13",
 	  //host: "localhost",
+	  host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
-	  user: "root",
-	  password: "bcd127",
+	  //user: "root",
+	  user: "theribssh",
+	  //password: "bcd127",
 	  //password: "",
+	  password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
 
@@ -175,8 +178,57 @@ app.get('/selectRestaurante', function(req, res){
 	"on r.id_endereco = e.id_endereco "+
 	"inner join tbl_cidade as c "+
 	"on c.id_cidade = e.id_cidade "+
-	"where r.id_restaurante = 2 "+
 	"order by r.id_restaurante asc";
+
+  con.query(command, function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+
+
+});
+
+app.get('/selectPeriodo', function(req, res){
+
+  var command = "select * from tbl_periodo";
+
+  con.query(command, function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+
+
+});
+
+app.get('/inserirFaleconosco', function(req, res){
+	
+	var nome = req.query.nome,
+		email = req.query.email,
+		celular = req.query.celular,
+		telefone = req.query.telefone,
+		obs = req.query.obs,
+		id_restaurante = req.query.id_unidade,
+		id_periodo = req.query.id_periodo,
+		id_tipoinfo = req.query.id_tipoinfo;
+	
+	if (nome == "" || email == "" || celular == ""){
+		res.send({mensagem : "Verifique todos os campos com * e preencha-os."});
+	}else{
+		var command = "insert into tbl_faleconosco(id_restaurante, id_tipoinfo, nome_completo, email, obs, celular, telefone) "+
+			"values('" + id_restaurante + "', '" + id_tipoinfo + "', '" + nome + "', '" + email + "', '" + obs + "', '" + celular + "', '" + telefone + "')";
+
+		con.query(command, function (err, result, fields) {
+			if (err) throw err;
+			res.send({mensagem : "Obrigado pelo contado. Sua informação foi enviada com sucesso."});
+		});
+		
+	}
+
+});
+
+app.get('/selectTipoInfo', function(req, res){
+
+  var command = "select * from tbl_tipoinfo";
 
   con.query(command, function (err, result, fields) {
     if (err) throw err;
@@ -207,7 +259,7 @@ app.get('/selectCliente', function(req, res){
 		"c.celular as 'celular', c.telefone as 'telefone', c.email as 'email', c.foto as 'foto', "+
 		"e.logradouro as 'logradouro', e.bairro as 'bairro', e.rua as 'rua', e.numero as 'numero', "+
 		"cc.numero as 'numerocartao', cc.nome_cartao as 'nomereg', cc.cvv as 'cvv', cc.data as 'vencimento', "+
-		"cc.id_cartaocredito as 'id_cartaocredito', ci.id_cidade as 'id_cidade', es.id_estado as 'id_estado' "+
+		"cc.id_cartaocredito as 'id_cartaocredito', ci.id_cidade as 'id_cidade', es.id_estado as 'id_estado', b.nome as 'bandeira' "+
 		"from tbl_cliente as c "+
 		"inner join tbl_endereco as e "+
 		"on c.id_endereco = e.id_endereco "+
@@ -242,6 +294,7 @@ app.get('/cadastrarUsuario', function(req, res){
 		email = req.query.email,
 		logradouro = req.query.logradouro,
 		numero = req.query.numero,
+		numero_cartao = req.query.numero_cartao,
 		bairro = req.query.bairro,
 		rua = req.query.rua,
 		nome_cartao = req.query.nome_cartao,
@@ -283,8 +336,27 @@ app.get('/cadastrarUsuario', function(req, res){
 
 								con.query(command3, function(err3, result3, fields3){
 									if (err3) throw err3 + command3;
-
-									res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se."});
+									
+									if (nome_cartao == "" || cvv == "" || vencimento == "" || id_banco == ""){
+										res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se. (O cartão não foi cadastrado por falta de dados)"});
+									}else{
+										var command4 = "select * from tbl_cliente where login = '" + login + "' and senha = '" + senha + "'";
+										
+										con.query(command4, function(err4, result4, fields4){
+											if (err4) throw err4 + command4;
+											
+											var command5 = "insert into tbl_cartaocredito(id_cliente, id_banco, numero, nome_cartao, data, cvv) "+
+												"values('" + result4[0].id_cliente + "', '" + id_banco + "', '" + numero_cartao + "', '" + nome_cartao + "', '" + vencimento + "', '" + cvv + "')";
+											
+											con.query(command5, function(err5, result5, fields5){
+												if (err5) throw err5 + command5;
+												
+												res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se."});
+											});
+										});
+									}
+									
+									
 								});
 							});
 						});
@@ -300,6 +372,99 @@ app.get('/cadastrarUsuario', function(req, res){
 	}
 
 
+
+});
+
+app.get('/updateUsuario', function(req, res){
+
+	var login = req.query.login,
+		senha = req.query.senha,
+		senhaatual = req.query.senhaatual,
+		nome = req.query.nome,
+		sobrenome = req.query.sobrenome,
+		celular = req.query.celular,
+		telefone = req.query.telefone,
+		email = req.query.email,
+		logradouro = req.query.logradouro,
+		numero = req.query.numero,
+		numero_cartao = req.query.numero_cartao,
+		bairro = req.query.bairro,
+		rua = req.query.rua,
+		nome_cartao = req.query.nome_cartao,
+		cvv = req.query.cvv,
+		vencimento = req.query.vencimento,
+		id_banco = req.query.id_banco,
+		id_cliente = req.query.id_cliente,
+		id_cidade = req.query.id_cidade;
+
+	if (login == "" || senha == "" || nome == "" || sobrenome == "" || celular == "" || telefone == "" || email == "" || senha == "" || logradouro == "" || numero == "" ||
+	bairro == "" || rua == ""){
+		res.send({mensagem : "Verifique todos os campos com * e preencha-os"});
+	}else{
+		
+		var commandVer = "select * from tbl_cliente where id_cliente = '" + id_cliente + "'";
+		
+		con.query(commandVer, function(errVer, resultVer, fieldsVer){
+			
+			if(senhaatual == resultVer[0].senha){
+			
+				var command = "update tbl_cliente set login = '" + login + "', senha = '" + senha + "', nome = '" + nome + "', sobrenome = '" + sobrenome + "', email = '" + email + "', celular = '" + celular + "', telefone = '" + telefone + "' where id_cliente = '" + id_cliente + "'";
+
+				con.query(command, function(err, result, fields){
+					if (err) throw err + command;
+					
+					var command2 = "update tbl_endereco set id_cidade = '" + id_cidade + "', logradouro = '" + logradouro + "', bairro = '" + bairro + "', rua = '" + rua + "', numero = '" + numero + "'";
+					
+					con.query(command2, function(err2, result2, fields2){
+						if (err2) throw err2 + command2;
+						
+						var command3 = "select * from tbl_cartaocredito where id_cliente = '" + id_cliente + "'";
+						
+						con.query(command3, function(err3, result3, fields3){
+							if (err3) throw err3 + command3;
+							
+							if (result3.length > 0){
+								if (nome_cartao == "" || cvv == "" || vencimento == "" || id_banco == ""){
+									var command4 = "delete from tbl_cartaocredito where id_cliente = '" + id_cliente + "'";
+									
+									con.query(command4, function(err4, result4, fields4){
+										if (err4) throw err4 + command4;
+										
+										res.send({mensagem : "Atualizado com sucesso."});
+									});
+								}else{
+									var command4 = "update tbl_cartaocredito set id_banco = '" + id_banco + "', numero = '" + numero_cartao + "', nome_cartao = '" + nome_cartao + "', data = '" + vencimento + "', cvv = '" + cvv + "' where id_cliente = '" + id_cliente + "'";
+									
+									con.query(command4, function(err4, result4, fields4){
+										if (err4) throw err4 + command4;
+										
+										res.send({mensagem : "Atualizado com sucesso."});
+									});
+								}
+							}else{
+								if (nome_cartao == "" || cvv == "" || vencimento == "" || id_banco == ""){
+									res.send({mensagem : "Atualizado com sucesso. (O cartão não foi cadastrado por falta de dados)"});
+								}else{
+									var command4 = "insert into tbl_cartaocredito(id_cliente, id_banco, numero, nome_cartao, data, cvv) "+
+										"values('" + id_cliente + "', '" + id_banco + "', '" + numero_cartao + "', '" + nome_cartao + "', '" + vencimento + "', '" + cvv + "')";
+									
+									con.query(command4, function(err4, result4, fields4){
+										if (err4) throw err4 + command4;
+										
+										res.send({mensagem : "Atualizado com sucesso."});
+									});
+
+								}
+							}
+						});
+					});
+				});
+			}else{
+				res.send({mensagem : "Senha atual incorreta."});
+			}
+		});	
+			
+	}
 
 });
 

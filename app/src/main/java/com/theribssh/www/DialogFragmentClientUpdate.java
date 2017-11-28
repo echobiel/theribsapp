@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -70,10 +71,8 @@ public class DialogFragmentClientUpdate extends DialogFragment {
     EditText edit_text_nome;
     EditText edit_text_sobrenome;
     String urlStrings;
-    String email;
     String nome;
-    String sobrenome;
-    FloatingActionButton fab;
+    int id_cliente;
     List<UsuarioPerfilCliente> user;
     View view;
 
@@ -117,6 +116,10 @@ public class DialogFragmentClientUpdate extends DialogFragment {
         Log.i("Script", "onCreateView()");
 
         act = ((MainActivity)getActivity());
+
+        Intent intent = act.getIntent();
+
+        id_cliente = intent.getIntExtra("id_usuario",0);
 
         view = inflater.inflate(R.layout.activity_update_cliente, container);
 
@@ -164,7 +167,7 @@ public class DialogFragmentClientUpdate extends DialogFragment {
 
                     if (senha.equals(cfmsenha)) {
 
-                        urlStrings = String.format("?login=%s&senha=%s&nome=%s&sobrenome=%s&celular=%s&telefone=%s&email=%s&logradouro=%s&numero=%s&bairro=%s&nome_cartao=%s&numero_cartao=%s&cvv=%s&vencimento=%s&rua=%s&id_banco=%d&id_cidade=%d",
+                        urlStrings = String.format("?login=%s&senha=%s&nome=%s&sobrenome=%s&celular=%s&telefone=%s&email=%s&logradouro=%s&numero=%s&bairro=%s&nome_cartao=%s&numero_cartao=%s&cvv=%s&vencimento=%s&rua=%s&id_banco=%d&id_cidade=%d&senhaatual=%s&id_cliente=%d",
                                 edit_text_login.getText().toString().replace(" ", "+"),
                                 edit_text_senha.getText().toString().replace(" ", "+"),
                                 edit_text_nome.getText().toString().replace(" ", "+"),
@@ -181,11 +184,13 @@ public class DialogFragmentClientUpdate extends DialogFragment {
                                 edit_text_vencimento_cartao.getText().toString().replace(" ", "+"),
                                 edit_text_rua.getText().toString().replace(" ", "+"),
                                 ((Banco) spinner_bandeira_cartao.getSelectedItem()).getId_banco(),
-                                ((Cidade) spinner_cidade.getSelectedItem()).getId_cidade());
+                                ((Cidade) spinner_cidade.getSelectedItem()).getId_cidade(),
+                                edit_text_senhaatual.getText().toString().replace(" ", "+"),
+                                id_cliente);
 
                         Log.d("urlStrings", urlStrings);
 
-                        new InserirTask().execute();
+                        new UpdateTask().execute();
 
                     }else{
                         Toast.makeText(getActivity(), "Confirmação de senha incorreta.", Toast.LENGTH_SHORT).show();
@@ -268,14 +273,14 @@ public class DialogFragmentClientUpdate extends DialogFragment {
         }
     }
 
-    public class InserirTask extends AsyncTask<Void, Void, Void>{
+    public class UpdateTask extends AsyncTask<Void, Void, Void>{
 
         String href;
         String json;
 
         @Override
         protected Void doInBackground(Void... params) {
-            String href = String.format("http://%s/cadastrarUsuario%s", getResources().getString(R.string.ip_node), urlStrings);
+            String href = String.format("http://%s/updateUsuario%s", getResources().getString(R.string.ip_node), urlStrings);
             json = HttpConnection.get(href);
 
             return null;
@@ -359,7 +364,7 @@ public class DialogFragmentClientUpdate extends DialogFragment {
                 estados = gson.fromJson(json, new TypeToken<List<Estado>>() {
                 }.getType());
 
-                if (bancos.size() > 0){
+                if (estados.size() > 0){
                     ArrayAdapter<Estado> mesaArrayAdapter =
                             new ArrayAdapter<>(((MainActivity)getActivity()), R.layout.spinner_padrao, estados);
 
@@ -398,7 +403,7 @@ public class DialogFragmentClientUpdate extends DialogFragment {
                 cidades = gson.fromJson(json, new TypeToken<List<Cidade>>() {
                 }.getType());
 
-                if (bancos.size() > 0){
+                if (cidades.size() > 0){
                     ArrayAdapter<Cidade> mesaArrayAdapter =
                             new ArrayAdapter<>(((MainActivity)getActivity()), R.layout.spinner_padrao, cidades);
 

@@ -64,20 +64,13 @@ public class NossosRestaurantesAdapter extends BaseAdapter {
 
         //Guardando o nome da imagem
         String nameImage = nossos_restaurantes.getFoto_restaurante();
-        //Pegando o contexto da imagem
-        //Context context = foto_restaurante.getContext();
-
-        int idImagem;
-        int sucesso;
 
         try {
-            //Pegando id da imagem via nome
-            //idImagem = context.getResources().getIdentifier(nameImage, "drawable", context.getPackageName());
             //Colocando Imagem de fundo
-            Glide.with(view).load("http://10.107.144.13/inf4t/OPROJETOTAAQUI/cms/" + nameImage).thumbnail(Glide.with(view).load(R.drawable.loading)).into(foto_restaurante);
+            Glide.with(view).load(String.format("%s%s", activity.getResources().getString(R.string.url_serverFotoFuncionario), nameImage)).thumbnail(Glide.with(view).load(R.drawable.loading)).into(foto_restaurante);
 
         }catch (Exception e){
-
+            e.printStackTrace();
         }
 
 

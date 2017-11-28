@@ -60,7 +60,7 @@ public class ProdutosGarcomAdapter extends BaseAdapter {
         text_nome_status.setText(menu.getNome_status());
         text_qtd.setText(String.format("Qtd. %d",menu.getQtd()));
 
-        Glide.with(view).load(menu.getImagem()).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
+        Glide.with(view).load(String.format("%s%s", act.getResources().getString(R.string.url_serverFotoFuncionario), menu.getImagem())).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
 
         return view;
     }
