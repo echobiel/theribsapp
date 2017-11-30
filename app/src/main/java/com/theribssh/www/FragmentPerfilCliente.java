@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,11 +44,12 @@ public class FragmentPerfilCliente extends Fragment {
     TextView text_view_vencimento_cartao;
     List<UsuarioPerfilCliente> resultado = new ArrayList<>();
     int id_usuario;
+    View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_perfil_cliente, container, false);
+        view = inflater.inflate(R.layout.activity_perfil_cliente, container, false);
 
         img_user = (ImageView)view.findViewById(R.id.img_user);
         text_view_login = (TextView) view.findViewById(R.id.text_view_login);
@@ -128,6 +130,17 @@ public class FragmentPerfilCliente extends Fragment {
                 text_view_rua.setText(resultado.get(0).getRua());
                 text_view_telefone.setText(resultado.get(0).getTelefone());
                 text_view_vencimento_cartao.setText(resultado.get(0).getVencimento());
+
+                //Guardando o nome da imagem
+                String nameImage = resultado.get(0).getFoto();
+
+                try {
+                    //Colocando Imagem de fundo
+                    Glide.with(view).load(String.format("%s%s", ((MainActivity)getActivity()).getResources().getString(R.string.url_serverFotoFuncionario), nameImage)).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_user);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
             }catch(Exception e){
                 e.printStackTrace();

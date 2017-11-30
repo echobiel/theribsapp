@@ -9,16 +9,16 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  //host: "10.107.144.13",
+	  host: "10.107.144.13",
 	  //host: "localhost",
-	  host: "192.168.1.1",
+	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  //user: "root",
-	  user: "theribssh",
-	  //password: "bcd127",
+	  user: "root",
+	  password: "bcd127",
 	  //password: "",
-	  password: "bcd127@theribssh",
+	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
 
@@ -886,15 +886,23 @@ app.get('/finalizarPedidoFisico', function(req, res){
 				var contador = 0;
 
 				while (contador < produtos.length){
+					
+					var contadorQtd = 0;
+					var qtd = produtos[contador].qtd;
+					
+					while (contadorQtd < qtd){
+					
+						var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+						"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
 
-					var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-					"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
-
-					con.query(command3, function(err3){
-						if (err3) throw err3 + command3;
-					});
-
+						con.query(command3, function(err3){
+							if (err3) throw err3 + command3;
+						});
+						
+						contadorQtd = contadorQtd + 1;
+					}
 					contador = contador + 1;
+					
 				}
 
 

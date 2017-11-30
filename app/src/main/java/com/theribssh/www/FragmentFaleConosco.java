@@ -60,9 +60,6 @@ public class FragmentFaleConosco extends Fragment {
         edit_text_celular.addTextChangedListener(celularMask);
         edit_text_telefone.addTextChangedListener(telefoneMask);
 
-        ArrayAdapter tipo_info = ArrayAdapter.createFromResource(((MainActivity)getActivity()), R.array.tipos_info, R.layout.spinner_padrao);
-        spinner_tipo_info.setAdapter(tipo_info);
-
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
