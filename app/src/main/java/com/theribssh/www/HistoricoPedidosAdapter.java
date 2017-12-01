@@ -19,10 +19,10 @@ import java.util.List;
 
 public class HistoricoPedidosAdapter extends BaseAdapter{
 
-    List<HistoricoPedidosListView> listPedidos;
+    List<Pedidos> listPedidos;
     Activity act;
 
-    public HistoricoPedidosAdapter(List<HistoricoPedidosListView> listPedidos, Activity act){
+    public HistoricoPedidosAdapter(List<Pedidos> listPedidos, Activity act){
         this.act = act;
         this.listPedidos = listPedidos;
     }
@@ -47,14 +47,14 @@ public class HistoricoPedidosAdapter extends BaseAdapter{
         View view = act.getLayoutInflater()
                 .inflate(R.layout.historico_pedidos_list_item, parent, false);
 
-        HistoricoPedidosListView pedido = listPedidos.get(position);
+        Pedidos pedido = listPedidos.get(position);
 
         TextView txt_restaurante = (TextView) view.findViewById(R.id.txt_restaurante);
         TextView txt_qtd_produtos = (TextView) view.findViewById(R.id.txt_qtd_produtos);
         TextView txt_data = (TextView) view.findViewById(R.id.txt_data);
 
         txt_restaurante.setText(pedido.getRestaurante());
-        txt_qtd_produtos.setText(pedido.getQtd_produtos() + " Produtos");
+        txt_qtd_produtos.setText(pedido.getQtd() + " Produtos");
         txt_data.setText(pedido.getData() + "");
 
         return view;

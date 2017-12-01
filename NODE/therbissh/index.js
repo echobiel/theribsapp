@@ -576,6 +576,39 @@ app.get('/selectHistoricoPedidos', function(req, res){
   });
 });
 
+app.get('/historicoPedidos', function(req, res){
+
+  var command = "select p.id_pedido, DATE_FORMAT(p.data, '%d/%m/%Y')as 'data', r.nome as 'restaurante', "+
+		"(select count(*) from tbl_pedidoproduto as pp where pp.id_pedido = p.id_pedido) as 'qtd' "+
+		"from tbl_pedido as p "+
+		"inner join tbl_mesa as m "+
+		"on p.id_mesa = m.id_mesa "+
+		"inner join tbl_restaurante as r "+
+		"on r.id_restaurante = m.id_restaurante "+
+		"where p.id_cliente = '" + req.query.id_cliente + "' order by p.data desc";
+
+  con.query(command, function (err, result, fields) {
+    if (err) throw err + command;
+	
+	res.send(result);
+
+  });
+});
+
+app.get('/perfilFuncionario', function(req, res){
+
+  var command = "select id_funcionario, nome_completo, cpf, email, telefone, celular, num_registro, r.nome as 'restaurante' from tbl_funcionario as f "+
+	"inner join tbl_restaurante as r "+
+	"on r.id_restaurante = f.id_restaurante where id_funcionario = '" + req.query.id_funcionario + "'";
+	
+  con.query(command, function (err, result, fields) {
+    if (err) throw err + command;
+	
+	res.send(result);
+
+  });
+});
+
 app.get('/disconnect', function(req, res){
 
 	res.send(disconnect,1);
@@ -934,6 +967,31 @@ app.get('/selectCidades',function(req,res){
 			res.send(result);
 		}else{
 			res.send({mensagem : "Ocorreu um erro de conexão. Tente novamente mais tarde."});
+		}
+
+	});
+
+});
+
+app.get('/historicoReservas',function(req,res){
+
+	var command = "select DATE_FORMAT(r.dataMarcada, '%d/%m/%Y')as 'data', r.id_restaurante, re.nome, "+
+		"re.imagem as 'foto', re.descricao as 'desc', p.nome as 'periodo', s.nome as 'status' from tbl_reserva as r "+
+		"inner join tbl_restaurante as re "+
+		"on r.id_restaurante = re.id_restaurante "+
+		"inner join tbl_periodo as p "+
+		"on p.id_periodo = r.id_periodo "+
+		"inner join tbl_status as s "+
+		"on s.id_status = r.id_status "+
+		"where r.id_cliente = '" + req.query.id_cliente + "'";
+	
+	con.query(command, function(err, result, fields){
+		if (err) throw err + command;
+
+		if (result.length > 0){
+			res.send(result);
+		}else{
+			res.send({mensagem : "Não há reservas."});
 		}
 
 	});

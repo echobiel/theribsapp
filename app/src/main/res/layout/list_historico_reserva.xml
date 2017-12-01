@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_view_nome_restaurante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restaurante 1"
+            android:layout_marginLeft="10dp"
+            android:textStyle="italic"
+            android:textColor="@color/corVinho"
+            android:textSize="20dp"
+            android:layout_marginBottom="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/image_view_restaurante"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/saudavel" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/text_view_desc_restaurante"
+                    android:text="jksdffjknsdjkfnksjdnfklsdlkfnklsdmgklmsdlmgklsndklgnjksdffjknsdjkfnksjdnfklsdlkfnklsdmgklmsdlmgklsndklgnjksdffjknsdjkfnksjdnfklsdlkfnklsdmgklmsdlmgklsndklgnjksdffjknsdjkfnksjdnfklsdlkfnklsdmgklmsdlmgklsndklgnjksdffjknsdjkfnksjdnfklsdlkfnklsdmgklmsdlmgklsndklgnjksdffjknsdjkfnksjdnfklsdlkfnbjd" />
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Data: "
+                android:textColor="@color/corVinho"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13/05/2017"
+                android:textSize="15dp"
+                android:textColor="@color/corPreto"
+                android:id="@+id/text_view_data_reserva"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Período: "
+                android:textSize="15dp"
+                android:textColor="@color/corVinho"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Almoço"
+                android:textSize="15dp"
+                android:textColor="@color/corPreto"
+                android:id="@+id/text_view_periodo_reserva"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

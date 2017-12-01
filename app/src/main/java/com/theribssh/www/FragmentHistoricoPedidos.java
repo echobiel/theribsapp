@@ -1,6 +1,7 @@
 package com.theribssh.www;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,9 +24,10 @@ import java.util.List;
 public class FragmentHistoricoPedidos extends Fragment {
 
     ListView list_view_historico_pedidos;
-    List<HistoricoPedidosListView> listPedidos = new ArrayList<>();
+    List<Pedidos> listPedidos = new ArrayList<>();
     HistoricoPedidosAdapter historicoPedidosAdapter;
     Activity act;
+    int id_cliente;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,16 +36,13 @@ public class FragmentHistoricoPedidos extends Fragment {
 
         act = ((MainActivity)getActivity());
 
+        Intent intent = act.getIntent();
+
+        id_cliente = intent.getIntExtra("id_usuario", 0);
+
         list_view_historico_pedidos = (ListView) rootView.findViewById(R.id.list_view_historico_pedidos);
 
-        listPedidos.add(new HistoricoPedidosListView(4,"The Ribs Steakhosue 1", new Date()));
-        listPedidos.add(new HistoricoPedidosListView(4,"The Ribs Steakhosue 2", new Date()));
-        listPedidos.add(new HistoricoPedidosListView(4,"The Ribs Steakhosue 3", new Date()));
-        listPedidos.add(new HistoricoPedidosListView(4,"The Ribs Steakhosue 4", new Date()));
-
-        HistoricoPedidosAdapter adapter = new HistoricoPedidosAdapter(listPedidos, ((MainActivity)getActivity()));
-
-        list_view_historico_pedidos.setAdapter(adapter);
+        new PegadorTask().execute();
 
         return rootView;
     }
@@ -53,7 +52,7 @@ public class FragmentHistoricoPedidos extends Fragment {
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            String href = "http://10.0.2.2:8888/selectCardapio";
+            String href = String.format("http://%s/historicoPedidos?id_cliente=%d", getResources().getString(R.string.ip_node), id_cliente);
             json = HttpConnection.get(href);
 
             return null;
@@ -64,11 +63,12 @@ public class FragmentHistoricoPedidos extends Fragment {
             super.onPostExecute(aVoid);
             Gson gson = new Gson();
 
-            listPedidos = gson.fromJson(json, new TypeToken<List<CardapioPrincipaisListView>>(){
-            }.getType());
+            try{
+                listPedidos = gson.fromJson(json, new TypeToken<List<Pedidos>>(){
+                }.getType());
 
-            historicoPedidosAdapter = new HistoricoPedidosAdapter(listPedidos, act);
-            try {
+                historicoPedidosAdapter = new HistoricoPedidosAdapter(listPedidos, act);
+
                 list_view_historico_pedidos.setAdapter(historicoPedidosAdapter);
             }catch (Exception e){
                 e.printStackTrace();
