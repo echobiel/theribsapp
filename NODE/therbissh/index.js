@@ -9,15 +9,15 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
-	  //host: "localhost",
+	  //host: "10.107.144.13",
+	  host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
-	  //user: "root",
 	  user: "root",
-	  password: "bcd127",
-	  //password: "",
+	  //user: "theribssh",
+	  //password: "bcd127",
+	  password: "",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -171,13 +171,15 @@ io.on("connection", function (client) {
 
 app.get('/selectRestaurante', function(req, res){
 
-  var command = "select r.id_restaurante, r.nome, r.imagem, r.descricao, concat(coalesce(c.nome, ''), ', ' , "+
-	"coalesce(e.bairro, '') , ', ' , coalesce(e.rua, '') , ', ' , coalesce(e.numero, '') , ' ' , "+
-	"coalesce(e.aptbloco, '')) as 'endereco' from tbl_restaurante as r "+
+  var command = "select r.id_restaurante, r.nome, r.imagem, r.descricao, concat(coalesce(es.nome, ''), ', ' , coalesce(c.nome, ''), ', ' , "+
+	"coalesce(e.bairro, '') , ', ' , coalesce(e.rua, '') , ', ' , coalesce(e.numero, '')) "+
+	"as 'endereco' from tbl_restaurante as r "+
 	"inner join tbl_endereco as e "+
 	"on r.id_endereco = e.id_endereco "+
 	"inner join tbl_cidade as c "+
 	"on c.id_cidade = e.id_cidade "+
+	"inner join tbl_estado as es "+
+	"on c.id_estado = es.id_estado "+
 	"order by r.id_restaurante asc";
 
   con.query(command, function (err, result, fields) {
@@ -185,6 +187,53 @@ app.get('/selectRestaurante', function(req, res){
     res.send(result);
   });
 
+
+});
+
+app.get('/filtroRestaurante', function(req, res){
+	
+	var texto = req.query.texto;
+	
+	if (typeof texto != 'undefined'){
+		var command = "select r.id_restaurante, r.nome, r.imagem, r.descricao, concat(coalesce(es.nome, ''), ', ' , coalesce(c.nome, ''), ', ' , "+
+			"coalesce(e.bairro, '') , ', ' , coalesce(e.rua, '') , ', ' , coalesce(e.numero, '')) "+
+			"as 'endereco' from tbl_restaurante as r "+
+			"inner join tbl_endereco as e "+
+			"on r.id_endereco = e.id_endereco "+
+			"inner join tbl_cidade as c "+
+			"on c.id_cidade = e.id_cidade "+
+			"inner join tbl_estado as es "+
+			"on c.id_estado = es.id_estado "+
+			"where r.nome like '%" + texto + "%' or "+
+			"es.nome like '%" + texto + "%' or "+
+			"c.nome like '%" + texto + "%' or "+
+			"e.logradouro like '%" + texto + "%' or "+
+			"e.bairro like '%" + texto + "%' or "+
+			"e.rua like '%" + texto + "%' or "+
+			"r.descricao like '%" + texto + "%' "+
+			"order by r.id_restaurante asc";
+
+		con.query(command, function (err, result, fields) {
+			if (err) throw err;
+			res.send(result);
+		});
+	}else{
+		var command = "select r.id_restaurante, r.nome, r.imagem, r.descricao, concat(coalesce(es.nome, ''), ', ' , coalesce(c.nome, ''), ', ' , "+
+			"coalesce(e.bairro, '') , ', ' , coalesce(e.rua, '') , ', ' , coalesce(e.numero, '')) "+
+			"as 'endereco' from tbl_restaurante as r "+
+			"inner join tbl_endereco as e "+
+			"on r.id_endereco = e.id_endereco "+
+			"inner join tbl_cidade as c "+
+			"on c.id_cidade = e.id_cidade "+
+			"inner join tbl_estado as es "+
+			"on c.id_estado = es.id_estado "+
+			"order by r.id_restaurante asc";
+
+		con.query(command, function (err, result, fields) {
+			if (err) throw err;
+			res.send(result);
+		});
+	}
 
 });
 
@@ -200,8 +249,39 @@ app.get('/selectPeriodo', function(req, res){
 
 });
 
-app.get('/inserirFaleconosco', function(req, res){
+app.get('/feedbacks', function(req, res){
+
+  var command = "select * from tbl_avaliacao";
+
+  con.query(command, function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+
+
+});
+
+app.get('/avaliar', function(req, res){
 	
+	var id_pedido = req.query.id_pedido,
+		id_avaliacao = req.query.id_avaliacao;
+	
+	if (typeof id_pedido != 'undefined' && typeof id_avaliacao != 'undefined'){
+		
+		command = "insert into tbl_feedback(id_pedido, id_avaliacao) "+
+			"values('" + id_pedido + "', '" + id_avaliacao + "')";
+		con.query(command, function (err, result, fields) {
+			if (err) throw err + command;
+			res.send({mensagem : "Feedback foi feito com êxito."});
+		});
+	}else{
+		res.send({mensagem : "Informações insuficientes."});
+	}
+
+});
+
+app.get('/inserirFaleconosco', function(req, res){
+
 	var nome = req.query.nome,
 		email = req.query.email,
 		celular = req.query.celular,
@@ -210,7 +290,7 @@ app.get('/inserirFaleconosco', function(req, res){
 		id_restaurante = req.query.id_unidade,
 		id_periodo = req.query.id_periodo,
 		id_tipoinfo = req.query.id_tipoinfo;
-	
+
 	if (nome == "" || email == "" || celular == ""){
 		res.send({mensagem : "Verifique todos os campos com * e preencha-os."});
 	}else{
@@ -221,7 +301,7 @@ app.get('/inserirFaleconosco', function(req, res){
 			if (err) throw err;
 			res.send({mensagem : "Obrigado pelo contado. Sua informação foi enviada com sucesso."});
 		});
-		
+
 	}
 
 });
@@ -336,27 +416,27 @@ app.get('/cadastrarUsuario', function(req, res){
 
 								con.query(command3, function(err3, result3, fields3){
 									if (err3) throw err3 + command3;
-									
+
 									if (nome_cartao == "" || cvv == "" || vencimento == "" || id_banco == ""){
 										res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se. (O cartão não foi cadastrado por falta de dados)"});
 									}else{
 										var command4 = "select * from tbl_cliente where login = '" + login + "' and senha = '" + senha + "'";
-										
+
 										con.query(command4, function(err4, result4, fields4){
 											if (err4) throw err4 + command4;
-											
+
 											var command5 = "insert into tbl_cartaocredito(id_cliente, id_banco, numero, nome_cartao, data, cvv) "+
 												"values('" + result4[0].id_cliente + "', '" + id_banco + "', '" + numero_cartao + "', '" + nome_cartao + "', '" + vencimento + "', '" + cvv + "')";
-											
+
 											con.query(command5, function(err5, result5, fields5){
 												if (err5) throw err5 + command5;
-												
+
 												res.send({mensagem : "Conta criada com sucesso. Já é possível logar-se."});
 											});
 										});
 									}
-									
-									
+
+
 								});
 							});
 						});
@@ -401,43 +481,43 @@ app.get('/updateUsuario', function(req, res){
 	bairro == "" || rua == ""){
 		res.send({mensagem : "Verifique todos os campos com * e preencha-os"});
 	}else{
-		
+
 		var commandVer = "select * from tbl_cliente where id_cliente = '" + id_cliente + "'";
-		
+
 		con.query(commandVer, function(errVer, resultVer, fieldsVer){
-			
+
 			if(senhaatual == resultVer[0].senha){
-			
+
 				var command = "update tbl_cliente set login = '" + login + "', senha = '" + senha + "', nome = '" + nome + "', sobrenome = '" + sobrenome + "', email = '" + email + "', celular = '" + celular + "', telefone = '" + telefone + "' where id_cliente = '" + id_cliente + "'";
 
 				con.query(command, function(err, result, fields){
 					if (err) throw err + command;
-					
+
 					var command2 = "update tbl_endereco set id_cidade = '" + id_cidade + "', logradouro = '" + logradouro + "', bairro = '" + bairro + "', rua = '" + rua + "', numero = '" + numero + "'";
-					
+
 					con.query(command2, function(err2, result2, fields2){
 						if (err2) throw err2 + command2;
-						
+
 						var command3 = "select * from tbl_cartaocredito where id_cliente = '" + id_cliente + "'";
-						
+
 						con.query(command3, function(err3, result3, fields3){
 							if (err3) throw err3 + command3;
-							
+
 							if (result3.length > 0){
 								if (nome_cartao == "" || cvv == "" || vencimento == "" || id_banco == ""){
 									var command4 = "delete from tbl_cartaocredito where id_cliente = '" + id_cliente + "'";
-									
+
 									con.query(command4, function(err4, result4, fields4){
 										if (err4) throw err4 + command4;
-										
+
 										res.send({mensagem : "Atualizado com sucesso."});
 									});
 								}else{
 									var command4 = "update tbl_cartaocredito set id_banco = '" + id_banco + "', numero = '" + numero_cartao + "', nome_cartao = '" + nome_cartao + "', data = '" + vencimento + "', cvv = '" + cvv + "' where id_cliente = '" + id_cliente + "'";
-									
+
 									con.query(command4, function(err4, result4, fields4){
 										if (err4) throw err4 + command4;
-										
+
 										res.send({mensagem : "Atualizado com sucesso."});
 									});
 								}
@@ -447,10 +527,10 @@ app.get('/updateUsuario', function(req, res){
 								}else{
 									var command4 = "insert into tbl_cartaocredito(id_cliente, id_banco, numero, nome_cartao, data, cvv) "+
 										"values('" + id_cliente + "', '" + id_banco + "', '" + numero_cartao + "', '" + nome_cartao + "', '" + vencimento + "', '" + cvv + "')";
-									
+
 									con.query(command4, function(err4, result4, fields4){
 										if (err4) throw err4 + command4;
-										
+
 										res.send({mensagem : "Atualizado com sucesso."});
 									});
 
@@ -462,8 +542,8 @@ app.get('/updateUsuario', function(req, res){
 			}else{
 				res.send({mensagem : "Senha atual incorreta."});
 			}
-		});	
-			
+		});
+
 	}
 
 });
@@ -633,8 +713,6 @@ app.get('/autenticarUsuarioSalaCadastro', function(req, res){
 				var id = result2[0].id_cliente;
 				var nome = result2[0].nome;
 
-				console.log(lstSalas[_id_pedido]);
-
 				lstSalas[_id_pedido].id_cliente = id;
 				lstSalas[_id_pedido].nome_cliente = nome;
 
@@ -796,8 +874,10 @@ app.get('/criacaoSala', function(req, res){
 			lstSalas.push(s);
 
 			//res.send({id_sala : _id_sala, id_funcionario : _id_funcionario, produtos : lstProdutos[_id_sala], tamanho : lstProdutos[_id_sala].length});
-			res.send(lstSalas[_id_sala]);
+			
 			io.sockets.emit("novo_pedido", lstSalas[_id_sala]);
+			
+			res.send(lstSalas[_id_sala]);
 		}else{
 			res.send({mensagem : "Ocorreu um erro durante a conexão. Tente novamente mais tarde."});
 		}
@@ -864,7 +944,7 @@ app.get('/finalizarPedidoFisico', function(req, res){
 	var _id_sala = req.query.id_sala;
 	var _id_cliente = lstSalas[_id_sala].id_cliente;
 
-	if (lstSalas[_id_sala].id_cliente == "" || lstSalas[_id_sala].id_mesa == 0){
+	if (lstSalas[_id_sala].id_cliente == "" || lstSalas[_id_sala].id_mesa == 0 || lstSalas[_id_sala].produtos.length == 0){
 		lstSalas[_id_sala] = {};
 		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
 	}else{
@@ -880,78 +960,120 @@ app.get('/finalizarPedidoFisico', function(req, res){
 
 			con.query(command2, function(err2,result2,fields2){
 				if (err2) throw err2 + command2;
-				id_pedido = result2[0].id_pedido;
+				_id_pedido = result2[0].id_pedido;
 
 				var produtos = lstSalas[_id_sala].produtos;
 				var contador = 0;
 
 				while (contador < produtos.length){
 					
-					var contadorQtd = 0;
-					var qtd = produtos[contador].qtd;
-					
-					while (contadorQtd < qtd){
-					
+					if (typeof produtos[contador].id_produto != 'undefined'){
 						var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-						"values('" + id_pedido + "', '" + produtos[contador].id_produto + "')";
+							"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
 
 						con.query(command3, function(err3){
 							if (err3) throw err3 + command3;
 						});
-						
-						contadorQtd = contadorQtd + 1;
 					}
-					contador = contador + 1;
-					
-				}
 
+					contador = contador + 1;
+				}
+				
+				var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+
+				con.query(command4, function(err4, result4, fields4){
+					if (err4) throw err4 + command4;
+					var saldo = result4[0].saldo;
+					
+					var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
+						"inner join tbl_produto as p "+
+						"on p.id_produto = pp.id_produto "+
+						"where id_pedido = '" + _id_pedido + "';";
+					
+					con.query(command5, function(err5, result5, fields5){
+						if (err5) throw err5 + command5;
+						
+						if (saldo > result5[0].preco){
+							var saldoTotal = saldo - result5[0].preco;
+							
+							command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
+							
+							con.query(command6, function(err6, result6, fields6){
+								if(err6) throw err6 + command6;
+								
+							});
+						}else{
+							command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
+							
+							con.query(command6, function(err6, result6, fields6){
+								if(err6) throw err6 + command6;
+								
+							});
+						}
+					});
+				});
 
 				io.sockets.emit("pedido_finalizado",  _id_cliente);
 				lstSalas[_id_sala] = {};
-
-				res.send({mensagem : "Finalizado com sucesso."});
+				
+				res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
 			});
 		});
 	}
 
 });
 
+app.get('/excluirProduto', function(req,res){
+	var _id_produto_pedido = req.query.id_produto_pedido,
+		_id_pedido = req.query.id_pedido;
+		
+	if (typeof _id_produto_pedido != 'undefined' && typeof _id_pedido != 'undefined'){
+		lstSalas[_id_pedido].produtos[_id_produto_pedido] = {};
+		
+		io.sockets.emit("novo_produto", {id_funcionario : lstSalas[_id_pedido].id_funcionario, id_cliente : lstSalas[_id_pedido].id_cliente});
+		
+		res.send({mensagem : "Excluído com sucesso."});
+	}
+});
+
 app.get('/adicionarProduto', function(req, res){
 	var _id_produto = req.query.id_produto,
-			_qtd = req.query.qtd,
-			id_pedido = req.query.id_pedido;
+		_qtd = req.query.qtd,
+		id_pedido = req.query.id_pedido;
 
 	var _produtos = lstSalas[id_pedido].produtos;
-	_produtos[0]
+	
 	var command = "select nome, preco, descricao, imagem from tbl_produto where id_produto = '" + _id_produto + "'";
 	con.query(command, function(err, result, fields){
 		if (err) throw err + command;
 
-		_produtos.push({id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem,status : 0, nome_status : "Em espera"});
+		if (result.length > 0){
+			_produtos.push({id_produto_pedido : _produtos.length,id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem,status : 0, nome_status : "Em espera"});
+			
+			var command2 = "select e.uf as 'uf', r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
+											"inner join tbl_restaurante as r "+
+											"on f.id_restaurante = r.id_restaurante "+
+											"inner join tbl_endereco as en "+
+											"on r.id_endereco = en.id_endereco "+
+											"inner join tbl_cidade as c "+
+											"on c.id_cidade = en.id_cidade "+
+											"inner join tbl_estado as e "+
+											"on e.id_estado = c.id_estado "+
+											"where f.id_funcionario = '" + lstSalas[id_pedido].id_funcionario + "'";
 
-		res.send({mensagem : "Sucesso."});
-
-		var command2 = "select e.uf as 'uf', r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
-										"inner join tbl_restaurante as r "+
-										"on f.id_restaurante = r.id_restaurante "+
-										"inner join tbl_endereco as en "+
-										"on r.id_endereco = en.id_endereco "+
-										"inner join tbl_cidade as c "+
-										"on c.id_cidade = en.id_cidade "+
-										"inner join tbl_estado as e "+
-										"on e.id_estado = c.id_estado "+
-										"where f.id_funcionario = '" + lstSalas[id_pedido].id_funcionario + "'";
-
-		con.query(command2, function(err2, result2, fields2){
-			if (err2) throw err2 + command2;
-
-
-			io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
-			io.emit("selectPedidos", result2[0].id_rest);
-
-		});
+			con.query(command2, function(err2, result2, fields2){
+				if (err2) throw err2 + command2;
 
 
+				io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
+				io.emit("selectPedidos", result2[0].id_rest);
+				
+				res.send({mensagem : "Sucesso."});
+
+			});
+		}else{
+			res.send({mensagem : "Produto Inválido."});
+		}
 	});
 });
 
@@ -1057,7 +1179,102 @@ app.get('/salas', function(req, res){
 
 });
 
+app.get('/saldoCliente', function(req, res){
+	var _id_pedido = req.query.id_sala;
 
+	if(typeof _id_pedido != "undefined"){
+		
+		var _id_cliente = lstSalas[_id_pedido].id_cliente;
+		
+		var command = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+		
+		con.query(command, function(err, result, fields){
+			if (err) throw err + command;
+			
+			res.send({mensagem : "Saldo de brindes: R$ " + result[0].saldo.toFixed(2)});
+		});
+	}else{
+		res.send("Nada");
+	}
+
+});
+
+app.get('/brinde', function(req, res){
+	var _id_pedido = req.query.id_pedido;
+	
+	if (typeof _id_pedido != 'undefined'){
+		
+		var command = "select * from tbl_pedido where id_pedido = '" + _id_pedido + "'";
+		
+		con.query(command, function(err, result, fields){
+			if (err) throw err + command;
+			
+			var _id_cliente = result[0].id_cliente;
+			
+			var command2 = "select * from tbl_pedido where id_cliente = '" + _id_cliente + "'";
+			
+			con.query(command2, function(err2, result2, fields2){
+				if (err2) throw err2 + command2;
+				
+				if (result2.length % 5 == 0){
+					
+					var command3 = "select * from tbl_pedido where id_cliente = '" + _id_cliente + "' order by id_pedido desc limit 0,5";
+					
+					con.query(command3, function(err3, result3, fields3){
+						if (err3) throw err3 + command3;
+						
+						var contador = 0;
+						var totalGasto = 0;
+						var brinde = 0;
+						
+						while (contador < result3.length){
+							
+							var command4 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
+								"inner join tbl_produto as p "+
+								"on p.id_produto = pp.id_produto "+
+								"where id_pedido = '" + result3[contador].id_pedido + "' ";
+							
+							con.query(command4, function(err4, result4, fields4){
+								if (err4) throw err4 + command4;
+								
+								totalGasto = totalGasto + result4[0].preco;
+								
+								brinde = (totalGasto / 100) * 18;
+							});
+							
+							contador = contador + 1;
+							
+							if (contador == result3.length){
+								setTimeout(function(){
+									var command5 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+										
+									con.query(command5, function(err5, result5, fields5){
+										if (err5) throw err5 + command5;
+										
+										var novoSaldo = result5[0].saldo + brinde;
+										
+										var command6 = "update tbl_cliente set saldo = '" + novoSaldo.toFixed(2) + "' where id_cliente = '" + _id_cliente + "'";
+										console.log(command6);
+										
+										con.query(command6, function(err6, result6, fields6){
+											if(err6) throw err6 + command6;
+											res.send({mensagem : "O cliente recebeu R$ " + brinde.toFixed(2) + " de brinde."});									
+										});	
+									});
+								},1000);
+							}
+							
+						}					
+											
+					});
+					
+				}else{
+					res.send({mensagem : "Faltam " + ((result2.length % 5) - 5) * - 1 + " pedidos para o próximo brinde."});
+				}
+			});
+		});
+	}
+});
 
 http.listen(8100, function(){
 
