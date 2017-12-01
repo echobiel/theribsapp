@@ -98,7 +98,6 @@ public class FragmentPedidoGarcom extends Fragment {
 
             socket.connect();
         }
-        //TODO: Notificação do cliente (Chamar garçom)
         return VIEW;
 
     }

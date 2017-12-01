@@ -9,15 +9,15 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  //host: "10.107.144.13",
-	  host: "localhost",
+	  host: "10.107.144.13",
+	  //host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
 	  //user: "theribssh",
 	  //password: "bcd127",
-	  password: "",
+	  password: "bcd127",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -1079,6 +1079,18 @@ app.get('/finalizarPedidoFisico', function(req, res){
 		});
 	}
 
+});
+
+app.get('/chamarGarcom', function(req,res){
+	var _id_sala = req.query.sala;
+	
+	if (typeof _id_sala != 'undefined'){
+		var _mesa = lstSalas[_id_sala].mesa;
+		var _id_funcionario = lstSalas[_id_sala].id_funcionario;
+		
+		io.sockets.emit("chamarGarcom", {id_funcionario : _id_funcionario, mesa : _mesa});
+		res.send({mensagem : "O garçom foi chamado com sucesso."});
+	}
 });
 
 app.get('/excluirProduto', function(req,res){

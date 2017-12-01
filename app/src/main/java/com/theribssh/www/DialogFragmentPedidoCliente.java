@@ -192,17 +192,6 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
         }
     }
 
-    public void closePedido(){
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentCardapio dfm = (DialogFragmentCardapio) ((MainActivity)getActivity())
-                .getSupportFragmentManager().findFragmentByTag("dialog");
-
-        if (dfm != null){
-            dfm.dismiss();
-            ft.remove(dfm);
-        }
-    }
-
     private void setupBotoes() {
 
         btn_add_produto.setOnClickListener(new View.OnClickListener() {

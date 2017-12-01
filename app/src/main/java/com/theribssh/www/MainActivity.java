@@ -2,9 +2,13 @@ package com.theribssh.www;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -25,11 +29,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -174,6 +181,32 @@ public class MainActivity extends AppCompatActivity
             }catch (Exception e){
                 e.printStackTrace();
             }
+            //chamarGarcom
+            socket = conectarSocket();
+
+            socket.on("chamarGarcom", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0){
+
+                        final Notificacao n = (Notificacao) args[0];
+
+                        int id_funcionario = n.getId_funcionario();
+
+                        if (id_funcionario == intent.getIntExtra("id_usuario",0)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    enviarNotificacao(n);
+
+                                }
+                            });
+                        }
+
+                    }
+                }
+            });
         }
 
         manage = getSupportFragmentManager();
@@ -198,6 +231,52 @@ public class MainActivity extends AppCompatActivity
         }else{
             navigationView.getMenu().getItem(0).setChecked(true);
         }
+    }
+
+    int notification_id;
+
+    public void enviarNotificacao(Notificacao item){
+
+        Intent intent = this.getIntent();
+
+        intent.putExtra("novo_pedido", 1);
+
+        PendingIntent p = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setSmallIcon(R.drawable.logo_icon)
+                .setContentTitle(item.getMesa() + "")
+                .setContentText("A mesa " + item.getMesa() + " está chamando-o")
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentIntent(p);
+
+        NotificationManager nManager = (NotificationManager)
+                (this).getSystemService(Context.NOTIFICATION_SERVICE);
+
+        nManager.notify( notification_id , builder.build() );
+        Notification n = builder.build();
+
+        n.vibrate = new long[]{150,300,150,600};
+
+        try{
+            Uri som = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone toque = RingtoneManager.getRingtone(this,som);
+            toque.play();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public Socket conectarSocket(){
+        try{
+            socket = IO.socket(String.format("http://%s",getResources().getText(R.string.ip_node)));
+        }catch (URISyntaxException e){
+            e.printStackTrace();
+        }
+        return socket;
     }
 
     public int getId_pedido() {
