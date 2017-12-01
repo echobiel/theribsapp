@@ -1,5 +1,6 @@
 package com.theribssh.www;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,7 +76,19 @@ public class SalaPedido {
     }
 
     public List<PedidoGarcomProduto> getProdutos() {
-        return produtos;
+
+        List<PedidoGarcomProduto> p = new ArrayList<>();
+
+        int contador = 0;
+        while (contador < produtos.size()){
+            if (produtos.get(contador).getId_produto() != 0){
+                p.add(produtos.get(contador));
+            }
+
+            contador = contador + 1;
+        }
+
+        return p;
     }
 
     public void setProdutos(List<PedidoGarcomProduto> produtos) {

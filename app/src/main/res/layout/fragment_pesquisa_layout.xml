@@ -22,11 +22,23 @@
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.theribssh.www.MyListView
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/list_pesquisa"></com.theribssh.www.MyListView>
+                android:textSize="14dp"
+                android:id="@+id/text_view_erro"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.theribssh.www.MyListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/list_pesquisa"
+                    android:clickable="true"></com.theribssh.www.MyListView>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
     <LinearLayout

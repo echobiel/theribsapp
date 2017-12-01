@@ -1,6 +1,7 @@
 package com.theribssh.www;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -12,10 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -29,23 +29,22 @@ import java.util.List;
  */
 
 @SuppressLint("ValidFragment")
-public class DialogFragmentMetodoPagamento extends DialogFragment {
+public class DialogFragmentOptProduto extends DialogFragment {
 
     private int numStyle;
     private int numTheme;
+    Button btn_sim;
+    Button btn_nao;
+    Activity act;
     private int id_pedido;
-    private Spinner spinner_cartao;
-    private Button btn_salvar_mesa;
-    private TextView text_titulo_pg;
-    private TextView text_view_saldo;
-    private String metodo;
-    private MetodoFisico resultadoF;
+    private int id_produto_pedido;
 
     @SuppressLint("ValidFragment")
-    public DialogFragmentMetodoPagamento(int numStyle, int numTheme, int id_pedido){
+    public DialogFragmentOptProduto(int numStyle, int numTheme, int id_pedido, int id_produto_pedido){
         this.numStyle = numStyle;
         this.numTheme = numTheme;
         this.id_pedido = id_pedido;
+        this.id_produto_pedido = id_produto_pedido;
     }
 
     @Override
@@ -78,56 +77,39 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        act = ((MainActivity)getActivity());
+
         Log.i("Script", "onCreateView()");
 
-        View view = inflater.inflate(R.layout.dialog_pagamento, container);
+        View view = inflater.inflate(R.layout.dialog_excluir, container);
 
-        spinner_cartao = (Spinner) view.findViewById(R.id.spinner_mesa);
-        btn_salvar_mesa = (Button) view.findViewById(R.id.btn_salvar_mesa);
-        text_titulo_pg = (TextView) view.findViewById(R.id.text_titulo_pg);
-        text_view_saldo = (TextView) view.findViewById(R.id.text_view_saldo);
+        btn_sim = (Button) view.findViewById(R.id.btn_sim);
+        btn_nao = (Button) view.findViewById(R.id.btn_nao);
 
-        text_titulo_pg.setText("Indique a forma de pagamento:");
+        btn_sim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ExcluirTask().execute();
+            }
+        });
 
-        ArrayAdapter bandeira = ArrayAdapter.createFromResource(((MainActivity)getActivity()), R.array.metodos_pagamento, R.layout.spinner_padrao);
-        spinner_cartao.setAdapter(bandeira);
-
-        new SaldoTask().execute();
-
-        setupBotao();
+        btn_nao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
 
         return view;
     }
 
-    private void setupBotao() {
-        btn_salvar_mesa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                metodo = spinner_cartao.getSelectedItem().toString();
-
-                if (metodo.equals("Cartão (Virtual)")){
-
-                }else{
-                    new FinalizarFisicoTask().execute();
-                }
-            }
-        });
-    }
-
-    public void openFeedback(){
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentFeedback dff = new DialogFragmentFeedback(1,2,id_pedido);
-        dff.show(ft, "dialog");
-    }
-
-    private class SaldoTask extends AsyncTask<Void, Void, Void>{
-
+    private class ExcluirTask extends AsyncTask<Void, Void, Void>
+    {
         String href;
         String json;
-
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/saldoCliente?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
+            href = String.format("http://%s/excluirProduto?id_pedido=%d&id_produto_pedido=%d", getResources().getString(R.string.ip_node), id_pedido, id_produto_pedido);
             json = HttpConnection.get(href);
 
             return null;
@@ -136,48 +118,14 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
             try {
                 Gson gson = new Gson();
                 Mensagem mensagem = gson.fromJson(json, new TypeToken<Mensagem>() {
                 }.getType());
 
-                text_view_saldo.setText(mensagem.getMensagem());
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class FinalizarFisicoTask extends AsyncTask<Void,Void,Void>{
-
-        String href;
-        String json;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/finalizarPedidoFisico?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
-            json = HttpConnection.get(href);
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            try {
-                Gson gson = new Gson();
-                resultadoF = gson.fromJson(json, new TypeToken<MetodoFisico>() {
-                }.getType());
-
-                id_pedido = resultadoF.getId_pedido();
+                Toast.makeText(getActivity(), mensagem.getMensagem(), Toast.LENGTH_LONG).show();
 
                 dismiss();
-
-                openFeedback();
-
             }catch (Exception e){
                 e.printStackTrace();
             }

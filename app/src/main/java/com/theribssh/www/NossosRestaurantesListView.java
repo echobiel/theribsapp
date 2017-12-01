@@ -5,7 +5,7 @@ package com.theribssh.www;
  */
 
 public class NossosRestaurantesListView {
-
+    private int id_restaurante;
     private String imagem;
     private String nome;
     private String nome_restaurante;
@@ -13,12 +13,20 @@ public class NossosRestaurantesListView {
     private String descricao;
     private String telefone_restaurante;
 
-    public NossosRestaurantesListView(String imagem, String nome, String endereco, String descricao, String telefone_restaurante){
+    public NossosRestaurantesListView(String imagem, String nome, String endereco, String descricao, int id_restaurante){
         setFoto_restaurante(imagem);
         setNome_restaurante(nome);
         setEndereco_restaurante(endereco);
         setDesc_restaurante(descricao);
-        //setTelefone_restaurante(telefone);
+        setId_restaurante(id_restaurante);
+    }
+
+    public int getId_restaurante() {
+        return id_restaurante;
+    }
+
+    public void setId_restaurante(int id_restaurante) {
+        this.id_restaurante = id_restaurante;
     }
 
     public String getNome_restaurante() {

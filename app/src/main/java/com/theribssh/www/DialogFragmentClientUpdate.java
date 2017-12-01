@@ -297,6 +297,8 @@ public class DialogFragmentClientUpdate extends DialogFragment {
 
                 Toast.makeText(getActivity(), mensagem.getMensagem(), Toast.LENGTH_SHORT).show();
 
+                dismiss();
+
             }catch(Exception e){
                 Log.d("Script", "catch onPostExecute");
                 e.printStackTrace();

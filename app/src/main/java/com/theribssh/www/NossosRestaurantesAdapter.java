@@ -57,9 +57,6 @@ public class NossosRestaurantesAdapter extends BaseAdapter {
         TextView desc_restaurante = (TextView)view.findViewById(R.id.text_view_desc_restaurante);
         desc_restaurante.setText(nossos_restaurantes.getDesc_restaurante());
 
-        TextView telefone_restaurante = (TextView)view.findViewById(R.id.text_view_telefone_restaurante);
-        telefone_restaurante.setText(nossos_restaurantes.getTelefone_restaurante());
-
         ImageView foto_restaurante = (ImageView)view.findViewById(R.id.image_view_restaurante);
 
         //Guardando o nome da imagem

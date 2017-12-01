@@ -29,6 +29,7 @@
     <!--<string name="ip_node">www.theribssh.com:8100</string>-->
     <string name="ip_node">10.0.2.2:8100</string>
     <string name="title_bem_vindo">Bem-vindo(a) </string>
+    <string name="msg_erro_pesquisa">Nenhum resultado foi encontrado.</string>
 
     <string-array name="metodos_pagamento">
         <item>Cartão (Físico)</item>

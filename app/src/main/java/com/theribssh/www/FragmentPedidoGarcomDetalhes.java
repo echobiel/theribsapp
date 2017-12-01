@@ -14,10 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -49,7 +51,7 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
     int id_pedido;
     float total;
     MyListView list_pedidos_produtos;
-    List<PedidoGarcomProduto> listPedidosDetalhes = new ArrayList<>();
+    List<PedidoGarcomProduto> lpgp = new ArrayList<>();
     SalaPedido resultado;
     Button btn_add_produto;
     Button btn_finalizar_pedido;
@@ -77,6 +79,14 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
         btn_finalizar_pedido = (Button) view.findViewById(R.id.btn_finalizar_pedido);
 
         setupBotoes();
+
+        list_pedidos_produtos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                openOptProduto(lpgp.get(i).getId_produto_pedido());
+                return false;
+            }
+        });
 
         pet= new PegadorTask();
         pet.execute();
@@ -138,42 +148,22 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
     }
 
     public void openPedido(){
-        closePedido();
-        ((MainActivity)getActivity()).setVerificadorDialog(1);
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
         DialogFragmentCardapio dfpc = new DialogFragmentCardapio(4,3);
         dfpc.show(ft, "dialog");
     }
 
-    public void closePedido(){
-        ((MainActivity)getActivity()).setVerificadorDialog(0);
+    public void openOptProduto(int id_produto_pedido){
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentCardapio dfm = (DialogFragmentCardapio) ((MainActivity)getActivity())
-                .getSupportFragmentManager().findFragmentByTag("dialog");
-
-        if (dfm != null){
-            dfm.dismiss();
-            ft.remove(dfm);
-        }
+        DialogFragmentOptProduto dfop = new DialogFragmentOptProduto(1,2,id_pedido,id_produto_pedido);
+        dfop.show(ft, "dialog");
     }
 
 
     public void openPagamento(){
-        closePagamento();
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
         DialogFragmentMetodoPagamento dfmp = new DialogFragmentMetodoPagamento(1,2,id_pedido);
         dfmp.show(ft, "dialog");
-    }
-
-    public void closePagamento(){
-        FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentMetodoPagamento dfmp = (DialogFragmentMetodoPagamento) ((MainActivity)getActivity())
-                .getSupportFragmentManager().findFragmentByTag("dialog");
-
-        if (dfmp != null){
-            dfmp.dismiss();
-            ft.remove(dfmp);
-        }
     }
 
     public Socket conectarSocket(){
@@ -218,15 +208,16 @@ public class FragmentPedidoGarcomDetalhes extends Fragment {
                 text_status.setText(resultado.getStatus_nome());
                 text_nome_cliente.setText(resultado.getNome_cliente());
 
-                List<PedidoGarcomProduto> lpgp = resultado.getProdutos();
+                lpgp = resultado.getProdutos();
 
                 int contador = 0;
 
                 total = 0;
 
                 while (contador < lpgp.size()){
-
-                    total = total + lpgp.get(contador).getPreco() * lpgp.get(contador).getQtd();
+                    if (lpgp.get(contador).getId_produto() != 0) {
+                        total = total + lpgp.get(contador).getPreco() * lpgp.get(contador).getQtd();
+                    }
 
                     contador = contador + 1;
                 }

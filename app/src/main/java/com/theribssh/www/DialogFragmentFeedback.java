@@ -29,20 +29,19 @@ import java.util.List;
  */
 
 @SuppressLint("ValidFragment")
-public class DialogFragmentMetodoPagamento extends DialogFragment {
+public class DialogFragmentFeedback extends DialogFragment {
 
     private int numStyle;
     private int numTheme;
     private int id_pedido;
-    private Spinner spinner_cartao;
-    private Button btn_salvar_mesa;
+    private Spinner spinner_feedback;
+    private Button btn_salvar_feedback;
     private TextView text_titulo_pg;
-    private TextView text_view_saldo;
-    private String metodo;
-    private MetodoFisico resultadoF;
+    private int id_avaliacao;
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @SuppressLint("ValidFragment")
-    public DialogFragmentMetodoPagamento(int numStyle, int numTheme, int id_pedido){
+    public DialogFragmentFeedback(int numStyle, int numTheme, int id_pedido){
         this.numStyle = numStyle;
         this.numTheme = numTheme;
         this.id_pedido = id_pedido;
@@ -70,7 +69,7 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
         }
 
         setStyle(style, theme);
-        setCancelable(true);
+        setCancelable(false);
     }
 
     @Nullable
@@ -80,19 +79,13 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
 
         Log.i("Script", "onCreateView()");
 
-        View view = inflater.inflate(R.layout.dialog_pagamento, container);
+        View view = inflater.inflate(R.layout.dialog_feedback, container);
 
-        spinner_cartao = (Spinner) view.findViewById(R.id.spinner_mesa);
-        btn_salvar_mesa = (Button) view.findViewById(R.id.btn_salvar_mesa);
+        spinner_feedback = (Spinner) view.findViewById(R.id.spinner_feedback);
+        btn_salvar_feedback = (Button) view.findViewById(R.id.btn_salvar_feedback);
         text_titulo_pg = (TextView) view.findViewById(R.id.text_titulo_pg);
-        text_view_saldo = (TextView) view.findViewById(R.id.text_view_saldo);
 
-        text_titulo_pg.setText("Indique a forma de pagamento:");
-
-        ArrayAdapter bandeira = ArrayAdapter.createFromResource(((MainActivity)getActivity()), R.array.metodos_pagamento, R.layout.spinner_padrao);
-        spinner_cartao.setAdapter(bandeira);
-
-        new SaldoTask().execute();
+        new PegadorTask().execute();
 
         setupBotao();
 
@@ -100,34 +93,30 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
     }
 
     private void setupBotao() {
-        btn_salvar_mesa.setOnClickListener(new View.OnClickListener() {
+        btn_salvar_feedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                metodo = spinner_cartao.getSelectedItem().toString();
+                id_avaliacao = ((Feedback)spinner_feedback.getSelectedItem()).getId_avaliacao();
 
-                if (metodo.equals("Cartão (Virtual)")){
-
-                }else{
-                    new FinalizarFisicoTask().execute();
-                }
+                new AvaliarTask().execute();
             }
         });
     }
 
-    public void openFeedback(){
+    public void openBrinde(){
         FragmentTransaction ft = ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-        DialogFragmentFeedback dff = new DialogFragmentFeedback(1,2,id_pedido);
-        dff.show(ft, "dialog");
+        DialogFragmentBrinde dfb = new DialogFragmentBrinde(1,2,id_pedido);
+        dfb.show(ft, "dialog");
     }
 
-    private class SaldoTask extends AsyncTask<Void, Void, Void>{
+    public class AvaliarTask extends AsyncTask<Void, Void, Void>{
 
         String href;
         String json;
 
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/saldoCliente?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
+            href = String.format("http://%s/avaliar?id_pedido=%d&id_avaliacao=%d",getResources().getString(R.string.ip_node), id_pedido, id_avaliacao);
             json = HttpConnection.get(href);
 
             return null;
@@ -142,22 +131,29 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
                 Mensagem mensagem = gson.fromJson(json, new TypeToken<Mensagem>() {
                 }.getType());
 
-                text_view_saldo.setText(mensagem.getMensagem());
+                String mensagem_text = mensagem.getMensagem();
 
-            }catch (Exception e){
+                Toast.makeText(getActivity(), mensagem_text, Toast.LENGTH_LONG).show();
+
+                openBrinde();
+
+                dismiss();
+
+            }catch(Exception e){
+                Log.d("Script", "catch onPostExecute");
                 e.printStackTrace();
             }
         }
     }
 
-    public class FinalizarFisicoTask extends AsyncTask<Void,Void,Void>{
+    public class PegadorTask extends AsyncTask<Void, Void, Void>{
 
         String href;
         String json;
 
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/finalizarPedidoFisico?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
+            href = String.format("http://%s/feedbacks",getResources().getString(R.string.ip_node));
             json = HttpConnection.get(href);
 
             return null;
@@ -169,16 +165,18 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
 
             try {
                 Gson gson = new Gson();
-                resultadoF = gson.fromJson(json, new TypeToken<MetodoFisico>() {
+                feedbacks = gson.fromJson(json, new TypeToken<List<Feedback>>() {
                 }.getType());
 
-                id_pedido = resultadoF.getId_pedido();
+                if (feedbacks.size() > 0){
+                    ArrayAdapter<Feedback> mesaArrayAdapter =
+                            new ArrayAdapter<>(((MainActivity)getActivity()), R.layout.spinner_padrao, feedbacks);
 
-                dismiss();
+                    spinner_feedback.setAdapter(mesaArrayAdapter);
+                }
 
-                openFeedback();
-
-            }catch (Exception e){
+            }catch(Exception e){
+                Log.d("Script", "catch onPostExecute");
                 e.printStackTrace();
             }
         }

@@ -171,8 +171,6 @@ public class DialogFragmentCardapio extends DialogFragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            Log.d("testid", href);
-
             dismiss();
         }
     }

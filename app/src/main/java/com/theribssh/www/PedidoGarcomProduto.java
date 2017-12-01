@@ -7,6 +7,7 @@ package com.theribssh.www;
 public class PedidoGarcomProduto {
 
     private int id_produto;
+    private int id_produto_pedido;
     private int qtd;
     private String imagem;
     private String nome;
@@ -14,7 +15,7 @@ public class PedidoGarcomProduto {
     private String obs;
     private float preco;
 
-    public PedidoGarcomProduto(int id_produto, int qtd,float preco, String nome_status,String nome, String imagem,String obs) {
+    public PedidoGarcomProduto(int id_produto, int id_produto_pedido, int qtd,float preco, String nome_status,String nome, String imagem,String obs) {
         setId_produto(id_produto);
         setQtd(qtd);
         setPreco(preco);
@@ -22,6 +23,15 @@ public class PedidoGarcomProduto {
         setObs(obs);
         setImagem(imagem);
         setNome_status(nome_status);
+        setId_produto_pedido(id_produto_pedido);
+    }
+
+    public int getId_produto_pedido() {
+        return id_produto_pedido;
+    }
+
+    public void setId_produto_pedido(int id_produto_pedido) {
+        this.id_produto_pedido = id_produto_pedido;
     }
 
     public String getNome_status() {

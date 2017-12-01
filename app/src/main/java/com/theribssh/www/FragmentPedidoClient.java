@@ -162,6 +162,7 @@ public class FragmentPedidoClient extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            verificadorDialog = 1;
             href = String.format("http://%s/autenticarSala?qr=%s&id_cliente=%d",getResources().getString(R.string.ip_node),codigo,id_usuario);
             json = HttpConnection.get(href);
 
