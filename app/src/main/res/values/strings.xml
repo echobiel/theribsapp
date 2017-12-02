@@ -27,8 +27,8 @@
     <!--<string name="ip_node">192.168.0.12:8100</string>-->
     <!--<string name="ip_node">10.107.144.9:8100</string>-->
     <!--<string name="ip_node">www.theribssh.com:8100</string>-->
-    <string name="ip_node">192.168.0.12:8100</string>
-    <string name="ip_reserva">192.168.0.12/2017/theribssteakhouse/home/home_mobile.php</string>
+    <string name="ip_node">www.theribssh.com:8100</string>
+    <string name="ip_reserva">www.theribssh.com/home/home_mobile.php</string>
     <!--<string name="ip_reserva">www.theribssh.com/home/home_mobile.php</string>-->
     <string name="title_bem_vindo">Bem-vindo(a) </string>
     <string name="msg_erro_pesquisa">Nenhum resultado foi encontrado.</string>
