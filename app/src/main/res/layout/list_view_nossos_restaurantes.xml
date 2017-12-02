@@ -44,36 +44,31 @@
                     android:id="@+id/text_view_unidade_restaurante"/>
 
             </LinearLayout>
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
-                android:layout_marginLeft="10dp">
-                <LinearLayout
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:textSize="18dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/corPreto"
+                    android:id="@+id/text_view_endereco_restaurante"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:textSize="18dp"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/corPreto"
-                        android:id="@+id/text_view_endereco_restaurante"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="15dp"
+                    android:textSize="14dp"
+                    android:textColor="@color/corPreto"
+                    android:id="@+id/text_view_desc_restaurante"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginTop="15dp"
-                        android:textSize="14dp"
-                        android:textColor="@color/corPreto"
-                        android:id="@+id/text_view_desc_restaurante"/>
-
-                </LinearLayout>
-            </ScrollView>
+            </LinearLayout>
 
         </LinearLayout>
 

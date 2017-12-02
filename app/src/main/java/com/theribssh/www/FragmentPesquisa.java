@@ -2,6 +2,7 @@ package com.theribssh.www;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,6 +47,7 @@ public class FragmentPesquisa extends Fragment {
     PegadorTask pet;
     FiltroTask ft;
     int id_restaurante;
+    int permissao;
 
     @Nullable
     @Override
@@ -69,14 +71,28 @@ public class FragmentPesquisa extends Fragment {
             }
         });
 
-        list_pesquisa.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
-                id_restaurante = lstRestaurantes.get(i).getId_restaurante();
-                openReserva();
-            }
-        });
+        Intent intent = act.getIntent();
+
+        permissao = intent.getIntExtra("permissao",0);
+
+        if (permissao == 1) {
+            list_pesquisa.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    id_restaurante = lstRestaurantes.get(i).getId_restaurante();
+                    openReserva();
+                    return false;
+                }
+            });
+        }else{
+            list_pesquisa.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Toast.makeText(getActivity(), "É necessário ter um cadastro para reservar. Cadastre-se e faça sua reserva.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+        }
 
         edit_text_pesquisa.addTextChangedListener(new TextWatcher() {
             @Override

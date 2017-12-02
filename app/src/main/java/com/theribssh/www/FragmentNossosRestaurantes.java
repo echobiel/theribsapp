@@ -1,15 +1,19 @@
 package com.theribssh.www;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +31,8 @@ public class FragmentNossosRestaurantes extends Fragment{
     NossosRestaurantesAdapter adapter;
     FloatingActionButton fab;
     Activity act;
+    int permissao;
+    int id_restaurante;
 
     @Nullable
     @Override
@@ -47,7 +53,40 @@ public class FragmentNossosRestaurantes extends Fragment{
             }
         });
 
+        Intent intent = act.getIntent();
+
+        permissao = intent.getIntExtra("permissao",0);
+
+        if (permissao == 1) {
+            list_view_nossos_restaurantes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    id_restaurante = lstRestaurantes.get(i).getId_restaurante();
+                    openReserva();
+                    return false;
+                }
+            });
+        }else{
+            list_view_nossos_restaurantes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Toast.makeText(getActivity(), "É necessário ter um cadastro para reservar. Cadastre-se e faça sua reserva.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+        }
+
         return view;
+    }
+
+    public void openReserva(){
+        try {
+            FragmentTransaction ft = ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction();
+            DialogFragmentReserva dfr = new DialogFragmentReserva(1, 3, id_restaurante);
+            dfr.show(ft, "dialog");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void configurarListView() {

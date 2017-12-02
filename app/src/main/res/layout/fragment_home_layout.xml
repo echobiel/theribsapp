@@ -120,6 +120,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:padding="15dp"
+                        android:minHeight="525dp"
                         android:layout_gravity="center_horizontal|left"
                         android:textSize="18dp"
                         android:id="@+id/txt_desc_sobrenos"

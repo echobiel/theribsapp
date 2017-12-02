@@ -3,6 +3,7 @@ package com.theribssh.www;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -15,6 +16,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by echobiel on 13/11/2017.
@@ -26,6 +28,7 @@ public class DialogFragmentReserva extends DialogFragment {
     private int numStyle;
     private int numTheme;
     private int id_restaurante;
+    private int id_cliente;
 
     WebView web_view_reserva;
 
@@ -71,9 +74,17 @@ public class DialogFragmentReserva extends DialogFragment {
 
         View view = inflater.inflate(R.layout.dialog_reserva, container);
 
+        Intent intent = getActivity().getIntent();
+
+        id_cliente = intent.getIntExtra("id_usuario", 0);
+
         web_view_reserva = (WebView) view.findViewById(R.id.web_view_reserva);
 
-        web_view_reserva.loadUrl("https://www.youtube.com/channel/UCCqoc2as2nMEXoZPlwXei4g");
+        web_view_reserva.loadUrl(String.format("http://%s?id=%d&id_cliente=%d&funcao=reservar", getResources().getString(R.string.ip_reserva), id_restaurante, id_cliente));
+
+        web_view_reserva.setInitialScale(100);
+
+        //Toast.makeText(getActivity(), String.format("%s?id=%d&id_cliente=%d&funcao=reservar", getResources().getString(R.string.ip_reserva), id_restaurante, id_cliente), Toast.LENGTH_LONG).show();
 
         WebSettings mWebSettings = web_view_reserva.getSettings();
 

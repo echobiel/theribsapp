@@ -28,6 +28,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -189,19 +191,27 @@ public class MainActivity extends AppCompatActivity
                 public void call(Object... args) {
                     if (args.length > 0){
 
-                        final Notificacao n = (Notificacao) args[0];
+                        try {
+                            String json = args[0].toString();
 
-                        int id_funcionario = n.getId_funcionario();
+                            Gson gson = new Gson();
+                            final Notificacao n = gson.fromJson(json, new TypeToken<Notificacao>() {
+                            }.getType());
 
-                        if (id_funcionario == intent.getIntExtra("id_usuario",0)) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                            int id_funcionario = n.getId_funcionario();
 
-                                    enviarNotificacao(n);
+                            if (id_funcionario == intent.getIntExtra("id_usuario", 0)) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                }
-                            });
+                                        enviarNotificacao(n);
+
+                                    }
+                                });
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
                         }
 
                     }

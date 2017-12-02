@@ -9,15 +9,15 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
-	  //host: "localhost",
+	  //host: "10.107.144.13",
+	  host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
 	  //user: "theribssh",
 	  //password: "bcd127",
-	  password: "bcd127",
+	  password: "",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -319,6 +319,18 @@ app.get('/selectTipoInfo', function(req, res){
 });
 
 app.get('/selectCardapio', function(req, res){
+
+  var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto order by nome_produto asc;";
+
+  con.query(command, function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+
+
+});
+
+app.get('/selectCardapioMain', function(req, res){
 
   var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto where statusAprovacao = 1 order by nome_produto asc;";
 
@@ -1081,6 +1093,99 @@ app.get('/finalizarPedidoFisico', function(req, res){
 
 });
 
+app.get('/finalizarPedidoVirtual', function(req, res){
+	var _id_sala = req.query.id_sala;
+	var _id_cliente = lstSalas[_id_sala].id_cliente;
+
+	if (lstSalas[_id_sala].id_cliente == "" || lstSalas[_id_sala].id_mesa == 0 || lstSalas[_id_sala].produtos.length == 0){
+		lstSalas[_id_sala] = {};
+		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
+	}else{
+		
+		var commandVer = "select * from tbl_cartaocredito where id_cliente = '" + _id_cliente + "'";
+		
+		con.query(commandVer, function(err, result, fields){
+			
+			if (result.length > 0){
+				var qtd_produtos = lstSalas[_id_sala].produtos;
+				var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
+											"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
+				var id_pedido;
+				con.query(command, function(err){
+					if (err) throw err + command;
+
+					var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
+
+					con.query(command2, function(err2,result2,fields2){
+						if (err2) throw err2 + command2;
+						_id_pedido = result2[0].id_pedido;
+
+						var produtos = lstSalas[_id_sala].produtos;
+						var contador = 0;
+
+						while (contador < produtos.length){
+							
+							if (typeof produtos[contador].id_produto != 'undefined'){
+								var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+									"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
+
+								con.query(command3, function(err3){
+									if (err3) throw err3 + command3;
+								});
+							}
+
+							contador = contador + 1;
+						}
+						
+						var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+
+						con.query(command4, function(err4, result4, fields4){
+							if (err4) throw err4 + command4;
+							var saldo = result4[0].saldo;
+							
+							var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
+								"inner join tbl_produto as p "+
+								"on p.id_produto = pp.id_produto "+
+								"where id_pedido = '" + _id_pedido + "';";
+							
+							con.query(command5, function(err5, result5, fields5){
+								if (err5) throw err5 + command5;
+								
+								if (saldo > result5[0].preco){
+									var saldoTotal = saldo - result5[0].preco;
+									
+									command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
+									
+									con.query(command6, function(err6, result6, fields6){
+										if(err6) throw err6 + command6;
+										
+									});
+								}else{
+									command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
+									
+									con.query(command6, function(err6, result6, fields6){
+										if(err6) throw err6 + command6;
+										
+									});
+								}
+							});
+						});
+
+						io.sockets.emit("pedido_finalizado",  _id_cliente);
+						lstSalas[_id_sala] = {};
+						
+						res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
+					});
+				});
+			}else{
+				res.send({mensagem : "Esta opção não é possível a este usuário."});
+			}			
+		});
+		
+	}
+
+});
+
 app.get('/chamarGarcom', function(req,res){
 	var _id_sala = req.query.sala;
 	
@@ -1090,7 +1195,20 @@ app.get('/chamarGarcom', function(req,res){
 		
 		io.sockets.emit("chamarGarcom", {id_funcionario : _id_funcionario, mesa : _mesa});
 		res.send({mensagem : "O garçom foi chamado com sucesso."});
+	}else{
+		res.send({mensagem : "Não foi possível chamar o garçom. Tente novamente mais tarde"});
 	}
+});
+
+app.get('/selectSobrenos', function(req,res){
+	
+	var command = "select * from tbl_sobrenos where status = 1";
+	
+	con.query(command, function(err, result, fields){
+		res.send({mensagem : result[0].texto});
+	});
+	
+	
 });
 
 app.get('/excluirProduto', function(req,res){
@@ -1324,8 +1442,7 @@ app.get('/brinde', function(req, res){
 										var novoSaldo = result5[0].saldo + brinde;
 										
 										var command6 = "update tbl_cliente set saldo = '" + novoSaldo.toFixed(2) + "' where id_cliente = '" + _id_cliente + "'";
-										console.log(command6);
-										
+																				
 										con.query(command6, function(err6, result6, fields6){
 											if(err6) throw err6 + command6;
 											res.send({mensagem : "O cliente recebeu R$ " + brinde.toFixed(2) + " de brinde."});									

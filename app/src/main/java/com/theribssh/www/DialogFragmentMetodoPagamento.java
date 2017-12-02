@@ -106,7 +106,7 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
                 metodo = spinner_cartao.getSelectedItem().toString();
 
                 if (metodo.equals("Cartão (Virtual)")){
-
+                    new FinalizarVirtualTask().execute();
                 }else{
                     new FinalizarFisicoTask().execute();
                 }
@@ -177,6 +177,47 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
                 dismiss();
 
                 openFeedback();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class FinalizarVirtualTask extends AsyncTask<Void,Void,Void>{
+
+        String href;
+        String json;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            href = String.format("http://%s/finalizarPedidoVirtual?id_sala=%d",getResources().getString(R.string.ip_node),id_pedido);
+            json = HttpConnection.get(href);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            try {
+                Gson gson = new Gson();
+                resultadoF = gson.fromJson(json, new TypeToken<MetodoFisico>() {
+                }.getType());
+
+                String msg = resultadoF.getMensagem();
+
+                if (msg.equals("Esta opção não é possível a este usuário.")){
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                }else {
+
+                    id_pedido = resultadoF.getId_pedido();
+
+                    dismiss();
+
+                    openFeedback();
+                }
 
             }catch (Exception e){
                 e.printStackTrace();

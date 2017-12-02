@@ -59,7 +59,7 @@ public class FragmentCardapioPrincipais extends Fragment {
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            String href = String.format("http://%s/selectCardapio", getResources().getString(R.string.ip_node));
+            String href = String.format("http://%s/selectCardapioMain", getResources().getString(R.string.ip_node));
             json = HttpConnection.get(href);
 
             return null;

@@ -50,6 +50,7 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
     int id_pedido;
     float total;
     Button btn_add_produto;
+    Button btn_chamar_garcom;
     PegadorTask pet;
 
     @SuppressLint("ValidFragment")
@@ -102,6 +103,7 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
         list_pedidos_produtos = (MyListView)view.findViewById(R.id.list_produtos);
         text_precoTotal = (TextView)view.findViewById(R.id.text_precoTotal);
         btn_add_produto = (Button) view.findViewById(R.id.btn_add_produto);
+        btn_chamar_garcom = (Button) view.findViewById(R.id.btn_chamar_garcom);
 
         text_precoTotal.setText(String.format("R$ %.2f", total));
 
@@ -201,6 +203,34 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
                 openPedido();
             }
         });
+        btn_chamar_garcom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    public class ChamarGarcomTask extends AsyncTask<Void, Void ,Void>{
+
+        String href;
+        String json;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                href = String.format("http://%s/chamarGarcom?id_sala=%d", getResources().getString(R.string.ip_node), id_pedido);
+                json = HttpConnection.get(href);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 
     public class PegadorTask extends AsyncTask<Void, Void, Void> {

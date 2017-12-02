@@ -1,5 +1,6 @@
 package com.theribssh.www;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,9 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,11 +78,7 @@ public class FragmentHome extends Fragment {
         //Configurando o menu(ou cardápio)
         setupMenu();
 
-        txt_desc_sobrenos.setText("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n" +
-                "Aenean nec lorem. In porttitor. Donec laoreet nonummy augue.\n" +
-                "Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.\n");
+        new PegadorTask().execute();
 
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getChildFragmentManager());
         contadorSlider = 0;
@@ -180,5 +180,37 @@ public class FragmentHome extends Fragment {
 
     public void setViewPager (int fragmentNumber){
         slider_home.setCurrentItem(fragmentNumber);
+    }
+
+    public class PegadorTask extends AsyncTask<Void, Void, Void> {
+
+        String href;
+        String json;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                href = String.format("http://%s/selectSobrenos", getResources().getString(R.string.ip_node));
+                json = HttpConnection.get(href);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try{
+                super.onPostExecute(aVoid);
+                Gson gson = new Gson();
+                Mensagem m = gson.fromJson(json, new TypeToken<List<Mensagem>>(){
+                }.getType());
+
+                txt_desc_sobrenos.setText(m.getMensagem());
+            }catch (Exception e){
+                e.printStackTrace();
+                txt_desc_sobrenos.setText(getResources().getString(R.string.sobrenos_default));
+            }
+        }
     }
 }
