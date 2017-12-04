@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -11,8 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -80,17 +86,49 @@ public class DialogFragmentReserva extends DialogFragment {
 
         web_view_reserva = (WebView) view.findViewById(R.id.web_view_reserva);
 
+        web_view_reserva.getSettings().setJavaScriptEnabled(true);
+        web_view_reserva.setWebChromeClient(new WebChromeClient());
+        web_view_reserva.setWebViewClient(new WViewClient());
+
         web_view_reserva.loadUrl(String.format("http://%s?id=%d&id_cliente=%d&funcao=reservar", getResources().getString(R.string.ip_reserva), id_restaurante, id_cliente));
 
-        web_view_reserva.setInitialScale(100);
+        web_view_reserva.addJavascriptInterface(new JsInterface(), "android");
 
-        //Toast.makeText(getActivity(), String.format("%s?id=%d&id_cliente=%d&funcao=reservar", getResources().getString(R.string.ip_reserva), id_restaurante, id_cliente), Toast.LENGTH_LONG).show();
+        web_view_reserva.setInitialScale(100);
 
         WebSettings mWebSettings = web_view_reserva.getSettings();
 
         mWebSettings.setJavaScriptEnabled(true);
 
         return view;
+    }
+
+    private class  WViewClient extends WebViewClient {
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+        }
+    }
+
+    private class JsInterface{
+
+        @JavascriptInterface
+        public void toast(String msg){
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            dismiss();
+        }
+
     }
 
     @Override

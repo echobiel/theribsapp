@@ -206,7 +206,7 @@ public class DialogFragmentPedidoCliente extends DialogFragment {
         btn_chamar_garcom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new ChamarGarcomTask().execute();
             }
         });
     }

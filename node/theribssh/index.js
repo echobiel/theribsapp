@@ -9,15 +9,15 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  //host: "10.107.144.13",
-	  host: "localhost",
+	  host: "10.107.144.13",
+	  //host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
 	  //user: "theribssh",
-	  //password: "bcd127",
-	  password: "",
+	  password: "bcd127",
+	  //password: "",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -59,14 +59,23 @@ io.on("connection", function (client) {
                 var idpedido = lstSalas[contador].id_sala,
                     /*horarioFeito = lstsalas[contador].horariofeito,*/
                     mesa = lstSalas[contador].mesa;
-
-                resultado = resultado + "<div class='div_infoReduzidaPed' onclick='abrirInformacoes("+idpedido+")' title='Ver Informações'><div class='linha_esquerda'></div> "+
-                                        "<div class='div_mesaHorario'> " +
-                                        "<div class='mesaHorario'>Mesa "+mesa+"</div> " +
-                                        "<div class='mesaHorario'></div>" +
-                                        "</div>" +
-                                        "<div class='div_btnConcluir' onclick='status(2,"+idpedido+")'><div class='btnConcluir' title='Concluir pedido'><img src='img/pedido_completo.png' alt=''></div></div> " +
-                                        "</div>";
+				
+				if(typeof mesa != 'undefined'){
+					
+					if(mesa != ""){
+				
+						resultado = resultado + "<div class='div_infoReduzidaPed' onclick='abrirInformacoes("+idpedido+")' title='Ver Informações'><div class='linha_esquerda'></div> "+
+												"<div class='div_mesaHorario'> " +
+												"<div class='mesaHorario'>Mesa "+mesa+"</div> " +
+												"<div class='mesaHorario'></div>" +
+												"</div>" +
+												"<div class='div_btnConcluir' onclick='status(2,"+idpedido+")'><div class='btnConcluir' title='Concluir pedido'><img src='img/pedido_completo.png' alt=''></div></div> " +
+												"</div>";
+												
+					}else{
+					}		
+				}else{
+				}			
                 contador = contador + 1;
             }
 
@@ -78,7 +87,7 @@ io.on("connection", function (client) {
 
         var resultado = "";
 
-		if (typeof lstSalas[id_pedido].id_sala != 'undefined'){
+		if (typeof lstSalas[id_pedido] != 'undefined'){
 
             var id_funcionario = lstSalas[id_pedido].id_funcionario;
             var command = "select nome_completo as 'nomegarcom' from tbl_funcionario where id_funcionario = '" + id_funcionario + "'";
@@ -109,25 +118,48 @@ io.on("connection", function (client) {
 					resultado = "",
 					produtos = lstSalas[id_pedido].produtos;
 
-				while(contador < produtos.length){
-					nomeproduto = produtos[contador].nome,
-					idproduto = produtos[contador].id_produto;
-					qntd = produtos[contador].qtd;
+				if(typeof produtos != "undefined"){	
+					
+					while(contador < produtos.length){
+						nomeproduto = produtos[contador].nome,
+						idproduto = produtos[contador].id_produto;
+						qntd = produtos[contador].qtd,
+						idpedidoproduto = produtos[contador].id_produto_pedido,
+						statusproduto = produtos[contador].status;
+						
 
-				   resultado = resultado +  "<div class='tituloInfo_caixa' onclick='mostrarIngrendientes("+idproduto+")'> " +
-											"<div class='tituloInfoPequenoQntI'><span class='centralizar_texto'>Quantidade</span></div> " +
-											"<div class='divisoria'></div> " +
-											"<div class='tituloInfoQntI'><span class='centralizar_texto'>Nome Produto</span></div> " +
-											"<div class='conteudoInfoPequeno'><span class='centralizar_texto'>"+qntd+"</span></div>" +
-											"<div class='divisoriaB'></div> " +
-											"<div class='conteudoInfo'><span class='centralizar_texto'>"+nomeproduto+"</span></div> " +
-											"</div>" +
-											"<div id='titulo_ingredientes"+idproduto+"' class='tituloIng'><span class='centralizar_texto'>Ingredientes</span></div>" +
-											"<div id='div_ingredientesNomes"+idproduto+"' class='div_ingredientesNomes'></div>";
+					   if(typeof nomeproduto != 'undefined'){	
+						
+						   var nomestatusdiv = "Em espera",
+							   stylestatus = "margin-left: 0;color: #ffffff;width: 70px;height: 30px;line-height: 30px;font-size: 80%;background-color: #f3c425;",
+							   mostraring = "onclick='mostrarIngrendientes("+idproduto+")'",
+							   funcaoBotaoStatus = "onclick='mudarStatusProdutos(2, "+id_pedido+", "+idpedidoproduto+")'";	
+						
+						   if(statusproduto == 2){
+							   var 	nomestatusdiv = "Feito",
+									stylestatus = "margin-left: 0;color: #ffffff;width: 70px;height: 30px;line-height: 30px;font-size: 80%;background-color: #71dc62;",
+									mostraring = "",
+									funcaoBotaoStatus = "";
+						   }   
+						
+						   resultado = resultado +  "<div class='tituloInfo_caixa' "+mostraring+"> " +
+													"<div class='tituloInfoPequenoQntI'><span class='centralizar_texto'>Quantidade</span></div> " +
+													"<div class='divisoria'></div> " +
+													"<div class='tituloInfoQntI'><span class='centralizar_texto'>Nome Produto</span></div> " +
+													"<div class='conteudoInfoPequeno'><span class='centralizar_texto'>"+qntd+"</span></div>" +
+													"<div class='divisoriaB'></div> " +
+													"<div class='conteudoInfo'><span class='centralizar_texto'>"+nomeproduto+"</span><span style='"+stylestatus+"' "+funcaoBotaoStatus+">"+nomestatusdiv+"</span></div> " +
+													"</div>" +
+													"<div id='titulo_ingredientes"+idproduto+"' class='tituloIng'><span class='centralizar_texto'>Ingredientes</span></div>" +
+													"<div id='div_ingredientesNomes"+idproduto+"' class='div_ingredientesNomes'></div>";
+					   }else{
+					   }	   
 
-					contador = contador + 1;
-				}
-				client.emit("resultadoProdutoQntd", resultado);
+						contador = contador + 1;
+					}
+					client.emit("resultadoProdutoQntd", resultado);
+				}else{
+				}		
 
             });
 		}
@@ -148,7 +180,7 @@ io.on("connection", function (client) {
                     detalhe = result[contador].detalhe,
                     sigla = result[contador].sigla;
 
-                resultado = resultado + "<p>"+quantidade+""+sigla+" de "+nomeingrediente+" "+detalhe+"</p>";
+                resultado = resultado + "<p>"+quantidade+""+sigla+" de "+nomeingrediente+" "+detalhe+"/p Unidade</p>";
 
                 contador = contador + 1;
             }
@@ -161,9 +193,29 @@ io.on("connection", function (client) {
         var command = "select nome from tbl_status where id_status = "+idstatus;
 
         con.query(command, function(err, result, fields){
-            var nomestatus = result[0].nome;
-            lstSalas[idpedido].status = idstatus;
-            lstSalas[idpedido].status_nome = nomestatus;
+			if(result.length > 0){
+				var nomestatus = result[0].nome;
+				lstSalas[idpedido].status = idstatus;
+				lstSalas[idpedido].status_nome = nomestatus;
+			}else{
+			}			
+        });
+    });
+	
+	client.on("mudarStatusProduto", function(idstatus, idpedido, idpedidoproduto){
+
+        var command = "select nome from tbl_status where id_status = "+idstatus;
+
+        con.query(command, function(err, result, fields){
+			if(result.length > 0){
+				var nomestatus = result[0].nome;
+				lstSalas[idpedido].produtos[idpedidoproduto].status = idstatus;
+				lstSalas[idpedido].produtos[idpedidoproduto].status_nome = nomestatus;
+				
+				io.sockets.emit("novo_produto", {id_funcionario : lstSalas[idpedido].id_funcionario, id_cliente : lstSalas[idpedido].id_cliente});
+				
+			}else{
+			}			
         });
     });
 
@@ -1038,14 +1090,23 @@ app.get('/finalizarPedidoFisico', function(req, res){
 				while (contador < produtos.length){
 					
 					if (typeof produtos[contador].id_produto != 'undefined'){
-						var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-							"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
+                        var qtd = produtos[contador].qtd;
+                        var contadorQtd = 0;
+                        
+                        while (contadorQtd < qtd){
+                            var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+                                "values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
 
-						con.query(command3, function(err3){
-							if (err3) throw err3 + command3;
-						});
+                            console.log(command3);
+
+                            con.query(command3, function(err3){
+                                if (err3) throw err3 + command3;
+                            });
+                            
+                            contadorQtd = contadorQtd + 1;
+                        }
 					}
-
+                    
 					contador = contador + 1;
 				}
 				
@@ -1236,7 +1297,7 @@ app.get('/adicionarProduto', function(req, res){
 		if (err) throw err + command;
 
 		if (result.length > 0){
-			_produtos.push({id_produto_pedido : _produtos.length,id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem,status : 0, nome_status : "Em espera"});
+			_produtos.push({id_produto_pedido : _produtos.length,id_produto : _id_produto, qtd : _qtd, nome : result[0].nome, obs : result[0].descricao, preco : result[0].preco, imagem : result[0].imagem, status : 0, nome_status : "Em espera"});
 			
 			var command2 = "select e.uf as 'uf', r.id_restaurante as 'id_rest' from tbl_funcionario as f "+
 											"inner join tbl_restaurante as r "+
@@ -1254,7 +1315,6 @@ app.get('/adicionarProduto', function(req, res){
 
 
 				io.sockets.emit("novo_produto", {id_funcionario : lstSalas[id_pedido].id_funcionario, id_cliente : lstSalas[id_pedido].id_cliente});
-				io.emit("selectPedidos", result2[0].id_rest);
 				
 				res.send({mensagem : "Sucesso."});
 
