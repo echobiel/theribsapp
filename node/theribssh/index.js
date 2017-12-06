@@ -385,7 +385,7 @@ app.get('/selectCardapio', function(req, res){
 app.get('/selectCardapioPedido', function(req, res){
 
 	var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto order by nome_produto asc;";
-	//var lstProdutos = [];
+	var lstProdutos = [];
 	
 	con.query(command, function (err, result, fields) {
 		if (err) throw err;

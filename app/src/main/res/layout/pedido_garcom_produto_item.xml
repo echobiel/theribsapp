@@ -118,20 +118,14 @@
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:background="#000"></LinearLayout>
-                    <ScrollView
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="1dp"
-                        android:padding="1dp">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minHeight="60dp"
-                            android:padding="4dp"
-                            android:layout_weight="1"
-                            android:id="@+id/txt_obs"
-                            android:text="Obs:Com pouco ..."/>
-                    </ScrollView>
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp"
+                        android:padding="4dp"
+                        android:layout_weight="1"
+                        android:id="@+id/txt_obs"
+                        android:text="Obs:Com pouco ..."/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

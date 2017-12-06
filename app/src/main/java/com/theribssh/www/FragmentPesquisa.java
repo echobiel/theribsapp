@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ public class FragmentPesquisa extends Fragment {
     TextView text_view_erro;
     ImageView img_swipe;
     ImageButton img_clicked;
+    LinearLayout background_click;
     ListView list_pesquisa;
     List<NossosRestaurantesListView> lstRestaurantes = new ArrayList<>();
     NossosRestaurantesAdapter adapter;
@@ -62,11 +64,12 @@ public class FragmentPesquisa extends Fragment {
         list_pesquisa = (ListView) view.findViewById(R.id.list_pesquisa);
         img_swipe = (ImageView) view.findViewById(R.id.img_swipe);
         img_clicked = (ImageButton) view.findViewById(R.id.img_clicked);
+        background_click = (LinearLayout) view.findViewById(R.id.background_click);
 
         img_clicked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                img_clicked.setVisibility(View.GONE);
+                background_click.setVisibility(View.GONE);
                 img_swipe.setVisibility(View.GONE);
             }
         });

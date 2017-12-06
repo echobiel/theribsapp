@@ -47,7 +47,8 @@
         android:layout_marginTop="-10000dp"
         android:layout_gravity="left"
         android:gravity="left|center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/background_click">
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="match_parent"
