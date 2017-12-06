@@ -181,7 +181,7 @@ public class DialogFragmentCardapio extends DialogFragment {
         String json;
         @Override
         protected Void doInBackground(Void... voids) {
-            href = String.format("http://%s/selectCardapio", getResources().getString(R.string.ip_node));
+            href = String.format("http://%s/selectCardapioPedido", getResources().getString(R.string.ip_node));
             json = HttpConnection.get(href);
 
             return null;

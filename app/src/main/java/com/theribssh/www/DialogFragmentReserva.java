@@ -125,7 +125,12 @@ public class DialogFragmentReserva extends DialogFragment {
 
         @JavascriptInterface
         public void toast(String msg){
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+            dismiss();
+        }
+
+        @JavascriptInterface
+        public void fechar(){
             dismiss();
         }
 

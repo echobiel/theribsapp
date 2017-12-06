@@ -9,15 +9,15 @@ var app = require('express')(),
 	client = "",
 	mysql = require('mysql'),
 	con = mysql.createConnection({
-	  host: "10.107.144.13",
+	  //host: "10.107.144.13",
 	  //host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
 	  //user: "theribssh",
-	  password: "bcd127",
-	  //password: "",
+	  //password: "bcd127",
+	  password: "",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -378,6 +378,20 @@ app.get('/selectCardapio', function(req, res){
     if (err) throw err;
     res.send(result);
   });
+
+
+});
+
+app.get('/selectCardapioPedido', function(req, res){
+
+	var command = "select id_produto, nome as 'nome_produto', descricao as 'desc_produto', imagem as 'foto_produto', concat('R$ ', format(preco,2,'de_DE')) as 'preco_produto' from tbl_produto order by nome_produto asc;";
+	//var lstProdutos = [];
+	
+	con.query(command, function (err, result, fields) {
+		if (err) throw err;
+		
+		res.send(result);
+	});
 
 
 });
