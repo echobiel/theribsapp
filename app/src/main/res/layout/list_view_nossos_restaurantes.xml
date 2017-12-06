@@ -36,8 +36,8 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="São Paulo - SP"
+                    android:layout_height="40dp"
+                    android:text="São Paulo - SP12131312 131213131"
                     android:textColor="@color/corVinho"
                     android:textSize="15dp"
                     android:textAlignment="center"

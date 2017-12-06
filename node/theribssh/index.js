@@ -10,14 +10,14 @@ var app = require('express')(),
 	mysql = require('mysql'),
 	con = mysql.createConnection({
 	  //host: "10.107.144.13",
-	  //host: "localhost",
+	  host: "localhost",
 	  //host: "192.168.1.1",
 	  //host: "10.107.134.26",
 	  //host: "10.107.134.15",
 	  user: "root",
 	  //user: "theribssh",
-	  //password: "bcd127",
-	  password: "",
+	  password: "bcd127",
+	  //password: "",
 	  //password: "bcd127@theribssh",
 	  database: "dbtheribssh"
 	});
@@ -210,7 +210,7 @@ io.on("connection", function (client) {
 			if(result.length > 0){
 				var nomestatus = result[0].nome;
 				lstSalas[idpedido].produtos[idpedidoproduto].status = idstatus;
-				lstSalas[idpedido].produtos[idpedidoproduto].status_nome = nomestatus;
+				lstSalas[idpedido].produtos[idpedidoproduto].nome_status = nomestatus;
 				
 				io.sockets.emit("novo_produto", {id_funcionario : lstSalas[idpedido].id_funcionario, id_cliente : lstSalas[idpedido].id_cliente});
 				
@@ -1084,86 +1084,103 @@ app.get('/finalizarPedidoFisico', function(req, res){
 		lstSalas[_id_sala] = {};
 		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
 	}else{
+		
+		var verificador = 0,
+			contador = 0;
+		
+		while (contador < lstSalas[_id_sala].produtos.length){
+			
+			if (lstSalas[_id_sala].produtos[contador].status == 0){
+				verificador = 1;
+			}
+			
+			contador = contador + 1;
+		}
+		
+		if (verificador == 0){
+		
+			var qtd_produtos = lstSalas[_id_sala].produtos;
+			var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
+										"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
+			var id_pedido;
+			con.query(command, function(err){
+				if (err) throw err + command;
 
-		var qtd_produtos = lstSalas[_id_sala].produtos;
-		var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
-									"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
-		var id_pedido;
-		con.query(command, function(err){
-			if (err) throw err + command;
+				var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
 
-			var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
+				con.query(command2, function(err2,result2,fields2){
+					if (err2) throw err2 + command2;
+					_id_pedido = result2[0].id_pedido;
 
-			con.query(command2, function(err2,result2,fields2){
-				if (err2) throw err2 + command2;
-				_id_pedido = result2[0].id_pedido;
+					var produtos = lstSalas[_id_sala].produtos;
+					var contador = 0;
 
-				var produtos = lstSalas[_id_sala].produtos;
-				var contador = 0;
-
-				while (contador < produtos.length){
-					
-					if (typeof produtos[contador].id_produto != 'undefined'){
-                        var qtd = produtos[contador].qtd;
-                        var contadorQtd = 0;
-                        
-                        while (contadorQtd < qtd){
-                            var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-                                "values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
-
-                            console.log(command3);
-
-                            con.query(command3, function(err3){
-                                if (err3) throw err3 + command3;
-                            });
-                            
-                            contadorQtd = contadorQtd + 1;
-                        }
-					}
-                    
-					contador = contador + 1;
-				}
-				
-				var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
-
-				con.query(command4, function(err4, result4, fields4){
-					if (err4) throw err4 + command4;
-					var saldo = result4[0].saldo;
-					
-					var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
-						"inner join tbl_produto as p "+
-						"on p.id_produto = pp.id_produto "+
-						"where id_pedido = '" + _id_pedido + "';";
-					
-					con.query(command5, function(err5, result5, fields5){
-						if (err5) throw err5 + command5;
+					while (contador < produtos.length){
 						
-						if (saldo > result5[0].preco){
-							var saldoTotal = saldo - result5[0].preco;
+						if (typeof produtos[contador].id_produto != 'undefined'){
+							var qtd = produtos[contador].qtd;
+							var contadorQtd = 0;
 							
-							command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
-							
-							con.query(command6, function(err6, result6, fields6){
-								if(err6) throw err6 + command6;
-								
-							});
-						}else{
-							command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
-							
-							con.query(command6, function(err6, result6, fields6){
-								if(err6) throw err6 + command6;
-								
-							});
-						}
-					});
-				});
+							while (contadorQtd < qtd){
+								var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+									"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
 
-				io.sockets.emit("pedido_finalizado",  _id_cliente);
-				lstSalas[_id_sala] = {};
-				
-				res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
+								console.log(command3);
+
+								con.query(command3, function(err3){
+									if (err3) throw err3 + command3;
+								});
+								
+								contadorQtd = contadorQtd + 1;
+							}
+						}
+						
+						contador = contador + 1;
+					}
+					
+					var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+
+					con.query(command4, function(err4, result4, fields4){
+						if (err4) throw err4 + command4;
+						var saldo = result4[0].saldo;
+						
+						var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
+							"inner join tbl_produto as p "+
+							"on p.id_produto = pp.id_produto "+
+							"where id_pedido = '" + _id_pedido + "';";
+						
+						con.query(command5, function(err5, result5, fields5){
+							if (err5) throw err5 + command5;
+							
+							if (saldo > result5[0].preco){
+								var saldoTotal = saldo - result5[0].preco;
+								
+								command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
+								
+								con.query(command6, function(err6, result6, fields6){
+									if(err6) throw err6 + command6;
+									
+								});
+							}else{
+								command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
+								
+								con.query(command6, function(err6, result6, fields6){
+									if(err6) throw err6 + command6;
+									
+								});
+							}
+						});
+					});
+
+					io.sockets.emit("pedido_finalizado",  _id_cliente);
+					lstSalas[_id_sala] = {};
+					
+					res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
+				});
 			});
-		});
+		}else{
+			res.send({mensagem : "É necessário que todos os pratos estejam preparados."});
+		}
 	}
 
 });
@@ -1177,86 +1194,102 @@ app.get('/finalizarPedidoVirtual', function(req, res){
 		res.send({mensagem : "O pedido não pode ser enviado por informações insuficientes. Tente novamente."});
 	}else{
 		
-		var commandVer = "select * from tbl_cartaocredito where id_cliente = '" + _id_cliente + "'";
+		var verificador = 0,
+			contador = 0;
 		
-		con.query(commandVer, function(err, result, fields){
+		while (contador < lstSalas[_id_sala].produtos.length){
 			
-			if (result.length > 0){
-				var qtd_produtos = lstSalas[_id_sala].produtos;
-				var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
-											"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
-				var id_pedido;
-				con.query(command, function(err){
-					if (err) throw err + command;
+			if (lstSalas[_id_sala].produtos[contador].status == 0){
+				verificador = 1;
+			}
+			
+			contador = contador + 1;
+		}
+		
+		if (verificador == 0){
+		
+			var commandVer = "select * from tbl_cartaocredito where id_cliente = '" + _id_cliente + "'";
+			
+			con.query(commandVer, function(err, result, fields){
+				
+				if (result.length > 0){
+					var qtd_produtos = lstSalas[_id_sala].produtos;
+					var command = "insert into tbl_pedido (id_funcionario, id_cliente, id_mesa, data) "+
+												"values('" + lstSalas[_id_sala].id_funcionario + "','" + lstSalas[_id_sala].id_cliente + "', '" + lstSalas[_id_sala].id_mesa + "', now())";
+					var id_pedido;
+					con.query(command, function(err){
+						if (err) throw err + command;
 
-					var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
+						var command2 = "select * from tbl_pedido order by id_pedido desc limit 0,1";
 
-					con.query(command2, function(err2,result2,fields2){
-						if (err2) throw err2 + command2;
-						_id_pedido = result2[0].id_pedido;
+						con.query(command2, function(err2,result2,fields2){
+							if (err2) throw err2 + command2;
+							_id_pedido = result2[0].id_pedido;
 
-						var produtos = lstSalas[_id_sala].produtos;
-						var contador = 0;
+							var produtos = lstSalas[_id_sala].produtos;
+							var contador = 0;
 
-						while (contador < produtos.length){
-							
-							if (typeof produtos[contador].id_produto != 'undefined'){
-								var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
-									"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
-
-								con.query(command3, function(err3){
-									if (err3) throw err3 + command3;
-								});
-							}
-
-							contador = contador + 1;
-						}
-						
-						var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
-
-						con.query(command4, function(err4, result4, fields4){
-							if (err4) throw err4 + command4;
-							var saldo = result4[0].saldo;
-							
-							var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
-								"inner join tbl_produto as p "+
-								"on p.id_produto = pp.id_produto "+
-								"where id_pedido = '" + _id_pedido + "';";
-							
-							con.query(command5, function(err5, result5, fields5){
-								if (err5) throw err5 + command5;
+							while (contador < produtos.length){
 								
-								if (saldo > result5[0].preco){
-									var saldoTotal = saldo - result5[0].preco;
-									
-									command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
-									
-									con.query(command6, function(err6, result6, fields6){
-										if(err6) throw err6 + command6;
-										
-									});
-								}else{
-									command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
-									
-									con.query(command6, function(err6, result6, fields6){
-										if(err6) throw err6 + command6;
-										
+								if (typeof produtos[contador].id_produto != 'undefined'){
+									var command3 = "insert into tbl_pedidoproduto(id_pedido, id_produto) "+
+										"values('" + _id_pedido + "', '" + produtos[contador].id_produto + "')";
+
+									con.query(command3, function(err3){
+										if (err3) throw err3 + command3;
 									});
 								}
-							});
-						});
 
-						io.sockets.emit("pedido_finalizado",  _id_cliente);
-						lstSalas[_id_sala] = {};
-						
-						res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
+								contador = contador + 1;
+							}
+							
+							var command4 = "select saldo from tbl_cliente where id_cliente = '" + _id_cliente + "'";
+
+							con.query(command4, function(err4, result4, fields4){
+								if (err4) throw err4 + command4;
+								var saldo = result4[0].saldo;
+								
+								var command5 = "select sum(p.preco) as 'preco' from tbl_pedidoproduto as pp "+
+									"inner join tbl_produto as p "+
+									"on p.id_produto = pp.id_produto "+
+									"where id_pedido = '" + _id_pedido + "';";
+								
+								con.query(command5, function(err5, result5, fields5){
+									if (err5) throw err5 + command5;
+									
+									if (saldo > result5[0].preco){
+										var saldoTotal = saldo - result5[0].preco;
+										
+										command6 = "update tbl_cliente set saldo = '" + saldoTotal + "' where id_cliente = '" + _id_cliente + "'";
+										
+										con.query(command6, function(err6, result6, fields6){
+											if(err6) throw err6 + command6;
+											
+										});
+									}else{
+										command6 = "update tbl_cliente set saldo = '0' where id_cliente = '" + _id_cliente + "'";
+										
+										con.query(command6, function(err6, result6, fields6){
+											if(err6) throw err6 + command6;
+											
+										});
+									}
+								});
+							});
+
+							io.sockets.emit("pedido_finalizado",  _id_cliente);
+							lstSalas[_id_sala] = {};
+							
+							res.send({mensagem : "Finalizado com sucesso.", id_pedido : _id_pedido});
+						});
 					});
-				});
-			}else{
-				res.send({mensagem : "Esta opção não é possível a este usuário."});
-			}			
-		});
-		
+				}else{
+					res.send({mensagem : "Esta opção não é possível a este usuário."});
+				}			
+			});
+		}else{
+			res.send({mensagem : "É necessário que todos os pratos estejam preparados."});
+		}
 	}
 
 });
@@ -1291,11 +1324,16 @@ app.get('/excluirProduto', function(req,res){
 		_id_pedido = req.query.id_pedido;
 		
 	if (typeof _id_produto_pedido != 'undefined' && typeof _id_pedido != 'undefined'){
-		lstSalas[_id_pedido].produtos[_id_produto_pedido] = {};
 		
-		io.sockets.emit("novo_produto", {id_funcionario : lstSalas[_id_pedido].id_funcionario, id_cliente : lstSalas[_id_pedido].id_cliente});
-		
-		res.send({mensagem : "Excluído com sucesso."});
+		if (lstSalas[_id_pedido].produtos[_id_produto_pedido].status == 0){		
+			lstSalas[_id_pedido].produtos[_id_produto_pedido] = {};
+			
+			io.sockets.emit("novo_produto", {id_funcionario : lstSalas[_id_pedido].id_funcionario, id_cliente : lstSalas[_id_pedido].id_cliente});
+			
+			res.send({mensagem : "Excluído com sucesso."});
+		}else{
+			res.send({mensagem : "Este produto não pode ser deletado."});
+		}
 	}
 });
 

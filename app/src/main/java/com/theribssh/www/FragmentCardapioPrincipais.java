@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,13 +67,13 @@ public class FragmentCardapioPrincipais extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Gson gson = new Gson();
-
-            card_principais = gson.fromJson(json, new TypeToken<List<CardapioPrincipaisListView>>(){
-            }.getType());
-
-            cardapioPrincipaisAdapter = new CardapioPrincipaisAdapter(card_principais, act);
             try {
+                Gson gson = new Gson();
+
+                card_principais = gson.fromJson(json, new TypeToken<List<CardapioPrincipaisListView>>(){
+                }.getType());
+
+                cardapioPrincipaisAdapter = new CardapioPrincipaisAdapter(card_principais, act);
                 list_view_cardapio_principais.setAdapter(cardapioPrincipaisAdapter);
             }catch (Exception e){
                 e.printStackTrace();

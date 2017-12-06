@@ -21,9 +21,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by echobiel on 13/11/2017.
  */
@@ -172,11 +169,23 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
                 resultadoF = gson.fromJson(json, new TypeToken<MetodoFisico>() {
                 }.getType());
 
+                String msg = resultadoF.getMensagem();
                 id_pedido = resultadoF.getId_pedido();
 
-                dismiss();
+                if (msg.equals("É necessário que todos os pratos estejam preparados.")){
+                    dismiss();
 
-                openFeedback();
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                }else if (msg.equals("O pedido não pode ser enviado por informações insuficientes. Tente novamente.")){
+                    dismiss();
+
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                }else{
+
+                    dismiss();
+
+                    openFeedback();
+                }
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -209,6 +218,14 @@ public class DialogFragmentMetodoPagamento extends DialogFragment {
                 String msg = resultadoF.getMensagem();
 
                 if (msg.equals("Esta opção não é possível a este usuário.")){
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                }else if (msg.equals("É necessário que todos os pratos estejam preparados.")){
+                    dismiss();
+
+                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                }else if (msg.equals("O pedido não pode ser enviado por informações insuficientes. Tente novamente.")){
+                    dismiss();
+
                     Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
                 }else {
 

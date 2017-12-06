@@ -60,6 +60,11 @@ public class ProdutosGarcomAdapter extends BaseAdapter {
         text_nome_status.setText(menu.getNome_status());
         text_qtd.setText(String.format("Qtd. %d",menu.getQtd()));
 
+        if (menu.getNome_status().equals("Preparado")) {
+            text_nome_status.setTextColor(act.getResources().getColor(R.color.corVerde));
+        }else{
+            text_nome_status.setTextColor(act.getResources().getColor(R.color.corLaranja));
+        }
         Glide.with(view).load(String.format("%s%s", act.getResources().getString(R.string.url_serverFotoFuncionario), menu.getImagem())).thumbnail(Glide.with(view).load(R.drawable.loading)).into(img_produto);
 
         return view;
